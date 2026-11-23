@@ -170,32 +170,130 @@ class ImapService {
   /// его, а телефон об этом не узнал) — один повтор на новом. Журнал
   /// владельца 11.11.2026: «список папок» Яндекса шёл больше минуты, а срок
   /// операции был общий, 5 минут, — всё это время ящик не обновлялся.
+  ///
+  /// [download] — скачивание вложения (2.7.2, журнал владельца 23.11.2026:
+  /// при плохой связи вложение качалось без конца, синхронизация ящика всё
+  /// это время стояла в очереди за ним — до 20 минут): своё соединение и своя
+  /// очередь, синхронизация его не ждёт.
+  ///
+  /// [stall] — приём встал: столько времени от сервера не пришло ни байта —
+  /// соединение закрывается, операция повторяется на новом (один раз).
+  ///
+  /// Обрыв соединения (сеть, сервер, смена сети — [dropConnections]) операция
+  /// узнаёт сразу ([TolerantImapClient.lost]), а не по тайм-ауту: enough_mail
+  /// команды на закрытом сокете не завершает.
   Future<T> _withClient<T>(AccountModel account, Future<T> Function(ImapClient client) action,
-      {Duration limit = const Duration(minutes: 5), bool Function()? canRetry, bool retryHung = false}) {
-    return _withAccountLock(account.id, () async {
-      for (var attempt = 0;; attempt++) {
-        final client = await _getImapClient(account).timeout(const Duration(seconds: 90));
-        try {
-          return await action(client).timeout(limit, onTimeout: () {
-            AppLogger.warning('IMAP ${account.email}: операция не завершилась за '
-                '${ImapOperationHung.describe(limit)} — соединение закрыто');
-            _dropClient(account.id);
-            throw ImapOperationHung(limit);
-          });
-        } on ImapOperationHung {
-          // Обычно не повторяем: зависание — не обрыв, повтор ждал бы снова.
-          if (!retryHung || attempt > 0) rethrow;
-          AppLogger.info('IMAP ${account.email}: повтор на новом соединении');
-        } catch (e) {
-          // [canRetry] — для APPEND: обрыв после начала записи мог случиться,
-          // когда сервер письмо уже сохранил, и повтор дал бы дубль. Обрыв
-          // мёртвого соединения ДО записи (простой пула) повторяем как обычно.
-          if (attempt > 0 || !(canRetry?.call() ?? true) || !_isConnectionError(e)) rethrow;
-          AppLogger.info('IMAP ${account.email}: соединение потеряно ($e) — переподключаюсь');
-          _dropClient(account.id);
+      {Duration limit = const Duration(minutes: 5),
+      bool Function()? canRetry,
+      bool retryHung = false,
+      bool download = false,
+      Duration? stall}) {
+    void drop() => download ? _dropDownloadClient(account.id, 'обрыв') : _dropClient(account.id);
+    return _withAccountLock(download ? '${account.id}#dl' : account.id, () async {
+      if (download) _downloadIdle.remove(account.id)?.cancel();
+      try {
+        for (var attempt = 0;; attempt++) {
+          final client = await (download ? _getDownloadClient(account) : _getImapClient(account))
+              .timeout(const Duration(seconds: 90));
+          try {
+            return await _guarded(client, action(client), stall: stall, email: account.email, check: stallCheck)
+                .timeout(limit, onTimeout: () {
+              AppLogger.warning('IMAP ${account.email}: операция не завершилась за '
+                  '${ImapOperationHung.describe(limit)} — соединение закрыто');
+              drop();
+              throw ImapOperationHung(limit);
+            });
+          } on ImapOperationHung {
+            // Обычно не повторяем: зависание — не обрыв, повтор ждал бы снова.
+            if (!retryHung || attempt > 0) rethrow;
+            AppLogger.info('IMAP ${account.email}: повтор на новом соединении');
+          } catch (e) {
+            // [canRetry] — для APPEND: обрыв после начала записи мог случиться,
+            // когда сервер письмо уже сохранил, и повтор дал бы дубль. Обрыв
+            // мёртвого соединения ДО записи (простой пула) повторяем как обычно.
+            if (attempt > 0 || !(canRetry?.call() ?? true) || !_isConnectionError(e)) rethrow;
+            AppLogger.info('IMAP ${account.email}: соединение потеряно ($e) — переподключаюсь');
+            drop();
+          }
+        }
+      } finally {
+        // Соединение вложений закрывается, если 2 минуты не нужно: сервер
+        // держит его наравне с основным.
+        if (download) {
+          _downloadIdle[account.id] =
+              Timer(const Duration(minutes: 2), () => _dropDownloadClient(account.id, ''));
         }
       }
     });
+  }
+
+  /// Операция наперегонки с обрывом соединения и (если задано [stall]) с
+  /// остановкой приёма; [check] — как часто смотреть на приём.
+  @visibleForTesting
+  static Future<T> guarded<T>(ImapClient client, Future<T> op,
+          {Duration? stall, String email = '', Duration check = const Duration(seconds: 5)}) =>
+      _guarded(client, op, stall: stall, email: email, check: check);
+
+  static Future<T> _guarded<T>(ImapClient client, Future<T> op,
+      {Duration? stall, String email = '', Duration check = const Duration(seconds: 5)}) {
+    if (client is! TolerantImapClient) return op;
+    client.touch();
+    final done = Completer<T>();
+    Timer? watch;
+    if (stall != null) {
+      watch = Timer.periodic(check, (_) {
+        if (done.isCompleted) return;
+        final quiet = DateTime.now().difference(client.lastDataAt);
+        if (quiet < stall) return;
+        watch?.cancel();
+        AppLogger.info('IMAP $email: данные не идут ${quiet.inSeconds} с — соединение закрыто');
+        unawaited(client.abort('данные не идут ${quiet.inSeconds} с'));
+      });
+    }
+    op.then((v) {
+      if (!done.isCompleted) done.complete(v);
+    }, onError: (Object e, StackTrace st) {
+      if (!done.isCompleted) done.completeError(e, st);
+    });
+    client.lost.then((_) {}, onError: (Object e, StackTrace st) {
+      if (!done.isCompleted) done.completeError(e, st);
+    });
+    return done.future.whenComplete(() => watch?.cancel());
+  }
+
+  // ── Соединение для вложений (2.7.2) ──
+  final Map<String, ImapClient> _downloadClients = {};
+  final Map<String, DateTime> _downloadUsed = {};
+  final Map<String, Timer> _downloadIdle = {};
+
+  Future<ImapClient> _getDownloadClient(AccountModel account) async {
+    final c = _downloadClients[account.id];
+    final idle = DateTime.now().difference(_downloadUsed[account.id] ?? DateTime(2000));
+    if (c != null && c.isLoggedIn && !(c is TolerantImapClient && c.isLost) && idle < const Duration(minutes: 2)) {
+      _downloadUsed[account.id] = DateTime.now();
+      return c;
+    }
+    if (c != null) _dropDownloadClient(account.id, '');
+    final client = await _connectAndLogin(account);
+    _downloadClients[account.id] = client;
+    _downloadUsed[account.id] = DateTime.now();
+    AppLogger.info('IMAP подключён ✓ (вложения): ${account.email}');
+    return client;
+  }
+
+  void _dropDownloadClient(String accountId, String reason) {
+    _downloadIdle.remove(accountId)?.cancel();
+    final c = _downloadClients.remove(accountId);
+    if (c != null) _close(c, reason.isEmpty ? 'не нужно' : reason);
+  }
+
+  /// Закрыть соединение; ждущие ответа команды — сразу с ошибкой.
+  static void _close(ImapClient c, String reason) {
+    if (c is TolerantImapClient) {
+      unawaited(c.abort(reason));
+    } else {
+      unawaited(c.disconnect().catchError((Object _) {}));
+    }
   }
 
   static bool _isConnectionError(Object e) {
@@ -214,11 +312,9 @@ class ImapService {
 
   void _dropClient(String accountId) {
     final c = _imapClients.remove(accountId);
-    if (c != null) {
-      // disconnect() асинхронный: ошибку закрытия мёртвого сокета ловим
-      // в самом Future, иначе она всплывала бы как необработанная.
-      unawaited(c.disconnect().catchError((Object _) {}));
-    }
+    // disconnect() асинхронный: ошибку закрытия мёртвого сокета ловим в
+    // самом Future (_close), иначе она всплывала бы как необработанная.
+    if (c != null) _close(c, 'закрыто');
   }
 
   /// Путь папки для MOVE/APPEND. enough_mail кодирует последний сегмент
@@ -2844,12 +2940,22 @@ class ImapService {
 
   // ════════════════════════ ATTACHMENTS ════════════════════════
 
+  /// Сколько ждать хоть одного байта при скачивании вложения, прежде чем
+  /// считать соединение мёртвым (меняется в тестах).
+  @visibleForTesting
+  static Duration attachmentStall = const Duration(seconds: 60);
+
+  /// Как часто смотреть на приём (меняется в тестах).
+  @visibleForTesting
+  static Duration stallCheck = const Duration(seconds: 5);
+
   /// Скачать вложение
   Future<Uint8List> fetchAttachment(AccountModel account, {required String folderId, required int uid, required String partNumber}) async {
-    // Последовательно на аккаунт: SELECT+операция не должны перемешаться
-    // с параллельным запросом к другой папке (см. _withAccountLock).
-    // Большое вложение по медленной сети качается дольше обычной операции.
-    return _withClient(account, limit: const Duration(minutes: 20), (client) async {
+    // Своё соединение (2.7.2): синхронизация ящика не ждёт вложения. Большое
+    // вложение по медленной сети качается дольше обычной операции, но если
+    // минуту не пришло ни байта — соединение мертво: повтор на новом.
+    return _withClient(account, limit: const Duration(minutes: 20), download: true, stall: attachmentStall,
+        (client) async {
     try {
       await client.selectMailboxByPath(folderId);
 
@@ -3166,11 +3272,16 @@ class ImapService {
   /// 185 с после двух смен сети). Закрываем их сразу: идущая команда
   /// заканчивается ошибкой, следующая открывает новое соединение.
   void dropConnections({String reason = ''}) {
-    if (_imapClients.isEmpty && _smtpClients.isEmpty) return;
+    if (_imapClients.isEmpty && _smtpClients.isEmpty && _downloadClients.isEmpty) return;
     AppLogger.info('IMAP: соединения закрыты${reason.isEmpty ? '' : ' — $reason'} '
-        '(IMAP ${_imapClients.length}, SMTP ${_smtpClients.length})');
+        '(IMAP ${_imapClients.length}, вложения ${_downloadClients.length}, SMTP ${_smtpClients.length})');
+    // Идущие команды (синхронизация, скачивание вложения) сразу получают
+    // обрыв и повторяются на новом соединении — уже в новой сети (2.7.2).
     for (final client in _imapClients.values) {
-      unawaited(client.disconnect().catchError((Object _) {}));
+      _close(client, reason.isEmpty ? 'закрыто' : reason);
+    }
+    for (final id in [..._downloadClients.keys]) {
+      _dropDownloadClient(id, reason.isEmpty ? 'закрыто' : reason);
     }
     for (final client in _smtpClients.values) {
       unawaited(client.disconnect().catchError((Object _) {}));
@@ -3182,7 +3293,10 @@ class ImapService {
   void dispose() {
     stopAllIdle(); // закрывает и отдельные idle-соединения
     for (final client in _imapClients.values) {
-      unawaited(client.disconnect().catchError((Object _) {}));
+      _close(client, 'закрыто');
+    }
+    for (final id in [..._downloadClients.keys]) {
+      _dropDownloadClient(id, 'закрыто');
     }
     for (final client in _smtpClients.values) {
       unawaited(client.disconnect().catchError((Object _) {}));

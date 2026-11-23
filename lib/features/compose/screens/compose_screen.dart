@@ -1422,7 +1422,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     }
     try {
       // Качаем от имени ящика, где лежит ИСХОДНОЕ письмо (общий ящик).
-      final bytes = await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, p.id, emailId: emailId);
+      final bytes = await ref.read(mailEngineServiceProvider).getAttachmentBytes(account, p.id, emailId: emailId, waitForNetwork: true);
       if (bytes.isEmpty) throw StateError('сервер вернул пустое вложение');
       String? path;
       try {

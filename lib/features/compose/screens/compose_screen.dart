@@ -3439,16 +3439,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               padding: const EdgeInsets.symmetric(vertical: Space.s),
               child: Row(
                 children: [
-                  // Фото первых адресатов перед строкой имён.
+                  // Фото первых адресатов перед строкой имён — того же
+                  // размера, что фото отправителя в строке «От» (2.7.2,
+                  // замечание владельца 23.11.2026).
                   for (final r in recipients.take(3))
                     Padding(
                       padding: const EdgeInsets.only(right: Space.xs),
                       child: HeroEmailAvatar(
+                        key: ValueKey('sum_avatar_${r.email}'),
                         emailId: 'sum/${r.email}',
                         initial: initialOf(_nameOf(r, names)),
                         color: HeroEmailAvatar.colorForEmail(r.email),
                         email: r.email,
-                        radius: 11,
+                        radius: recipientAvatarRadius,
                         hero: false,
                       ),
                     ),
@@ -5693,11 +5696,10 @@ class _RecipientPill extends StatelessWidget {
       // Удержание пальцем — перетаскивание плашки, адрес — по наведению мыши.
       triggerMode: TooltipTriggerMode.manual,
       child: Container(
-        constraints: const BoxConstraints(minHeight: 28),
-        padding: const EdgeInsets.only(left: 2),
+        constraints: const BoxConstraints(minHeight: 2 * recipientAvatarRadius),
         decoration: BoxDecoration(
           color: scheme.secondaryContainer,
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(recipientAvatarRadius),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -5712,11 +5714,12 @@ class _RecipientPill extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.only(right: 6),
                 child: HeroEmailAvatar(
+                  key: ValueKey('pill_avatar_$email'),
                   emailId: 'pill/$email',
                   initial: text.isNotEmpty ? initialOf(text) : '?',
                   color: HeroEmailAvatar.colorForEmail(email),
                   email: email,
-                  radius: 12,
+                  radius: recipientAvatarRadius,
                   hero: false,
                 ),
               ),
@@ -5746,6 +5749,12 @@ class _RecipientPill extends StatelessWidget {
     );
   }
 }
+
+/// Радиус фото адресата в строках «Кому», «Копия», «Скрытая» — как фото
+/// отправителя в строке «От» (AccountAvatar: 13 + поле и кольцо 3 = 16;
+/// 2.7.2, замечание владельца 23.11.2026: «фото контакта и фото отправителя
+/// разные по размеру»).
+const double recipientAvatarRadius = 16;
 
 /// Вложение пересылаемого письма, ещё не скачанное на телефон (1.6.18).
 enum _CloseChoice { save, delete, keepWriting }

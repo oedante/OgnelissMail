@@ -278,7 +278,7 @@ class _MailRecipientsPanelState extends State<MailRecipientsPanel> {
             if (k > 0) const SizedBox(width: Space.s),
             Flexible(
               child: Row(mainAxisSize: MainAxisSize.min, children: [
-                _MailFace(email: e, person: shown[k], tag: '${cc ? 'cc' : 'to'}_$k', radius: 10),
+                _MailFace(email: e, person: shown[k], tag: '${cc ? 'cc' : 'to'}_$k', radius: kMailFaceRadius),
                 const SizedBox(width: 6),
                 Flexible(
                   child: Text(_short(shown[k]),
@@ -321,7 +321,9 @@ class _MailRecipientsPanelState extends State<MailRecipientsPanel> {
     final main = e.to.isNotEmpty ? e.to : e.cc;
     final faces = main.take(3).toList();
     final more = main.length - faces.length;
-    const r = 14.0, step = 20.0;
+    // Фото адресатов — того же размера, что фото отправителя (2.7.2,
+    // замечание владельца 23.11.2026); внахлёст — с тем же шагом в долях.
+    const r = kMailFaceRadius, step = 22.0;
     final ring = theme.colorScheme.surface;
     final rest = main.length - 1;
     final chipText = _open
@@ -486,7 +488,7 @@ class _MailRecipientsPanelState extends State<MailRecipientsPanel> {
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(children: [
-                    _MailFace(email: e, person: people[k], tag: 'full_${tag}_$k', radius: 12),
+                    _MailFace(email: e, person: people[k], tag: 'full_${tag}_$k', radius: kMailFaceRadius),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(people[k].label,

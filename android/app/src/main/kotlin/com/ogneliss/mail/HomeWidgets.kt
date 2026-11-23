@@ -893,18 +893,21 @@ class CalendarWidget : OgnelissWidget() {
             else -> WidgetUi.cap(SimpleDateFormat("EEEE, d MMMM", locale).format(Date(now)), locale)
         }
         v.setTextViewText(R.id.cal_title, period)
-        // «Мой день»: под датой — непрочитанные и «в работе», как внизу виджета
-        // «Мой день».
-        val myDayLine = listOf(myDay?.optString("unread").orEmpty(), myDay?.optString("work").orEmpty())
-            .filter { it.isNotEmpty() }.joinToString("  ·  ")
-        // Погода — в начале строки (21.11.2026).
+        // Под датой — погода с городом (и вторым городом, 2.7.2). «Мой
+        // день»: непрочитанные и «в работе» — строкой под переключателем вида
+        // (просьба пользователей 23.11.2026: место под погоду было занято).
         val weather = myDay?.optString("weather").orEmpty()
-        val myDaySub = listOf(weather, myDayLine).filter { it.isNotEmpty() }.joinToString("  ·  ")
-        WidgetUi.text(v, R.id.cal_sub, if (mode == 3) myDaySub else weather)
+        WidgetUi.text(v, R.id.cal_sub, weather)
+        val myDayLine = if (mode == 3) {
+            listOf(myDay?.optString("unread").orEmpty(), myDay?.optString("work").orEmpty())
+                .filter { it.isNotEmpty() }.joinToString("  ·  ")
+        } else ""
+        WidgetUi.text(v, R.id.cal_line, myDayLine)
 
-        // Высота: поля, шапка, вкладки (8 + 32), отступ до содержимого.
+        // Высота: поля, шапка, вкладки (8 + 32), строка «Мой день», отступ до
+        // содержимого.
         val height = WidgetUi.heightDp(context, manager, id, 300)
-        var avail = height - WidgetUi.PAD - WidgetUi.HEADER - 40 - WidgetUi.GAP
+        var avail = height - WidgetUi.PAD - WidgetUi.HEADER - 40 - WidgetUi.GAP - (if (myDayLine.isEmpty()) 0 else 22)
 
         // «Подключиться» — когда на экране сегодняшний день.
         val showsToday = mode == 0 && anchor == today || mode == 1 && today >= weekStart && today < WidgetUi.addDays(weekStart, 7) ||

@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Adathalászat-figyelmeztetések és nyomkövetők blokkolása</string>
     <string name="advancedSecurity">Biztonság</string>
     <string name="trackerDetailsDesc">Mely szolgáltatások és levelek, megbízható feladók</string>
+    <string name="weatherAddSecond">Második város hozzáadása</string>
+    <string name="weatherRemoveSecond">Eltávolítás</string>
 </resources>

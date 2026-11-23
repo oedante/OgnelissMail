@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Nätfiskevarningar och blockering av spårare</string>
     <string name="advancedSecurity">Säkerhet</string>
     <string name="trackerDetailsDesc">Vilka tjänster och meddelanden, betrodda avsändare</string>
+    <string name="weatherAddSecond">Lägg till en andra stad</string>
+    <string name="weatherRemoveSecond">Ta bort</string>
 </resources>

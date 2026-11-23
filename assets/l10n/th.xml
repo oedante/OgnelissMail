@@ -4392,4 +4392,6 @@
     <string name="mailProtectionDesc">คำเตือนฟิชชิงและการบล็อกตัวติดตาม</string>
     <string name="advancedSecurity">ความปลอดภัย</string>
     <string name="trackerDetailsDesc">บริการและข้อความใดบ้าง ผู้ส่งที่เชื่อถือได้</string>
+    <string name="weatherAddSecond">เพิ่มเมืองที่สอง</string>
+    <string name="weatherRemoveSecond">นำออก</string>
 </resources>

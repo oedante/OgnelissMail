@@ -4434,4 +4434,6 @@
     <string name="mailProtectionDesc">אזהרות דיוג וחסימת עוקבים</string>
     <string name="advancedSecurity">אבטחה</string>
     <string name="trackerDetailsDesc">אילו שירותים והודעות, שולחים מהימנים</string>
+    <string name="weatherAddSecond">הוספת עיר שנייה</string>
+    <string name="weatherRemoveSecond">הסרה</string>
 </resources>

@@ -4497,4 +4497,6 @@
     <string name="mailProtectionDesc">تحذيرات التصيّد وحظر أدوات التتبع</string>
     <string name="advancedSecurity">الأمان</string>
     <string name="trackerDetailsDesc">أي الخدمات والرسائل، والمرسلون الموثوقون</string>
+    <string name="weatherAddSecond">إضافة مدينة ثانية</string>
+    <string name="weatherRemoveSecond">إزالة</string>
 </resources>

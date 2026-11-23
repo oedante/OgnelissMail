@@ -4434,4 +4434,6 @@
     <string name="mailProtectionDesc">Avertismente de phishing și blocarea trackerelor</string>
     <string name="advancedSecurity">Securitate</string>
     <string name="trackerDetailsDesc">Ce servicii și mesaje, expeditori de încredere</string>
+    <string name="weatherAddSecond">Adaugă un al doilea oraș</string>
+    <string name="weatherRemoveSecond">Elimină</string>
 </resources>

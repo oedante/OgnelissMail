@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Tietojenkalasteluvaroitukset ja seurainten esto</string>
     <string name="advancedSecurity">Turvallisuus</string>
     <string name="trackerDetailsDesc">Mitkä palvelut ja viestit, luotetut lähettäjät</string>
+    <string name="weatherAddSecond">Lisää toinen kaupunki</string>
+    <string name="weatherRemoveSecond">Poista</string>
 </resources>

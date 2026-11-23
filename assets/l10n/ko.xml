@@ -4392,4 +4392,6 @@
     <string name="mailProtectionDesc">피싱 경고 및 추적기 차단</string>
     <string name="advancedSecurity">보안</string>
     <string name="trackerDetailsDesc">어떤 서비스와 메일인지, 신뢰하는 보낸 사람</string>
+    <string name="weatherAddSecond">두 번째 도시 추가</string>
+    <string name="weatherRemoveSecond">제거</string>
 </resources>

@@ -4455,4 +4455,6 @@
     <string name="mailProtectionDesc">Предупреждения о фишинге и блокировка трекеров</string>
     <string name="advancedSecurity">Безопасность</string>
     <string name="trackerDetailsDesc">Какие сервисы и письма, доверенные отправители</string>
+    <string name="weatherAddSecond">Добавить второй город</string>
+    <string name="weatherRemoveSecond">Убрать</string>
 </resources>

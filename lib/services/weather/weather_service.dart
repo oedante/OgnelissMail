@@ -323,12 +323,16 @@ class WeatherEndpoints {
 /// и снимки экрана подменяют.
 final weatherApprovedProvider = Provider<bool>((ref) => WeatherApi.termsAccepted);
 
-// ── Настройка: включена ли погода и для какого города ──
+// ── Настройка: включена ли погода и для каких городов ──
 
 class WeatherSettings {
   final bool enabled;
   final WeatherPlace? place;
-  const WeatherSettings({this.enabled = false, this.place});
+
+  /// Второй город (2.7.2, просьба пользователей 23.11.2026: «отслеживать
+  /// погоду в двух городах»); null — один город.
+  final WeatherPlace? second;
+  const WeatherSettings({this.enabled = false, this.place, this.second});
   bool get active => enabled && place != null;
 }
 
@@ -337,28 +341,55 @@ class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
   final SharedPreferences _p;
 
   static const _kOn = 'weather_on';
-  static const _kPlace = 'weather_place_v1';
+  static const kPlace = 'weather_place_v1';
+  static const kSecond = 'weather_place2_v1';
 
-  static WeatherSettings _load(SharedPreferences p) {
-    WeatherPlace? place;
+  static WeatherPlace? readPlace(SharedPreferences p, String key) {
     try {
-      final raw = p.getString(_kPlace);
-      if (raw != null) place = WeatherPlace.fromJson(jsonDecode(raw));
+      final raw = p.getString(key);
+      if (raw != null) return WeatherPlace.fromJson(jsonDecode(raw));
     } catch (_) {}
-    return WeatherSettings(enabled: p.getBool(_kOn) ?? false, place: place);
+    return null;
   }
 
-  /// Город выбран — погода включается.
+  static WeatherSettings _load(SharedPreferences p) => WeatherSettings(
+      enabled: p.getBool(_kOn) ?? false, place: readPlace(p, kPlace), second: readPlace(p, kSecond));
+
+  static bool _same(WeatherPlace a, WeatherPlace b) =>
+      WeatherApi.round2(a.lat) == WeatherApi.round2(b.lat) && WeatherApi.round2(a.lon) == WeatherApi.round2(b.lon);
+
+  /// Город выбран — погода включается. Тот же, что второй, — второго нет.
   Future<void> setPlace(WeatherPlace place) async {
-    await _p.setString(_kPlace, jsonEncode(place.toJson()));
+    await _p.setString(kPlace, jsonEncode(place.toJson()));
     await _p.setBool(_kOn, true);
-    state = WeatherSettings(enabled: true, place: place);
+    var second = state.second;
+    if (second != null && _same(second, place)) {
+      second = null;
+      await _p.remove(kSecond);
+      await _p.remove(WeatherCache.secondKey);
+    }
+    state = WeatherSettings(enabled: true, place: place, second: second);
+  }
+
+  /// Второй город; тот же, что первый, — не добавляется.
+  Future<void> setSecond(WeatherPlace place) async {
+    final first = state.place;
+    if (first != null && _same(first, place)) return;
+    await _p.setString(kSecond, jsonEncode(place.toJson()));
+    state = WeatherSettings(enabled: state.enabled, place: state.place, second: place);
+  }
+
+  Future<void> removeSecond() async {
+    await _p.remove(kSecond);
+    await _p.remove(WeatherCache.secondKey);
+    state = WeatherSettings(enabled: state.enabled, place: state.place);
   }
 
   Future<void> turnOff() async {
     await _p.setBool(_kOn, false);
     await _p.remove(WeatherCache.key);
-    state = WeatherSettings(enabled: false, place: state.place);
+    await _p.remove(WeatherCache.secondKey);
+    state = WeatherSettings(enabled: false, place: state.place, second: state.second);
   }
 }
 
@@ -379,8 +410,11 @@ class WeatherCache {
   WeatherCache._();
   static const key = 'weather_cache_v1';
 
+  /// Кэш второго города (2.7.2).
+  static const secondKey = 'weather_cache2_v1';
+
   static ({double lat, double lon, DateTime expires, String? lastModified, String body, DateTime? fetched})? read(
-      SharedPreferences p) {
+      SharedPreferences p, {String key = key}) {
     try {
       final raw = p.getString(key);
       if (raw == null) return null;
@@ -399,7 +433,8 @@ class WeatherCache {
   }
 
   static Future<void> write(SharedPreferences p,
-          {required double lat,
+          {String key = key,
+          required double lat,
           required double lon,
           required DateTime expires,
           String? lastModified,
@@ -437,14 +472,28 @@ DateTime _expiresOf(http.Response r, DateTime now) {
 /// организацией). Сеть недоступна — последний сохранённый прогноз.
 final weatherProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async {
   final settings = ref.watch(weatherSettingsProvider);
-  final place = settings.place;
   if (!ref.watch(weatherApprovedProvider)) return null;
-  if (!settings.active || place == null) return null;
+  if (!settings.active) return null;
   if (ref.watch(managedPolicyProvider).blockWeather) return null;
+  return _forecast(ref, settings.place!, WeatherCache.key);
+});
+
+/// Прогноз второго города (2.7.2); null — второго города нет или погода
+/// выключена.
+final weatherSecondProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async {
+  final settings = ref.watch(weatherSettingsProvider);
+  final second = settings.second;
+  if (!ref.watch(weatherApprovedProvider)) return null;
+  if (!settings.active || second == null) return null;
+  if (ref.watch(managedPolicyProvider).blockWeather) return null;
+  return _forecast(ref, second, WeatherCache.secondKey);
+});
+
+Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey) async {
   final prefs = ref.read(sharedPrefsProvider);
   final lat = WeatherApi.round2(place.lat), lon = WeatherApi.round2(place.lon);
   final now = DateTime.now();
-  final cached = WeatherCache.read(prefs);
+  final cached = WeatherCache.read(prefs, key: cacheKey);
   final sameSpot = cached != null && cached.lat == lat && cached.lon == lon;
   WeatherForecast? fromCache() => sameSpot ? WeatherApi.parseMet(cached.body)?.withFetchedAt(cached.fetched) : null;
   if (sameSpot && cached.expires.isAfter(now)) return fromCache();
@@ -465,6 +514,7 @@ final weatherProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async
     }).timeout(const Duration(seconds: 12));
     if (r.statusCode == 304 && sameSpot) {
       await WeatherCache.write(prefs,
+          key: cacheKey,
           lat: lat,
           lon: lon,
           expires: _expiresOf(r, now),
@@ -486,6 +536,7 @@ final weatherProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async
       final f = WeatherApi.parseMet(body);
       if (f != null) {
         await WeatherCache.write(prefs,
+            key: cacheKey,
             lat: lat,
             lon: lon,
             expires: _expiresOf(r, now),
@@ -500,6 +551,6 @@ final weatherProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async
     AppLogger.warning('Погода: прогноз не получен — $e');
   }
   return fromCache();
-});
+}
 
 const _backoffKey = 'weather_backoff_until';

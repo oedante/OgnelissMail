@@ -4392,4 +4392,6 @@
     <string name="mailProtectionDesc">Cảnh báo lừa đảo và chặn trình theo dõi</string>
     <string name="advancedSecurity">Bảo mật</string>
     <string name="trackerDetailsDesc">Dịch vụ và thư nào, người gửi tin cậy</string>
+    <string name="weatherAddSecond">Thêm thành phố thứ hai</string>
+    <string name="weatherRemoveSecond">Bỏ</string>
 </resources>

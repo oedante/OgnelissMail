@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Phishing warnings and tracker blocking</string>
     <string name="advancedSecurity">Security</string>
     <string name="trackerDetailsDesc">Which services and messages, trusted senders</string>
+    <string name="weatherAddSecond">Add a second city</string>
+    <string name="weatherRemoveSecond">Remove</string>
 </resources>

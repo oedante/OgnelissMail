@@ -182,6 +182,7 @@ abstract final class AppIcons {
   static const IconData link = Symbols.link_rounded;
   static const IconData list_alt = Symbols.list_alt_rounded;
   static const IconData location_on = Symbols.location_on_rounded;
+  static const IconData add_location_alt = Symbols.add_location_alt_rounded;
   static const IconData lock = Symbols.lock_rounded;
   static const IconData lock_open = Symbols.lock_open_rounded;
   static const IconData no_encryption = Symbols.no_encryption_rounded;

@@ -78,6 +78,17 @@
         <TextView android:id="@+id/cal_tab3" style="@style/WidgetTabDk" android:text="@string/widget_myday_label" />
     </LinearLayout>
 
+    <!-- «Мой день»: непрочитанные и «в работе» — под переключателем вида
+         (2.7.2, просьба пользователей 23.11.2026: строка под датой занята
+         погодой). -->
+    <TextView
+        android:id="@+id/cal_line"
+        style="@style/WidgetSubtitleDk"
+        android:layout_marginTop="6dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
+        android:visibility="gone" />
+
     <!-- «Подключиться»: идущая или ближайшая (в 15 минутах) онлайн-встреча. -->
     <TextView
         android:id="@+id/cal_join"

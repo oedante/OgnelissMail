@@ -4392,4 +4392,6 @@
     <string name="mailProtectionDesc">Peringatan phishing dan pemblokiran pelacak</string>
     <string name="advancedSecurity">Keamanan</string>
     <string name="trackerDetailsDesc">Layanan dan pesan mana, pengirim tepercaya</string>
+    <string name="weatherAddSecond">Tambah kota kedua</string>
+    <string name="weatherRemoveSecond">Hapus</string>
 </resources>

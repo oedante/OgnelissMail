@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Lista och läsning</string>
     <string name="mailReadingSettingsDesc">Startmapp, konversationer, förhandsrader, knappar under meddelandet</string>
     <string name="mailComposeSettings">Skriva och skicka</string>
-    <string name="mailComposeSettingsDesc">Ångra skicka, mottagare, personer i citat, fotostorlek</string>
+    <string name="mailComposeSettingsDesc">Ångra skicka, mottagare, personer i citat</string>
     <string name="mailFilesSettings">Nedladdning och bilagor</string>
-    <string name="mailFilesSettingsDesc">Nedladdningsläge, e-post på enheten, dokumentförhandsvisning, sökning i bilagor</string>
+    <string name="mailFilesSettingsDesc">Nedladdningsläge, e-post på enheten, dokumentförhandsvisning, sökning i bilagor, fotostorlek</string>
     <string name="mailTranslateSettingsDesc">Översättning av e-post på enheten</string>
     <string name="mailSafetySettingsDesc">Varningar om förfalskade avsändare</string>
     <string name="generalDesc">Språk, skärmrotation, E-postwidget</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">kontakter</string>
     <string name="googleAccessPhotos">kontakters foton</string>
     <string name="outboxOnServer">Meddelanden i den här mappen på servern: {n}</string>
+    <string name="mailProtection">Skydd för e-post</string>
+    <string name="mailProtectionDesc">Nätfiskevarningar och blockering av spårare</string>
+    <string name="advancedSecurity">Säkerhet</string>
+    <string name="trackerDetailsDesc">Vilka tjänster och meddelanden, betrodda avsändare</string>
 </resources>

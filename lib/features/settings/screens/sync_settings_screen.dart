@@ -63,12 +63,6 @@ class SyncSettingsScreen extends ConsumerWidget {
                     '${l10n.tr('scheduleOffShort').replaceAll('{n}', '${SyncSchedule.offMinutes}')}',
                 onTap: () => context.push('/settings/delivery-schedule'),
               ),
-              SettingsItem(
-                icon: AppIcons.sync_problem,
-                title: l10n.tr('syncConflicts'),
-                subtitle: l10n.tr('syncConflictsDesc'),
-                onTap: () => context.push('/settings/conflicts'),
-              ),
             ]),
           ],
         ),

@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">รายการและการอ่าน</string>
     <string name="mailReadingSettingsDesc">โฟลเดอร์เริ่มต้น บทสนทนา บรรทัดตัวอย่าง ปุ่มใต้ข้อความ</string>
     <string name="mailComposeSettings">การเขียนและการส่ง</string>
-    <string name="mailComposeSettingsDesc">เลิกทำการส่ง ผู้รับ บุคคลในข้อความอ้างอิง ขนาดรูปภาพ</string>
+    <string name="mailComposeSettingsDesc">เลิกทำการส่ง ผู้รับ บุคคลในข้อความอ้างอิง</string>
     <string name="mailFilesSettings">การดาวน์โหลดและไฟล์แนบ</string>
-    <string name="mailFilesSettingsDesc">โหมดดาวน์โหลด อีเมลบนอุปกรณ์ ดูตัวอย่างเอกสาร ค้นหาในไฟล์แนบ</string>
+    <string name="mailFilesSettingsDesc">โหมดดาวน์โหลด อีเมลบนอุปกรณ์ ดูตัวอย่างเอกสาร ค้นหาในไฟล์แนบ ขนาดรูปภาพ</string>
     <string name="mailTranslateSettingsDesc">แปลอีเมลบนอุปกรณ์</string>
     <string name="mailSafetySettingsDesc">คำเตือนเกี่ยวกับผู้ส่งปลอม</string>
     <string name="generalDesc">ภาษา การหมุนหน้าจอ วิดเจ็ตอีเมล</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">รายชื่อติดต่อ</string>
     <string name="googleAccessPhotos">รูปของผู้ติดต่อ</string>
     <string name="outboxOnServer">ข้อความในโฟลเดอร์นี้บนเซิร์ฟเวอร์: {n}</string>
+    <string name="mailProtection">การป้องกันอีเมล</string>
+    <string name="mailProtectionDesc">คำเตือนฟิชชิงและการบล็อกตัวติดตาม</string>
+    <string name="advancedSecurity">ความปลอดภัย</string>
+    <string name="trackerDetailsDesc">บริการและข้อความใดบ้าง ผู้ส่งที่เชื่อถือได้</string>
 </resources>

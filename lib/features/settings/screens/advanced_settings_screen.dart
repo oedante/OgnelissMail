@@ -49,14 +49,13 @@ class AdvancedSettingsScreen extends ConsumerWidget {
             // «Синхронизация» — на главном экране настроек, в «Аккаунтах»
             // (замечание владельца 18.11.2026: искали рядом с ящиками).
 
-            // «Разрешения», безопасность соединения и защита данных (DLP) —
-            // на главном экране, в «Конфиденциальности» (перегруппировка
-            // 08.11.2026): здесь они повторялись.
+            // «Разрешения» — на главном экране, в «Конфиденциальности».
 
-            // ── Проверка почты в фоне: само, вручную — здесь ──
-            if (backgroundDeliveryAvailable) ...[
-              SettingsSectionTitle(l10n.tr('sync')),
-              SettingsGroup(children: [
+            // ── Синхронизация: проверка почты в фоне (выбирается сама) и
+            // конфликты (решаются сами, 2.7.2 — из «Синхронизации») ──
+            SettingsSectionTitle(l10n.tr('sync')),
+            SettingsGroup(children: [
+              if (backgroundDeliveryAvailable)
                 SettingsItem(
                   key: const ValueKey('adv_bg_delivery'),
                   icon: AppIcons.cloud_sync,
@@ -64,8 +63,35 @@ class AdvancedSettingsScreen extends ConsumerWidget {
                   subtitle: l10n.tr('bgDeliveryAutoShort'),
                   onTap: () => context.push('/settings/background-delivery'),
                 ),
-              ]),
-            ],
+              SettingsItem(
+                key: const ValueKey('adv_conflicts'),
+                icon: AppIcons.sync_problem,
+                title: l10n.tr('syncConflicts'),
+                subtitle: l10n.tr('syncConflictsDesc'),
+                onTap: () => context.push('/settings/conflicts'),
+              ),
+            ]),
+
+            // ── Безопасность для администратора (2.7.2, из
+            // «Конфиденциальности»): сертификаты серверов и защита данных —
+            // настраивает организация (MDM) или администратор ──
+            SettingsSectionTitle(l10n.tr('advancedSecurity')),
+            SettingsGroup(children: [
+              SettingsItem(
+                key: const ValueKey('adv_conn_security'),
+                icon: AppIcons.verified_user,
+                title: l10n.tr('connectionSecurity'),
+                subtitle: l10n.tr('connectionSecurityDesc'),
+                onTap: () => context.push('/settings/security'),
+              ),
+              SettingsItem(
+                key: const ValueKey('adv_dlp'),
+                icon: AppIcons.shield,
+                title: l10n.tr('dlpTitle'),
+                subtitle: l10n.tr('dlpSettingsDesc'),
+                onTap: () => context.push('/settings/dlp'),
+              ),
+            ]),
 
             // ── Беседы Android в уведомлениях (по умолчанию: VIP и письма
             // людей — беседами, рассылки — обычным видом) ──

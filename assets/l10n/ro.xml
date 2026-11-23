@@ -4123,9 +4123,9 @@
     <string name="mailReadingSettings">Listă și citire</string>
     <string name="mailReadingSettingsDesc">Dosar la pornire, conversații, rânduri de previzualizare, butoane sub mesaj</string>
     <string name="mailComposeSettings">Scriere și trimitere</string>
-    <string name="mailComposeSettingsDesc">Anulare trimitere, destinatari, persoane în citate, dimensiune foto</string>
+    <string name="mailComposeSettingsDesc">Anulare trimitere, destinatari, persoane în citate</string>
     <string name="mailFilesSettings">Descărcare și atașamente</string>
-    <string name="mailFilesSettingsDesc">Mod descărcare, e-mailuri pe dispozitiv, previzualizare documente, căutare în atașamente</string>
+    <string name="mailFilesSettingsDesc">Mod descărcare, e-mailuri pe dispozitiv, previzualizare documente, căutare în atașamente, dimensiune foto</string>
     <string name="mailTranslateSettingsDesc">Traducerea e-mailurilor pe dispozitiv</string>
     <string name="mailSafetySettingsDesc">Avertismente despre expeditori falsificați</string>
     <string name="generalDesc">Limbă, rotirea ecranului, widgetul E-mail</string>
@@ -4430,4 +4430,8 @@
     <string name="googleAccessContacts">contacte</string>
     <string name="googleAccessPhotos">fotografiile corespondenților</string>
     <string name="outboxOnServer">Mesaje în acest dosar pe server: {n}</string>
+    <string name="mailProtection">Protecția e-mailului</string>
+    <string name="mailProtectionDesc">Avertismente de phishing și blocarea trackerelor</string>
+    <string name="advancedSecurity">Securitate</string>
+    <string name="trackerDetailsDesc">Ce servicii și mesaje, expeditori de încredere</string>
 </resources>

@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Liste og læsning</string>
     <string name="mailReadingSettingsDesc">Startmappe, samtaler, eksempellinjer, knapper under beskeden</string>
     <string name="mailComposeSettings">Skrivning og afsendelse</string>
-    <string name="mailComposeSettingsDesc">Fortryd afsendelse, modtagere, personer i citater, fotostørrelse</string>
+    <string name="mailComposeSettingsDesc">Fortryd afsendelse, modtagere, personer i citater</string>
     <string name="mailFilesSettings">Download og vedhæftninger</string>
-    <string name="mailFilesSettingsDesc">Downloadtilstand, mail på enheden, dokumentvisning, søgning i vedhæftninger</string>
+    <string name="mailFilesSettingsDesc">Downloadtilstand, mail på enheden, dokumentvisning, søgning i vedhæftninger, fotostørrelse</string>
     <string name="mailTranslateSettingsDesc">Oversættelse af mail på enheden</string>
     <string name="mailSafetySettingsDesc">Advarsler om forfalskede afsendere</string>
     <string name="generalDesc">Sprog, skærmrotation, Mail-widget</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">kontakter</string>
     <string name="googleAccessPhotos">kontakters fotos</string>
     <string name="outboxOnServer">Beskeder i denne mappe på serveren: {n}</string>
+    <string name="mailProtection">Mailbeskyttelse</string>
+    <string name="mailProtectionDesc">Phishing-advarsler og blokering af trackere</string>
+    <string name="advancedSecurity">Sikkerhed</string>
+    <string name="trackerDetailsDesc">Hvilke tjenester og beskeder, betroede afsendere</string>
 </resources>

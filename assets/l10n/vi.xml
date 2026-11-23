@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">Danh sách và đọc thư</string>
     <string name="mailReadingSettingsDesc">Thư mục khi mở, hội thoại, số dòng xem trước, nút dưới thư</string>
     <string name="mailComposeSettings">Soạn và gửi</string>
-    <string name="mailComposeSettingsDesc">Hoàn tác gửi, người nhận, người trong trích dẫn, kích thước ảnh</string>
+    <string name="mailComposeSettingsDesc">Hoàn tác gửi, người nhận, người trong trích dẫn</string>
     <string name="mailFilesSettings">Tải xuống và tệp đính kèm</string>
-    <string name="mailFilesSettingsDesc">Chế độ tải, thư trên thiết bị, xem tài liệu, tìm trong tệp đính kèm</string>
+    <string name="mailFilesSettingsDesc">Chế độ tải, thư trên thiết bị, xem tài liệu, tìm trong tệp đính kèm, kích thước ảnh</string>
     <string name="mailTranslateSettingsDesc">Dịch thư trên thiết bị</string>
     <string name="mailSafetySettingsDesc">Cảnh báo người gửi giả mạo</string>
     <string name="generalDesc">Ngôn ngữ, xoay màn hình, tiện ích Thư</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">danh bạ</string>
     <string name="googleAccessPhotos">ảnh người liên hệ</string>
     <string name="outboxOnServer">Thư trong thư mục này trên máy chủ: {n}</string>
+    <string name="mailProtection">Bảo vệ thư</string>
+    <string name="mailProtectionDesc">Cảnh báo lừa đảo và chặn trình theo dõi</string>
+    <string name="advancedSecurity">Bảo mật</string>
+    <string name="trackerDetailsDesc">Dịch vụ và thư nào, người gửi tin cậy</string>
 </resources>

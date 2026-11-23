@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Lista és olvasás</string>
     <string name="mailReadingSettingsDesc">Kezdőmappa, beszélgetések, előnézeti sorok, gombok az üzenet alatt</string>
     <string name="mailComposeSettings">Írás és küldés</string>
-    <string name="mailComposeSettingsDesc">Küldés visszavonása, címzettek, személyek az idézetekben, fotóméret</string>
+    <string name="mailComposeSettingsDesc">Küldés visszavonása, címzettek, személyek az idézetekben</string>
     <string name="mailFilesSettings">Letöltés és mellékletek</string>
-    <string name="mailFilesSettingsDesc">Letöltési mód, levelek az eszközön, dokumentumelőnézet, keresés a mellékletekben</string>
+    <string name="mailFilesSettingsDesc">Letöltési mód, levelek az eszközön, dokumentumelőnézet, keresés a mellékletekben, fotóméret</string>
     <string name="mailTranslateSettingsDesc">Levelek fordítása az eszközön</string>
     <string name="mailSafetySettingsDesc">Figyelmeztetés hamisított feladókra</string>
     <string name="generalDesc">Nyelv, képernyő elforgatása, Levelek widget</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">névjegyek</string>
     <string name="googleAccessPhotos">partnerek fényképei</string>
     <string name="outboxOnServer">Üzenetek ebben a mappában a szerveren: {n}</string>
+    <string name="mailProtection">Levélvédelem</string>
+    <string name="mailProtectionDesc">Adathalászat-figyelmeztetések és nyomkövetők blokkolása</string>
+    <string name="advancedSecurity">Biztonság</string>
+    <string name="trackerDetailsDesc">Mely szolgáltatások és levelek, megbízható feladók</string>
 </resources>

@@ -44,9 +44,9 @@ const _entries = <_Entry>[
   _Entry('vipManage', 'notifications', AppIcons.star, '/vip-settings'),
   _Entry('rulesSection', 'notifications', AppIcons.rule, '/vip-settings'),
   // 1.7.2: сигналы сервера для проверки почты в фоне на iPhone.
-  _Entry('pushWakeTitle', 'notifications', AppIcons.cloud_sync, '/settings/notifications', iosOnly: true),
+  _Entry('pushWakeTitle', 'advancedSettings', AppIcons.cloud_sync, '/settings/background-delivery', iosOnly: true),
   // 1.9.x: они же на Android (FCM); 1.10.x — и без сервисов Google (UnifiedPush).
-  _Entry('pushWakeTitleAndroid', 'notifications', AppIcons.cloud_sync, '/settings/notifications',
+  _Entry('pushWakeTitleAndroid', 'advancedSettings', AppIcons.cloud_sync, '/settings/background-delivery',
       androidOnly: true),
   _Entry('autoReplies', 'sectionMail', AppIcons.beach_access, '/settings/auto-reply'),
   // Оформление (1.9.x): тема и цвета перенесены из «Общих».
@@ -95,10 +95,11 @@ const _entries = <_Entry>[
   if (kRulesAndCategoriesEnabled) _Entry('automation', 'automation', AppIcons.rule, '/settings/automation'),
   // Функции
   _Entry('undoSendWindow', 'mailComposeSettings', AppIcons.undo, '/settings/mail/compose'),
-  _Entry('photoSendSize', 'mailComposeSettings', AppIcons.photo_size_select_large, '/settings/mail/compose'),
+  _Entry('photoSendSize', 'mailFilesSettings', AppIcons.photo_size_select_large, '/settings/mail/files'),
   _Entry('confirmRecipients', 'mailComposeSettings', AppIcons.groups, '/settings/mail/compose'),
   _Entry('readReceiptAll', 'mailComposeSettings', AppIcons.done_all, '/settings/mail/compose'),
-  _Entry('antiPhishing', 'sectionPrivacy', AppIcons.phishing, '/settings/mail/safety'),
+  _Entry('antiPhishing', 'mailProtection', AppIcons.phishing, '/settings/mail/safety'),
+  _Entry('mailProtection', 'sectionPrivacy', AppIcons.phishing, '/settings/mail/safety'),
   _Entry('tasksTab', 'profileFeatures', AppIcons.check_box, '/settings/profile'),
   _Entry('myDay', 'profileFeatures', AppIcons.myDay, '/settings/profile'),
   _Entry('controlFilter', 'profileFeatures', AppIcons.task_alt, '/settings/profile'),
@@ -137,7 +138,7 @@ const _entries = <_Entry>[
   _Entry('bgNotifHide', 'permissions', AppIcons.notifications_off, '/settings/permissions'),
   _Entry('pinLock', 'sectionPrivacy', AppIcons.pin, '/settings'),
   // План 08.11.2026 п. 4: настройки, которых не было в поиске.
-  _Entry('trackerBlocker', 'sectionPrivacy', AppIcons.visibility_off, '/settings/trackers'),
+  _Entry('trackerBlocker', 'mailProtection', AppIcons.visibility_off, '/settings/mail/safety'),
   _Entry('orgIcons', 'mailReadingSettings', AppIcons.verified, '/settings/mail'),
   _Entry('readingPane', 'mailReadingSettings', AppIcons.vertical_split, '/settings/mail'),
   _Entry('uiScaleTitle', 'appearanceTitle', AppIcons.zoom_in, '/settings/appearance'),
@@ -145,9 +146,9 @@ const _entries = <_Entry>[
   _Entry('customGreeting', 'templatesSignature', AppIcons.waving_hand, '/settings/signatures'),
   _Entry('syncPeriod', 'accounts', AppIcons.date_range, '/settings/accounts'),
   _Entry('vipRulesTitle', 'sectionMail', AppIcons.rule, '/vip-settings'),
-  _Entry('connectionSecurity', 'sectionPrivacy', AppIcons.verified_user, '/settings/security'),
-  _Entry('dlpTitle', 'sectionPrivacy', AppIcons.shield, '/settings/dlp'),
-  _Entry('syncConflicts', 'sync', AppIcons.sync_problem, '/settings/conflicts'),
+  _Entry('connectionSecurity', 'advancedSettings', AppIcons.verified_user, '/settings/security'),
+  _Entry('dlpTitle', 'advancedSettings', AppIcons.shield, '/settings/dlp'),
+  _Entry('syncConflicts', 'advancedSettings', AppIcons.sync_problem, '/settings/conflicts'),
   _Entry('resetApp', 'advancedSettings', AppIcons.delete_forever, '/settings/advanced'),
   _Entry('profileFeatures', 'advancedSettings', AppIcons.widgets, '/settings/profile'),
   _Entry('backupTitle', 'backupTitle', AppIcons.settings_backup_restore, '/settings/backup'),

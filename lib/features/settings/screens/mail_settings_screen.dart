@@ -5,7 +5,8 @@
 //   · «Написание и отправка» — /settings/mail/compose;
 //   · «Загрузка и вложения» — /settings/mail/files;
 //   · «Перевод» — /settings/mail/translate;
-//   · «Антифишинг» — /settings/mail/safety (в «Конфиденциальности»).
+//   · «Защита писем» (антифишинг и трекеры, 2.7.2) — /settings/mail/safety
+//     (в «Конфиденциальности»).
 
 import 'dart:async';
 
@@ -57,7 +58,7 @@ class MailSettingsScreen extends ConsumerWidget {
         MailSettingsPart.compose => 'mailComposeSettings',
         MailSettingsPart.files => 'mailFilesSettings',
         MailSettingsPart.translate => 'translateSection',
-        MailSettingsPart.safety => 'antiPhishing',
+        MailSettingsPart.safety => 'mailProtection',
       };
 
   String _fetchModeLabel(EmailFetchMode m, AppLocalizations l10n) {
@@ -336,17 +337,6 @@ class MailSettingsScreen extends ConsumerWidget {
               value: f.readReceipts,
               onChanged: fn.setReadReceipts,
             ),
-            // Фото во вложениях (1.7.2+109): спрашивать при отправке или
-            // сразу как есть / 75% / 50% / 25%.
-            SettingsItem(
-              icon: AppIcons.photo_size_select_large,
-              title: l10n.tr('photoSendSize'),
-              subtitle: f.photoSize == 0
-                  ? l10n.tr('photoSizeAskDesc')
-                  : l10n.tr('photoSizeFixedDesc').replaceAll('{size}', photoSizeLabel(l10n, f.photoSize)),
-              hint: l10n.tr('imageSizeHelp'),
-              onTap: () => unawaited(_pickPhotoSize(context, ref, l10n)),
-            ),
           ]),
           ],
           if (part == MailSettingsPart.safety) ...[
@@ -373,9 +363,47 @@ class MailSettingsScreen extends ConsumerWidget {
               onChanged: (v) => fn.setAntiPhishing(v!),
             ),
           ]),
+          // Блокировка трекеров — здесь же (2.7.2, замечание владельца
+          // 23.11.2026: «антифишинг и блокировку можно объединить»);
+          // подробности (сервисы, письма, доверенные) — отдельным экраном.
+          SettingsSectionTitle(l10n.tr('trackerBlocker')),
+          SettingsIntro(l10n.tr('trackerBlockerDesc')),
+          SettingsGroup(children: [
+            SettingsSwitchItem(
+              key: const ValueKey('safety_trackers'),
+              icon: AppIcons.visibility_off,
+              title: l10n.tr('trackerBlocker'),
+              value: ref.watch(trackerBlockerProvider).isEnabled,
+              onChanged: ref.read(trackerBlockerProvider.notifier).setEnabled,
+            ),
+            SettingsItem(
+              key: const ValueKey('safety_trackers_log'),
+              icon: AppIcons.analytics,
+              title: '${l10n.tr('trackersBlocked')}: ${ref.watch(trackerBlockerProvider).totalBlocked}',
+              subtitle: l10n.tr('trackerDetailsDesc'),
+              onTap: () => context.push('/settings/trackers'),
+            ),
+          ]),
           // «Иконки организаций» — в «Чтении», у ленты (18.11.2026).
           ],
           if (part == MailSettingsPart.files) ...[
+          // Размер фото при отправке — у вложений (2.7.2, замечание владельца
+          // 23.11.2026: лежал в «Написании и отправке»).
+          SettingsGroup(children: [
+            // Фото во вложениях (1.7.2+109): спрашивать при отправке или
+            // сразу как есть / 75% / 50% / 25%.
+            SettingsItem(
+              key: const ValueKey('files_photo_size'),
+              icon: AppIcons.photo_size_select_large,
+              title: l10n.tr('photoSendSize'),
+              subtitle: f.photoSize == 0
+                  ? l10n.tr('photoSizeAskDesc')
+                  : l10n.tr('photoSizeFixedDesc').replaceAll('{size}', photoSizeLabel(l10n, f.photoSize)),
+              hint: l10n.tr('imageSizeHelp'),
+              onTap: () => unawaited(_pickPhotoSize(context, ref, l10n)),
+            ),
+          ]),
+          const SizedBox(height: Space.s),
           // Просмотр документов во вложениях (1.11.x, просьба владельца
           // 04.11.2026): выключатель и виды документов.
           const DocPreviewSettingsSection(),

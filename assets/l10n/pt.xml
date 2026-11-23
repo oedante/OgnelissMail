@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Lista e leitura</string>
     <string name="mailReadingSettingsDesc">Pasta inicial, conversas, linhas de pré-visualização, botões abaixo da mensagem</string>
     <string name="mailComposeSettings">Escrita e envio</string>
-    <string name="mailComposeSettingsDesc">Desfazer envio, destinatários, pessoas nas citações, tamanho da foto</string>
+    <string name="mailComposeSettingsDesc">Desfazer envio, destinatários, pessoas nas citações</string>
     <string name="mailFilesSettings">Download e anexos</string>
-    <string name="mailFilesSettingsDesc">Modo de download, e-mails no dispositivo, pré-visualização de documentos, pesquisa em anexos</string>
+    <string name="mailFilesSettingsDesc">Modo de download, e-mails no dispositivo, pré-visualização de documentos, pesquisa em anexos, tamanho da foto</string>
     <string name="mailTranslateSettingsDesc">Tradução de e-mails no dispositivo</string>
     <string name="mailSafetySettingsDesc">Avisos sobre remetentes falsificados</string>
     <string name="generalDesc">Idioma, rotação do ecrã, widget de e-mail</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">contatos</string>
     <string name="googleAccessPhotos">fotos dos contatos</string>
     <string name="outboxOnServer">Mensagens nesta pasta no servidor: {n}</string>
+    <string name="mailProtection">Proteção de e-mails</string>
+    <string name="mailProtectionDesc">Avisos de phishing e bloqueio de rastreadores</string>
+    <string name="advancedSecurity">Segurança</string>
+    <string name="trackerDetailsDesc">Quais serviços e mensagens, remetentes confiáveis</string>
 </resources>

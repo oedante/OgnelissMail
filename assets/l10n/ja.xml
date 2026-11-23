@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">一覧と閲覧</string>
     <string name="mailReadingSettingsDesc">起動時のフォルダー、スレッド、プレビュー行、メール下部のボタン</string>
     <string name="mailComposeSettings">作成と送信</string>
-    <string name="mailComposeSettingsDesc">送信の取り消し、宛先、引用内の人物、写真のサイズ</string>
+    <string name="mailComposeSettingsDesc">送信の取り消し、宛先、引用内の人物</string>
     <string name="mailFilesSettings">ダウンロードと添付ファイル</string>
-    <string name="mailFilesSettingsDesc">ダウンロード方法、端末上のメール、文書のプレビュー、添付ファイル内の検索</string>
+    <string name="mailFilesSettingsDesc">ダウンロード方法、端末上のメール、文書のプレビュー、添付ファイル内の検索、写真のサイズ</string>
     <string name="mailTranslateSettingsDesc">端末上でのメール翻訳</string>
     <string name="mailSafetySettingsDesc">なりすまし送信者の警告</string>
     <string name="generalDesc">言語、画面の回転、メールウィジェット</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">連絡先</string>
     <string name="googleAccessPhotos">相手の写真</string>
     <string name="outboxOnServer">サーバー上のこのフォルダーのメッセージ: {n}</string>
+    <string name="mailProtection">メールの保護</string>
+    <string name="mailProtectionDesc">フィッシングの警告とトラッカーのブロック</string>
+    <string name="advancedSecurity">セキュリティ</string>
+    <string name="trackerDetailsDesc">どのサービスとメールか、信頼する送信者</string>
 </resources>

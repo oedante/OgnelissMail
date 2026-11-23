@@ -4102,9 +4102,9 @@
     <string name="mailReadingSettings">Luettelo ja lukeminen</string>
     <string name="mailReadingSettingsDesc">Aloituskansio, keskustelut, esikatselurivit, painikkeet viestin alla</string>
     <string name="mailComposeSettings">Kirjoittaminen ja lähettäminen</string>
-    <string name="mailComposeSettingsDesc">Lähetyksen peruutus, vastaanottajat, henkilöt lainauksissa, kuvan koko</string>
+    <string name="mailComposeSettingsDesc">Lähetyksen peruutus, vastaanottajat, henkilöt lainauksissa</string>
     <string name="mailFilesSettings">Lataus ja liitteet</string>
-    <string name="mailFilesSettingsDesc">Lataustila, sähköposti laitteella, asiakirjojen esikatselu, haku liitteistä</string>
+    <string name="mailFilesSettingsDesc">Lataustila, sähköposti laitteella, asiakirjojen esikatselu, haku liitteistä, kuvan koko</string>
     <string name="mailTranslateSettingsDesc">Viestien käännös laitteella</string>
     <string name="mailSafetySettingsDesc">Varoitukset väärennetyistä lähettäjistä</string>
     <string name="generalDesc">Kieli, näytön kierto, Sähköposti-widget</string>
@@ -4409,4 +4409,8 @@
     <string name="googleAccessContacts">yhteystiedot</string>
     <string name="googleAccessPhotos">yhteyshenkilöiden kuvat</string>
     <string name="outboxOnServer">Viestejä tässä kansiossa palvelimella: {n}</string>
+    <string name="mailProtection">Sähköpostin suojaus</string>
+    <string name="mailProtectionDesc">Tietojenkalasteluvaroitukset ja seurainten esto</string>
+    <string name="advancedSecurity">Turvallisuus</string>
+    <string name="trackerDetailsDesc">Mitkä palvelut ja viestit, luotetut lähettäjät</string>
 </resources>

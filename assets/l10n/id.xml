@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">Daftar dan membaca</string>
     <string name="mailReadingSettingsDesc">Folder awal, percakapan, baris pratinjau, tombol di bawah pesan</string>
     <string name="mailComposeSettings">Menulis dan mengirim</string>
-    <string name="mailComposeSettingsDesc">Batalkan kirim, penerima, orang dalam kutipan, ukuran foto</string>
+    <string name="mailComposeSettingsDesc">Batalkan kirim, penerima, orang dalam kutipan</string>
     <string name="mailFilesSettings">Unduhan dan lampiran</string>
-    <string name="mailFilesSettingsDesc">Mode unduhan, email di perangkat, pratinjau dokumen, cari di lampiran</string>
+    <string name="mailFilesSettingsDesc">Mode unduhan, email di perangkat, pratinjau dokumen, cari di lampiran, ukuran foto</string>
     <string name="mailTranslateSettingsDesc">Terjemahan email di perangkat</string>
     <string name="mailSafetySettingsDesc">Peringatan pengirim palsu</string>
     <string name="generalDesc">Bahasa, rotasi layar, widget Email</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">kontak</string>
     <string name="googleAccessPhotos">foto kontak</string>
     <string name="outboxOnServer">Pesan di folder ini di server: {n}</string>
+    <string name="mailProtection">Perlindungan email</string>
+    <string name="mailProtectionDesc">Peringatan phishing dan pemblokiran pelacak</string>
+    <string name="advancedSecurity">Keamanan</string>
+    <string name="trackerDetailsDesc">Layanan dan pesan mana, pengirim tepercaya</string>
 </resources>

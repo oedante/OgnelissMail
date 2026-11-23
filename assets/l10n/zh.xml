@@ -4081,9 +4081,9 @@
     <string name="mailReadingSettings">列表与阅读</string>
     <string name="mailReadingSettingsDesc">启动文件夹、会话、预览行数、邮件下方按钮</string>
     <string name="mailComposeSettings">撰写与发送</string>
-    <string name="mailComposeSettingsDesc">撤销发送、收件人、引用中的人员、照片大小</string>
+    <string name="mailComposeSettingsDesc">撤销发送、收件人、引用中的人员</string>
     <string name="mailFilesSettings">下载与附件</string>
-    <string name="mailFilesSettingsDesc">下载方式、设备上的邮件、文档预览、附件内搜索</string>
+    <string name="mailFilesSettingsDesc">下载方式、设备上的邮件、文档预览、附件内搜索、照片大小</string>
     <string name="mailTranslateSettingsDesc">在设备上翻译邮件</string>
     <string name="mailSafetySettingsDesc">冒充发件人警告</string>
     <string name="generalDesc">语言、屏幕旋转、邮件小组件</string>
@@ -4388,4 +4388,8 @@
     <string name="googleAccessContacts">通讯录</string>
     <string name="googleAccessPhotos">联系人照片</string>
     <string name="outboxOnServer">服务器上此文件夹中的邮件：{n}</string>
+    <string name="mailProtection">邮件保护</string>
+    <string name="mailProtectionDesc">钓鱼警告与跟踪器拦截</string>
+    <string name="advancedSecurity">安全</string>
+    <string name="trackerDetailsDesc">哪些服务和邮件、受信任的发件人</string>
 </resources>

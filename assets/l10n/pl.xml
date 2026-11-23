@@ -4455,4 +4455,6 @@
     <string name="mailProtectionDesc">Ostrzeżenia przed phishingiem i blokowanie trackerów</string>
     <string name="advancedSecurity">Bezpieczeństwo</string>
     <string name="trackerDetailsDesc">Które usługi i wiadomości, zaufani nadawcy</string>
+    <string name="weatherAddSecond">Dodaj drugie miasto</string>
+    <string name="weatherRemoveSecond">Usuń</string>
 </resources>

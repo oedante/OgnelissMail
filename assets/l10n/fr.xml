@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Alertes d\'hameçonnage et blocage des traqueurs</string>
     <string name="advancedSecurity">Sécurité</string>
     <string name="trackerDetailsDesc">Services et messages concernés, expéditeurs de confiance</string>
+    <string name="weatherAddSecond">Ajouter une deuxième ville</string>
+    <string name="weatherRemoveSecond">Retirer</string>
 </resources>

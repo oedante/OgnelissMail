@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Phishing-varsler og blokkering av sporere</string>
     <string name="advancedSecurity">Sikkerhet</string>
     <string name="trackerDetailsDesc">Hvilke tjenester og meldinger, klarerte avsendere</string>
+    <string name="weatherAddSecond">Legg til en by til</string>
+    <string name="weatherRemoveSecond">Fjern</string>
 </resources>

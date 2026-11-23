@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">Kimlik avı uyarıları ve izleyici engelleme</string>
     <string name="advancedSecurity">Güvenlik</string>
     <string name="trackerDetailsDesc">Hangi hizmetler ve iletiler, güvenilen gönderenler</string>
+    <string name="weatherAddSecond">İkinci şehir ekle</string>
+    <string name="weatherRemoveSecond">Kaldır</string>
 </resources>

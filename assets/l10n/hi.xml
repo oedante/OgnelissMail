@@ -4413,4 +4413,6 @@
     <string name="mailProtectionDesc">फ़िशिंग चेतावनियाँ और ट्रैकर अवरोधन</string>
     <string name="advancedSecurity">सुरक्षा</string>
     <string name="trackerDetailsDesc">कौन-सी सेवाएँ और संदेश, विश्वसनीय प्रेषक</string>
+    <string name="weatherAddSecond">दूसरा शहर जोड़ें</string>
+    <string name="weatherRemoveSecond">हटाएँ</string>
 </resources>

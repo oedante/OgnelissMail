@@ -38,7 +38,7 @@ import 'security/pin_lock_service.dart' show pinLockProvider;
 import '../l10n/app_localizations.dart';
 import 'mail/control_service.dart' show ControlState;
 import 'security/managed_config.dart' show ManagedPolicy;
-import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind;
+import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind, WeatherSettingsNotifier;
 import 'accounts/account_labels.dart' show AccountLabels;
 import 'calendar/meeting_link_service.dart';
 import 'calendar/pending_invites.dart' show loadPendingInvites;
@@ -435,38 +435,49 @@ class HomeWidgetService {
     };
   }
 
-  /// Погода для виджета: «☁ −9°» из сохранённого прогноза «Моего дня».
-  /// Погода выключена, запрещена организацией или прогноз старше 6 часов —
-  /// null (виджет без неё).
+  /// Погода для виджета: «☁ −9° Екатеринбург» из сохранённого прогноза
+  /// «Моего дня»; второй город — через «·» (2.7.2, просьба пользователей
+  /// 23.11.2026: «название города к значку погоды», «погода в двух
+  /// городах»). Погода выключена, запрещена организацией или прогноз старше
+  /// 6 часов — null (виджет без неё).
   static String? weatherLine(SharedPreferences prefs, DateTime now) {
     try {
       if (prefs.getBool('weather_on') != true) return null;
       if (ManagedPolicy.current.blockWeather) return null;
-      final cached = WeatherCache.read(prefs);
-      if (cached == null) return null;
-      final fetched = cached.fetched;
-      if (fetched != null && now.difference(fetched) > const Duration(hours: 6)) return null;
-      final f = WeatherApi.parseMet(cached.body, now: now);
-      if (f == null) return null;
-      final t = f.now.temp.round();
-      final icon = switch (f.now.kind) {
-        WeatherKind.clear => f.now.night ? '🌙' : '☀',
-        WeatherKind.fair => f.now.night ? '🌙' : '🌤',
-        WeatherKind.partlyCloudy => '⛅',
-        WeatherKind.cloudy => '☁',
-        WeatherKind.fog => '🌫',
-        WeatherKind.lightRain => '🌦',
-        WeatherKind.rain || WeatherKind.heavyRain => '🌧',
-        WeatherKind.sleet => '🌨',
-        WeatherKind.snow => '❄',
-        WeatherKind.thunder => '⛈',
-        null => '',
-      };
-      return '${icon.isEmpty ? '' : '$icon '}${t < 0 ? '−${-t}' : '$t'}°';
+      final first = _weatherOne(prefs, now, WeatherCache.key, WeatherSettingsNotifier.kPlace);
+      if (first == null) return null;
+      final second = _weatherOne(prefs, now, WeatherCache.secondKey, WeatherSettingsNotifier.kSecond);
+      return second == null ? first : '$first  ·  $second';
     } catch (_) {
       return null;
     }
   }
+
+  static String? _weatherOne(SharedPreferences prefs, DateTime now, String cacheKey, String placeKey) {
+    final cached = WeatherCache.read(prefs, key: cacheKey);
+    if (cached == null) return null;
+    final fetched = cached.fetched;
+    if (fetched != null && now.difference(fetched) > const Duration(hours: 6)) return null;
+    final f = WeatherApi.parseMet(cached.body, now: now);
+    if (f == null) return null;
+    final t = f.now.temp.round();
+    final icon = switch (f.now.kind) {
+      WeatherKind.clear => f.now.night ? '🌙' : '☀',
+      WeatherKind.fair => f.now.night ? '🌙' : '🌤',
+      WeatherKind.partlyCloudy => '⛅',
+      WeatherKind.cloudy => '☁',
+      WeatherKind.fog => '🌫',
+      WeatherKind.lightRain => '🌦',
+      WeatherKind.rain || WeatherKind.heavyRain => '🌧',
+      WeatherKind.sleet => '🌨',
+      WeatherKind.snow => '❄',
+      WeatherKind.thunder => '⛈',
+      null => '',
+    };
+    final city = WeatherSettingsNotifier.readPlace(prefs, placeKey)?.name ?? '';
+    return '${icon.isEmpty ? '' : '$icon '}${t < 0 ? '−${-t}' : '$t'}°${city.isEmpty ? '' : ' $city'}';
+  }
+
 
   /// Виджет «Почта»: непрочитанные во «Входящих» по ящикам и четыре
   /// последних непрочитанных письма (нажатие — письмо).

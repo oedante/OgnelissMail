@@ -8,6 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
+import 'package:ogneliss/services/home_widget_service.dart';
 import 'package:ogneliss/services/security/managed_config.dart';
 import 'package:ogneliss/services/weather/weather_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -245,6 +246,41 @@ void main() {
       status = 200;
       expect(await make().read(weatherProvider.future), isNotNull);
       expect(met().length, n, reason: 'после 429 — час без запросов');
+    });
+
+    // 2.7.2 (просьба пользователей 23.11.2026): «название города у значка
+    // погоды» и «погода в двух городах».
+    test('второй город: свой прогноз и кэш; тот же город — не второй; убрать', () async {
+      final n = WeatherSettingsNotifier(prefs);
+      await n.setPlace(const WeatherPlace(name: 'Казань', lat: 55.8, lon: 49.11));
+      await n.setSecond(const WeatherPlace(name: 'Казань', lat: 55.801, lon: 49.109));
+      expect(n.state.second, isNull, reason: 'тот же город');
+      await n.setSecond(const WeatherPlace(name: 'Москва', lat: 55.75, lon: 37.62));
+      expect(WeatherSettingsNotifier(prefs).state.second?.name, 'Москва');
+
+      final c = make();
+      expect(await c.read(weatherProvider.future), isNotNull);
+      expect(await c.read(weatherSecondProvider.future), isNotNull);
+      expect({for (final r in met()) r.url.queryParameters['lon']}, {'49.11', '37.62'});
+      expect(prefs.getString(WeatherCache.key), isNotNull);
+      expect(prefs.getString(WeatherCache.secondKey), isNotNull);
+
+      // Виджет: город у каждой температуры.
+      final line = HomeWidgetService.weatherLine(prefs, DateTime.now())!;
+      expect(line, contains('Казань'));
+      expect(line, contains('Москва'));
+      expect(line.indexOf('Казань'), lessThan(line.indexOf('Москва')));
+
+      await n.removeSecond();
+      expect(n.state.second, isNull);
+      expect(prefs.getString(WeatherCache.secondKey), isNull);
+      expect(await make().read(weatherSecondProvider.future), isNull);
+      expect(HomeWidgetService.weatherLine(prefs, DateTime.now()), allOf(contains('Казань'), isNot(contains('Москва'))));
+
+      // Первый город сменили на второй — второго больше нет.
+      await n.setSecond(const WeatherPlace(name: 'Москва', lat: 55.75, lon: 37.62));
+      await n.setPlace(const WeatherPlace(name: 'Москва', lat: 55.75, lon: 37.62));
+      expect(n.state.second, isNull);
     });
 
     test('выключить — кэш стирается, город запоминается', () async {

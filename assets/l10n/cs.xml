@@ -4434,4 +4434,6 @@
     <string name="mailProtectionDesc">Upozornění na phishing a blokování sledovačů</string>
     <string name="advancedSecurity">Zabezpečení</string>
     <string name="trackerDetailsDesc">Které služby a zprávy, důvěryhodní odesílatelé</string>
+    <string name="weatherAddSecond">Přidat druhé město</string>
+    <string name="weatherRemoveSecond">Odebrat</string>
 </resources>

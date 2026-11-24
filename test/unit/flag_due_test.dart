@@ -61,7 +61,7 @@ void main() {
     await db.customStatement(
         "INSERT INTO accounts (id, type, email, display_name, username, created_at) VALUES ('a1', 0, 'me@x.ru', 'Я', 'me', 0)");
     Future<void> mail(String id, {required bool flagged, required int control}) => db.customStatement(
-        "INSERT INTO emails (id, account_id, folder_id, from_email, to_recipients, subject, received_at, is_flagged, control_state, follow_up_at) "
+        'INSERT INTO emails (id, account_id, folder_id, from_email, to_recipients, subject, received_at, is_flagged, control_state, follow_up_at) '
         "VALUES (?, 'a1', 'INBOX', 'x@y.ru', '[]', 's', 0, ?, ?, ?)",
         [id, flagged ? 1 : 0, control, DateTime(2026, 11, 20, 18).millisecondsSinceEpoch ~/ 1000]);
     await mail('flag', flagged: true, control: 0);

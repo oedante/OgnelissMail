@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Inget datum</string>
     <string name="flagClear">Ta bort flagga</string>
     <string name="phoneSms">Skicka sms</string>
+    <string name="weatherAddCity">Lägg till stad</string>
+    <string name="weatherInWidgets">I widgetar — ta bort</string>
+    <string name="weatherShowInWidgets">Visa i widgetar</string>
+    <string name="weatherWidgetLimit">Widgetar visar högst två städer</string>
+    <string name="weatherMakeFirst">Gör till första</string>
 </resources>

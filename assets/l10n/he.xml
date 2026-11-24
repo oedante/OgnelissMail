@@ -4444,4 +4444,9 @@
     <string name="flagNoDate">ללא תאריך</string>
     <string name="flagClear">הסר דגל</string>
     <string name="phoneSms">שליחת SMS</string>
+    <string name="weatherAddCity">הוספת עיר</string>
+    <string name="weatherInWidgets">בווידג\'טים — הסרה</string>
+    <string name="weatherShowInWidgets">הצגה בווידג\'טים</string>
+    <string name="weatherWidgetLimit">בווידג\'טים — עד שתי ערים</string>
+    <string name="weatherMakeFirst">העבר לראשונה</string>
 </resources>

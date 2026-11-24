@@ -41,10 +41,12 @@ void main() {
   }
 
   test('расширения темы сравниваются по значению', () {
+    // ignore: prefer_const_constructors — сравнение не-const экземпляра с const
     expect(const OgnelissLook(outlined: true), OgnelissLook(outlined: true, cardBorder: false));
     expect(const OgnelissLook(outlined: true) == const OgnelissLook(), isFalse);
     expect(
         const AppearanceLook(density: ListDensity.compact, listFill: Color(0xFF010203)),
+        // ignore: prefer_const_constructors — сравнение не-const экземпляра с const
         AppearanceLook(density: ListDensity.compact, listFill: const Color(0xFF010203)));
     expect(const AppearanceLook(openAnimation: true) == const AppearanceLook(), isFalse);
   });

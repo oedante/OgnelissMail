@@ -4465,4 +4465,9 @@
     <string name="flagNoDate">Bez daty</string>
     <string name="flagClear">Usuń flagę</string>
     <string name="phoneSms">Wyślij SMS</string>
+    <string name="weatherAddCity">Dodaj miasto</string>
+    <string name="weatherInWidgets">W widżetach — usuń</string>
+    <string name="weatherShowInWidgets">Pokaż w widżetach</string>
+    <string name="weatherWidgetLimit">Widżety pokazują najwyżej dwa miasta</string>
+    <string name="weatherMakeFirst">Ustaw jako pierwsze</string>
 </resources>

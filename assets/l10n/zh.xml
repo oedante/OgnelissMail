@@ -4402,4 +4402,9 @@
     <string name="flagNoDate">无日期</string>
     <string name="flagClear">清除标记</string>
     <string name="phoneSms">发送短信</string>
+    <string name="weatherAddCity">添加城市</string>
+    <string name="weatherInWidgets">在小组件中 — 移除</string>
+    <string name="weatherShowInWidgets">在小组件中显示</string>
+    <string name="weatherWidgetLimit">小组件最多显示两个城市</string>
+    <string name="weatherMakeFirst">设为第一个</string>
 </resources>

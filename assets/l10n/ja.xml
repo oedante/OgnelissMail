@@ -4402,4 +4402,9 @@
     <string name="flagNoDate">日付なし</string>
     <string name="flagClear">フラグをクリア</string>
     <string name="phoneSms">SMS を送信</string>
+    <string name="weatherAddCity">都市を追加</string>
+    <string name="weatherInWidgets">ウィジェットに表示中 — 外す</string>
+    <string name="weatherShowInWidgets">ウィジェットに表示</string>
+    <string name="weatherWidgetLimit">ウィジェットに表示できるのは2都市まで</string>
+    <string name="weatherMakeFirst">最初にする</string>
 </resources>

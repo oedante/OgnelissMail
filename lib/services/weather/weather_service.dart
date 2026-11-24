@@ -44,9 +44,20 @@ class WeatherPlace {
   /// Уточнение для выбора среди одноимённых (область, страна).
   final String region;
   final double lat, lon;
-  const WeatherPlace({required this.name, this.region = '', required this.lat, required this.lon});
 
-  Map<String, Object> toJson() => {'name': name, 'region': region, 'lat': lat, 'lon': lon};
+  /// Часовой пояс города (IANA, «Asia/Yekaterinburg») — для часов города в
+  /// «Моём дне» (2.7.1); null — неизвестен (город выбран до 2.7.1 или сервер
+  /// поиска его не прислал).
+  final String? tz;
+  const WeatherPlace({required this.name, this.region = '', required this.lat, required this.lon, this.tz});
+
+  /// Ключ города: координаты, округлённые до сотых (как в запросах).
+  String get key => '${WeatherApi.round2(lat)},${WeatherApi.round2(lon)}';
+
+  WeatherPlace withTz(String? zone) => WeatherPlace(name: name, region: region, lat: lat, lon: lon, tz: zone);
+
+  Map<String, Object> toJson() =>
+      {'name': name, 'region': region, 'lat': lat, 'lon': lon, if (tz != null && tz!.isNotEmpty) 'tz': tz!};
 
   static WeatherPlace? fromJson(Object? j) {
     if (j is! Map) return null;
@@ -54,7 +65,13 @@ class WeatherPlace {
     final name = j['name'];
     if (lat == null || lon == null || name is! String || name.isEmpty) return null;
     if (lat.abs() > 90 || lon.abs() > 180) return null;
-    return WeatherPlace(name: name, region: (j['region'] as String?) ?? '', lat: lat, lon: lon);
+    final tz = j['tz'];
+    return WeatherPlace(
+        name: name,
+        region: (j['region'] as String?) ?? '',
+        lat: lat,
+        lon: lon,
+        tz: tz is String && WeatherApi.validTz(tz) ? tz : null);
   }
 }
 
@@ -209,10 +226,16 @@ class WeatherApi {
       if (parts.isNotEmpty && parts.first == name) parts.removeAt(0);
       // Уточнение — область и страна (последние две части), не весь адрес.
       final region = parts.length > 2 ? parts.sublist(parts.length - 2).join(', ') : parts.join(', ');
-      out.add(WeatherPlace(name: name, region: region, lat: round2(lat), lon: round2(lon)));
+      // Часовой пояс (2.7.1) — сервер поиска Ogneliss берёт его из GeoNames.
+      final zone = '${e['timezone'] ?? ''}'.trim();
+      out.add(WeatherPlace(
+          name: name, region: region, lat: round2(lat), lon: round2(lon), tz: validTz(zone) ? zone : null));
     }
     return out;
   }
+
+  /// Похоже ли на имя пояса IANA («Europe/Moscow», «UTC»).
+  static bool validTz(String v) => v.length < 64 && RegExp(r'^[A-Za-z_]+(/[A-Za-z0-9_+\-]+){0,2}$').hasMatch(v);
 
   /// Поиск города (по нажатию «Найти»). Ошибка сети — исключение.
   static Future<List<WeatherPlace>> search(http.Client client, String query, String lang,
@@ -327,22 +350,46 @@ final weatherApprovedProvider = Provider<bool>((ref) => WeatherApi.termsAccepted
 
 class WeatherSettings {
   final bool enabled;
-  final WeatherPlace? place;
 
-  /// Второй город (2.7.2, просьба пользователей 23.11.2026: «отслеживать
-  /// погоду в двух городах»); null — один город.
-  final WeatherPlace? second;
-  const WeatherSettings({this.enabled = false, this.place, this.second});
-  bool get active => enabled && place != null;
+  /// Города (2.7.1, просьба владельца 24.11.2026: часы и погода нескольких
+  /// городов в «Моём дне», листанием): первый — свой, всего до
+  /// [WeatherSettingsNotifier.maxPlaces].
+  final List<WeatherPlace> places;
+
+  /// Ключи городов для виджетов «Мой день» и «Календарь» — не больше
+  /// [WeatherSettingsNotifier.maxWidget].
+  final Set<String> widgetKeys;
+  const WeatherSettings({this.enabled = false, this.places = const [], this.widgetKeys = const {}});
+
+  bool get active => enabled && places.isNotEmpty;
+
+  /// Свой (первый) город.
+  WeatherPlace? get place => places.firstOrNull;
+
+  /// Второй город (2.7.2) — второй в списке.
+  WeatherPlace? get second => places.length > 1 ? places[1] : null;
+
+  /// Города для виджетов — в порядке списка.
+  List<WeatherPlace> get widgetPlaces => [for (final p in places) if (widgetKeys.contains(p.key)) p];
+
+  WeatherPlace? byKey(String key) => places.where((p) => p.key == key).firstOrNull;
 }
 
 class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
   WeatherSettingsNotifier(this._p) : super(_load(_p));
   final SharedPreferences _p;
 
+  static const maxPlaces = 5;
+  static const maxWidget = 2;
+
   static const _kOn = 'weather_on';
+
+  /// Города до 2.7.1 (первый и второй) — читаются, если списка ещё нет.
   static const kPlace = 'weather_place_v1';
   static const kSecond = 'weather_place2_v1';
+
+  /// Список городов (2.7.1): `[{…город…, "w": true}]`, «w» — в виджетах.
+  static const kPlaces = 'weather_places_v2';
 
   static WeatherPlace? readPlace(SharedPreferences p, String key) {
     try {
@@ -352,44 +399,160 @@ class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
     return null;
   }
 
-  static WeatherSettings _load(SharedPreferences p) => WeatherSettings(
-      enabled: p.getBool(_kOn) ?? false, place: readPlace(p, kPlace), second: readPlace(p, kSecond));
-
-  static bool _same(WeatherPlace a, WeatherPlace b) =>
-      WeatherApi.round2(a.lat) == WeatherApi.round2(b.lat) && WeatherApi.round2(a.lon) == WeatherApi.round2(b.lon);
-
-  /// Город выбран — погода включается. Тот же, что второй, — второго нет.
-  Future<void> setPlace(WeatherPlace place) async {
-    await _p.setString(kPlace, jsonEncode(place.toJson()));
-    await _p.setBool(_kOn, true);
-    var second = state.second;
-    if (second != null && _same(second, place)) {
-      second = null;
-      await _p.remove(kSecond);
-      await _p.remove(WeatherCache.secondKey);
-    }
-    state = WeatherSettings(enabled: true, place: place, second: second);
+  /// Города и отметки «в виджетах» из настроек; до 2.7.1 — первый и второй
+  /// город, оба в виджетах. Читает и обновление виджетов (без Riverpod).
+  static ({List<WeatherPlace> places, Set<String> widgets}) readPlaces(SharedPreferences p) {
+    try {
+      final raw = p.getString(kPlaces);
+      if (raw != null) {
+        final list = jsonDecode(raw);
+        final places = <WeatherPlace>[];
+        final widgets = <String>{};
+        if (list is List) {
+          for (final e in list) {
+            final place = WeatherPlace.fromJson(e);
+            if (place == null || places.any((x) => x.key == place.key) || places.length >= maxPlaces) continue;
+            places.add(place);
+            if (e is Map && e['w'] == true && widgets.length < maxWidget) widgets.add(place.key);
+          }
+        }
+        return (places: places, widgets: widgets);
+      }
+    } catch (_) {}
+    final places = [
+      ?readPlace(p, kPlace),
+      ?readPlace(p, kSecond),
+    ];
+    if (places.length == 2 && places[0].key == places[1].key) places.removeLast();
+    return (places: places, widgets: {for (final x in places) x.key});
   }
 
-  /// Второй город; тот же, что первый, — не добавляется.
+  /// Ключ кэша прогноза города: у первого — прежний ([WeatherCache.key]),
+  /// у остальных — по координатам. Кэш хранит и координаты: чужой (город
+  /// сменился местом) не берётся.
+  static String cacheKeyFor(WeatherSettings s, WeatherPlace place) =>
+      s.places.isNotEmpty && s.places.first.key == place.key ? WeatherCache.key : '${WeatherCache.cityPrefix}${place.key}';
+
+  static WeatherSettings _load(SharedPreferences p) {
+    final r = readPlaces(p);
+    return WeatherSettings(enabled: p.getBool(_kOn) ?? false, places: r.places, widgetKeys: r.widgets);
+  }
+
+  Future<void> _save(List<WeatherPlace> places, Set<String> widgets, {bool? enabled}) async {
+    final keep = places.take(maxPlaces).toList();
+    final w = {for (final x in keep) if (widgets.contains(x.key)) x.key};
+    await _p.setString(kPlaces, jsonEncode([for (final x in keep) {...x.toJson(), if (w.contains(x.key)) 'w': true}]));
+    // Прежние ключи — для обновления виджета старой сборкой не нужны.
+    await _p.remove(kSecond);
+    if (keep.isNotEmpty) await _p.setString(kPlace, jsonEncode(keep.first.toJson()));
+    if (enabled != null) await _p.setBool(_kOn, enabled);
+    // Кэш убранных городов — стереть.
+    final live = {for (final x in keep) x.key};
+    for (final k in _p.getKeys().where((k) => k.startsWith(WeatherCache.cityPrefix)).toList()) {
+      if (!live.contains(k.substring(WeatherCache.cityPrefix.length))) await _p.remove(k);
+    }
+    await _p.remove(WeatherCache.secondKey);
+    state = WeatherSettings(enabled: enabled ?? state.enabled, places: keep, widgetKeys: w);
+  }
+
+  /// Свой город выбран — погода включается. Был в списке — становится
+  /// первым.
+  Future<void> setPlace(WeatherPlace place) async {
+    final rest = [for (final x in state.places.skip(1)) if (x.key != place.key) x];
+    final widgets = {...state.widgetKeys};
+    if (state.places.isEmpty || widgets.contains(state.places.first.key) || widgets.length < maxWidget) {
+      widgets.add(place.key);
+    }
+    if (state.places.isNotEmpty && state.places.first.key != place.key) widgets.remove(state.places.first.key);
+    await _save([place, ...rest], widgets, enabled: true);
+  }
+
+  /// Ещё один город (до [maxPlaces]); в виджеты — если там меньше двух.
+  /// Уже есть — не добавляется. false — не добавлен.
+  Future<bool> addPlace(WeatherPlace place) async {
+    if (state.places.any((x) => x.key == place.key) || state.places.length >= maxPlaces) return false;
+    final widgets = {...state.widgetKeys};
+    if (widgets.length < maxWidget) widgets.add(place.key);
+    await _save([...state.places, place], widgets, enabled: state.places.isEmpty ? true : null);
+    return true;
+  }
+
+  /// Второй город (2.7.2): второй в списке; тот же, что первый, — нет.
   Future<void> setSecond(WeatherPlace place) async {
     final first = state.place;
-    if (first != null && _same(first, place)) return;
-    await _p.setString(kSecond, jsonEncode(place.toJson()));
-    state = WeatherSettings(enabled: state.enabled, place: state.place, second: place);
+    if (first == null || first.key == place.key) return;
+    final rest = [for (final x in state.places.skip(2)) if (x.key != place.key) x];
+    final widgets = {...state.widgetKeys}..remove(state.second?.key);
+    if (widgets.length < maxWidget) widgets.add(place.key);
+    await _save([first, place, ...rest], widgets);
   }
 
   Future<void> removeSecond() async {
-    await _p.remove(kSecond);
-    await _p.remove(WeatherCache.secondKey);
-    state = WeatherSettings(enabled: state.enabled, place: state.place);
+    final second = state.second;
+    if (second != null) await removePlace(second.key);
+  }
+
+  /// Убрать город. Первый убрали — первым становится следующий.
+  Future<void> removePlace(String key) async {
+    final rest = [for (final x in state.places) if (x.key != key) x];
+    await _save(rest, {...state.widgetKeys}..remove(key));
+  }
+
+  /// Сделать город первым (своим).
+  Future<void> makeFirst(String key) async {
+    final p = state.byKey(key);
+    if (p == null) return;
+    await _save([p, for (final x in state.places) if (x.key != key) x], state.widgetKeys);
+  }
+
+  /// Показывать ли город в виджетах. Третий — не ставится (false).
+  Future<bool> setInWidgets(String key, bool on) async {
+    final widgets = {...state.widgetKeys};
+    if (on) {
+      if (widgets.contains(key)) return true;
+      if (widgets.length >= maxWidget) return false;
+      widgets.add(key);
+    } else {
+      widgets.remove(key);
+    }
+    await _save(state.places, widgets);
+    return true;
+  }
+
+  /// Часовые пояса городов, выбранных до 2.7.1: тот же поиск по имени,
+  /// город с теми же координатами (до 0,1°). Не нашёлся — останется без
+  /// часов.
+  Future<void> fillTimeZones(Future<List<WeatherPlace>> Function(String name) search) async {
+    var changed = false;
+    final out = <WeatherPlace>[];
+    for (final p in state.places) {
+      if (p.tz != null) {
+        out.add(p);
+        continue;
+      }
+      String? zone;
+      try {
+        for (final f in await search(p.name)) {
+          if (f.tz != null && (f.lat - p.lat).abs() <= 0.1 && (f.lon - p.lon).abs() <= 0.1) {
+            zone = f.tz;
+            break;
+          }
+        }
+      } catch (_) {}
+      if (zone != null) changed = true;
+      out.add(zone == null ? p : p.withTz(zone));
+    }
+    if (changed) await _save(out, state.widgetKeys);
   }
 
   Future<void> turnOff() async {
     await _p.setBool(_kOn, false);
     await _p.remove(WeatherCache.key);
     await _p.remove(WeatherCache.secondKey);
-    state = WeatherSettings(enabled: false, place: state.place, second: state.second);
+    for (final k in _p.getKeys().where((k) => k.startsWith(WeatherCache.cityPrefix)).toList()) {
+      await _p.remove(k);
+    }
+    state = WeatherSettings(enabled: false, places: state.places, widgetKeys: state.widgetKeys);
   }
 }
 
@@ -410,8 +573,11 @@ class WeatherCache {
   WeatherCache._();
   static const key = 'weather_cache_v1';
 
-  /// Кэш второго города (2.7.2).
+  /// Кэш второго города (2.7.2; с 2.7.1 списка — не пишется, стирается).
   static const secondKey = 'weather_cache2_v1';
+
+  /// Кэш остальных городов (2.7.1): префикс + ключ города.
+  static const cityPrefix = 'weather_cache_city:';
 
   static ({double lat, double lon, DateTime expires, String? lastModified, String body, DateTime? fetched})? read(
       SharedPreferences p, {String key = key}) {
@@ -468,25 +634,32 @@ DateTime _expiresOf(http.Response r, DateTime now) {
   return e.isBefore(floor) ? floor : e;
 }
 
-/// Прогноз для выбранного города; null — погода выключена (или запрещена
-/// организацией). Сеть недоступна — последний сохранённый прогноз.
+/// Прогноз для своего (первого) города; null — погода выключена (или
+/// запрещена организацией). Сеть недоступна — последний сохранённый прогноз.
 final weatherProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async {
-  final settings = ref.watch(weatherSettingsProvider);
-  if (!ref.watch(weatherApprovedProvider)) return null;
-  if (!settings.active) return null;
-  if (ref.watch(managedPolicyProvider).blockWeather) return null;
-  return _forecast(ref, settings.place!, WeatherCache.key);
+  final key = ref.watch(weatherSettingsProvider.select((s) => s.active ? s.place?.key : null));
+  if (key == null) return null;
+  return ref.watch(weatherForProvider(key).future);
 });
 
 /// Прогноз второго города (2.7.2); null — второго города нет или погода
 /// выключена.
 final weatherSecondProvider = FutureProvider.autoDispose<WeatherForecast?>((ref) async {
+  final key = ref.watch(weatherSettingsProvider.select((s) => s.active ? s.second?.key : null));
+  if (key == null) return null;
+  return ref.watch(weatherForProvider(key).future);
+});
+
+/// Прогноз города по ключу ([WeatherPlace.key], 2.7.1); null — такого города
+/// нет, погода выключена или запрещена.
+final weatherForProvider = FutureProvider.autoDispose.family<WeatherForecast?, String>((ref, key) async {
   final settings = ref.watch(weatherSettingsProvider);
-  final second = settings.second;
   if (!ref.watch(weatherApprovedProvider)) return null;
-  if (!settings.active || second == null) return null;
+  if (!settings.active) return null;
   if (ref.watch(managedPolicyProvider).blockWeather) return null;
-  return _forecast(ref, second, WeatherCache.secondKey);
+  final place = settings.byKey(key);
+  if (place == null) return null;
+  return _forecast(ref, place, WeatherSettingsNotifier.cacheKeyFor(settings, place));
 });
 
 Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey) async {

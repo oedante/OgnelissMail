@@ -4507,4 +4507,9 @@
     <string name="flagNoDate">بلا تاريخ</string>
     <string name="flagClear">إزالة العلامة</string>
     <string name="phoneSms">إرسال رسالة نصية</string>
+    <string name="weatherAddCity">إضافة مدينة</string>
+    <string name="weatherInWidgets">في الأدوات — إزالة</string>
+    <string name="weatherShowInWidgets">إظهار في الأدوات</string>
+    <string name="weatherWidgetLimit">تعرض الأدوات مدينتين على الأكثر</string>
+    <string name="weatherMakeFirst">اجعلها الأولى</string>
 </resources>

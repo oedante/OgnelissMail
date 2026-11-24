@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Ingen dato</string>
     <string name="flagClear">Fjern flag</string>
     <string name="phoneSms">Send sms</string>
+    <string name="weatherAddCity">Tilføj by</string>
+    <string name="weatherInWidgets">I widgets — fjern</string>
+    <string name="weatherShowInWidgets">Vis i widgets</string>
+    <string name="weatherWidgetLimit">Widgets viser højst to byer</string>
+    <string name="weatherMakeFirst">Gør til første</string>
 </resources>

@@ -4444,4 +4444,9 @@
     <string name="flagNoDate">Bez data</string>
     <string name="flagClear">Zrušit příznak</string>
     <string name="phoneSms">Poslat SMS</string>
+    <string name="weatherAddCity">Přidat město</string>
+    <string name="weatherInWidgets">Ve widgetech — odebrat</string>
+    <string name="weatherShowInWidgets">Zobrazit ve widgetech</string>
+    <string name="weatherWidgetLimit">Widgety ukazují nejvýše dvě města</string>
+    <string name="weatherMakeFirst">Dát jako první</string>
 </resources>

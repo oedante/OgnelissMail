@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Tarih yok</string>
     <string name="flagClear">Bayrağı kaldır</string>
     <string name="phoneSms">SMS gönder</string>
+    <string name="weatherAddCity">Şehir ekle</string>
+    <string name="weatherInWidgets">Widget\'larda — kaldır</string>
+    <string name="weatherShowInWidgets">Widget\'larda göster</string>
+    <string name="weatherWidgetLimit">Widget\'lar en fazla iki şehir gösterir</string>
+    <string name="weatherMakeFirst">İlk yap</string>
 </resources>

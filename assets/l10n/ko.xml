@@ -4402,4 +4402,9 @@
     <string name="flagNoDate">날짜 없음</string>
     <string name="flagClear">플래그 지우기</string>
     <string name="phoneSms">SMS 보내기</string>
+    <string name="weatherAddCity">도시 추가</string>
+    <string name="weatherInWidgets">위젯에 표시 중 — 빼기</string>
+    <string name="weatherShowInWidgets">위젯에 표시</string>
+    <string name="weatherWidgetLimit">위젯에는 최대 두 도시</string>
+    <string name="weatherMakeFirst">첫 번째로</string>
 </resources>

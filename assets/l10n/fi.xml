@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Ei päivämäärää</string>
     <string name="flagClear">Poista lippu</string>
     <string name="phoneSms">Lähetä tekstiviesti</string>
+    <string name="weatherAddCity">Lisää kaupunki</string>
+    <string name="weatherInWidgets">Widgeteissä — poista</string>
+    <string name="weatherShowInWidgets">Näytä widgeteissä</string>
+    <string name="weatherWidgetLimit">Widgeteissä enintään kaksi kaupunkia</string>
+    <string name="weatherMakeFirst">Siirrä ensimmäiseksi</string>
 </resources>

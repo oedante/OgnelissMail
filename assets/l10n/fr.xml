@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Sans date</string>
     <string name="flagClear">Supprimer l\'indicateur</string>
     <string name="phoneSms">Envoyer un SMS</string>
+    <string name="weatherAddCity">Ajouter une ville</string>
+    <string name="weatherInWidgets">Dans les widgets — retirer</string>
+    <string name="weatherShowInWidgets">Afficher dans les widgets</string>
+    <string name="weatherWidgetLimit">Les widgets affichent deux villes au plus</string>
+    <string name="weatherMakeFirst">Mettre en premier</string>
 </resources>

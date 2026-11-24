@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Dátum nélkül</string>
     <string name="flagClear">Jelölő törlése</string>
     <string name="phoneSms">SMS küldése</string>
+    <string name="weatherAddCity">Város hozzáadása</string>
+    <string name="weatherInWidgets">Widgetekben — eltávolítás</string>
+    <string name="weatherShowInWidgets">Megjelenítés widgetekben</string>
+    <string name="weatherWidgetLimit">A widgetek legfeljebb két várost mutatnak</string>
+    <string name="weatherMakeFirst">Legyen az első</string>
 </resources>

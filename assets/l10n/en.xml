@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">No date</string>
     <string name="flagClear">Clear flag</string>
     <string name="phoneSms">Send SMS</string>
+    <string name="weatherAddCity">Add city</string>
+    <string name="weatherInWidgets">In widgets — remove</string>
+    <string name="weatherShowInWidgets">Show in widgets</string>
+    <string name="weatherWidgetLimit">Widgets show at most two cities</string>
+    <string name="weatherMakeFirst">Make first</string>
 </resources>

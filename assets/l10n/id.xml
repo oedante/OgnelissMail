@@ -4402,4 +4402,9 @@
     <string name="flagNoDate">Tanpa tanggal</string>
     <string name="flagClear">Hapus bendera</string>
     <string name="phoneSms">Kirim SMS</string>
+    <string name="weatherAddCity">Tambah kota</string>
+    <string name="weatherInWidgets">Di widget — hapus</string>
+    <string name="weatherShowInWidgets">Tampilkan di widget</string>
+    <string name="weatherWidgetLimit">Widget menampilkan paling banyak dua kota</string>
+    <string name="weatherMakeFirst">Jadikan pertama</string>
 </resources>

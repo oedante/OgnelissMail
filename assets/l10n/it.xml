@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">Nessuna data</string>
     <string name="flagClear">Rimuovi contrassegno</string>
     <string name="phoneSms">Invia SMS</string>
+    <string name="weatherAddCity">Aggiungi città</string>
+    <string name="weatherInWidgets">Nei widget — rimuovi</string>
+    <string name="weatherShowInWidgets">Mostra nei widget</string>
+    <string name="weatherWidgetLimit">I widget mostrano al massimo due città</string>
+    <string name="weatherMakeFirst">Metti per prima</string>
 </resources>

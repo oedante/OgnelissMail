@@ -24,7 +24,7 @@ void main() {
 
   Future<void> email(String id, {String folder = 'INBOX', String from = 'x@corp.ru', String? fromName, Object? to, Object? cc, int at = 0}) =>
       db.customStatement(
-          "INSERT INTO emails (id, account_id, folder_id, from_email, from_name, to_recipients, cc_json, subject, received_at) "
+          'INSERT INTO emails (id, account_id, folder_id, from_email, from_name, to_recipients, cc_json, subject, received_at) '
           "VALUES (?, 'a1', ?, ?, ?, ?, ?, 's', ?)",
           [id, folder, from, fromName, to is String ? to : jsonEncode(to ?? []), cc == null ? null : (cc is String ? cc : jsonEncode(cc)), at]);
 
@@ -50,7 +50,7 @@ void main() {
   test('контакты, отправители, «Кому» и «Копия»; спам и свой адрес — по правилам', () async {
     // Контакт с фото из CardDAV (data:image в базе) — имя берётся, фото не нужно.
     await db.customStatement(
-        "INSERT INTO contacts (id, email, display_name, first_name, middle_name, last_name, avatar_url) "
+        'INSERT INTO contacts (id, email, display_name, first_name, middle_name, last_name, avatar_url) '
         "VALUES ('c1', 'Smirnov@Corp.ru', 'Смирнов Андрей', 'Андрей', 'Викторович', 'Смирнов', ?)",
         ['data:image/jpeg;base64,${'A' * 200000}']);
     await email('e1', from: 'petrov@corp.ru', fromName: 'Петров Иван Сергеевич');
@@ -99,7 +99,7 @@ void main() {
     await db.batch((b) {
       for (var i = 0; i < 4000; i++) {
         b.customStatement(
-            "INSERT INTO emails (id, account_id, folder_id, from_email, from_name, to_recipients, subject, received_at) "
+            'INSERT INTO emails (id, account_id, folder_id, from_email, from_name, to_recipients, subject, received_at) '
             "VALUES (?, 'a1', 'INBOX', ?, ?, '[]', 's', ?)",
             ['m$i', 's$i@corp.ru', 'Смирнов Андрей Викторович', i]);
       }

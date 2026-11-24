@@ -4423,4 +4423,9 @@
     <string name="flagNoDate">कोई तारीख नहीं</string>
     <string name="flagClear">फ़्लैग हटाएँ</string>
     <string name="phoneSms">SMS भेजें</string>
+    <string name="weatherAddCity">शहर जोड़ें</string>
+    <string name="weatherInWidgets">विजेट में — हटाएँ</string>
+    <string name="weatherShowInWidgets">विजेट में दिखाएँ</string>
+    <string name="weatherWidgetLimit">विजेट में अधिकतम दो शहर</string>
+    <string name="weatherMakeFirst">पहला बनाएँ</string>
 </resources>

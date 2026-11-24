@@ -452,6 +452,9 @@ class HomeWidgetService {
       final parts = [
         for (final p in s.widgetPlaces) ?_weatherOne(prefs, now, WeatherSettingsNotifier.cacheKeyFor(s, p), p.name),
       ];
+      // Города в настройках нет (не записался), а прогноз своего города
+      // сохранён — без названия, как до 2.7.2.
+      if (parts.isEmpty && s.places.isEmpty) return _weatherOne(prefs, now, WeatherCache.key, '');
       return parts.isEmpty ? null : parts.join('  ·  ');
     } catch (_) {
       return null;

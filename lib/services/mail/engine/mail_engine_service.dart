@@ -4418,7 +4418,7 @@ class MailEngineService {
       isRead: m.isRead,
       // Флажок «На контроле» или «Позже» — не флажок пользователя.
       isFlagged: m.isFlagged && MarkFlag.codeOf(m.followUp?.flagType) == null,
-      // Срок флажка из Outlook («Сегодня», «Завтра»…) — срок письма (2.7.1).
+      // Срок флажка из Outlook («Сегодня», «Завтра»…) — срок письма (2.7.2).
       followUpAt: m.isFlagged && MarkFlag.codeOf(m.followUp?.flagType) == null
           ? FlagDues.fromServer(m.followUp?.due)
           : null,

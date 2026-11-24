@@ -176,7 +176,7 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
           title: Text(value),
           subtitle: Text(label),
           onTap: onTap,
-          // Удержание номера — позвонить, SMS, мессенджеры (2.7.1).
+          // Удержание номера — позвонить, SMS, мессенджеры (2.7.2).
           onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : null,
           trailing: trailing,
           minTileHeight: Sizes.tapTarget,

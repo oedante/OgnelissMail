@@ -15,6 +15,7 @@ import '../mail_engine.dart';
 import '../models/models.dart';
 import 'autodiscover.dart';
 import 'eas_engine.dart' show EasEngine;
+import 'inline_images.dart';
 
 class EwsEngine implements MailEngine {
   final DebugLog log;
@@ -293,7 +294,12 @@ class EwsEngine implements MailEngine {
     final ccXml = message.cc.isEmpty ? '' :
         '<t:CcRecipients>${message.cc.map((a) => '<t:Mailbox><t:EmailAddress>${esc(a.email)}</t:EmailAddress></t:Mailbox>').join()}</t:CcRecipients>';
     final isHtml = message.bodyHtml != null;
-    final bodyContent = esc(message.bodyHtml ?? message.bodyPlain ?? '');
+    // Картинки data: в тексте — встроенными вложениями с ContentId
+    // (inline_images.dart): Outlook картинки data: не показывает.
+    final domain = (_cfg?.email ?? '').contains('@') ? _cfg!.email.split('@').last : 'ogneliss';
+    final inl = isHtml ? MimeInlineImages.extract(message.bodyHtml!, domain: domain) : null;
+    final inlineParts = inl?.parts ?? const <InlineImagePart>[];
+    final bodyContent = esc(inl?.html ?? message.bodyPlain ?? '');
     // Порядок элементов важен для схемы EWS: Subject, Body, ToRecipients/CcRecipients.
     final messageFields =
         '<t:Subject>${esc(message.subject)}</t:Subject>'
@@ -305,7 +311,7 @@ class EwsEngine implements MailEngine {
         .toList();
 
     // Без вложений — отправка одним запросом (SendAndSaveCopy).
-    if (withBytes.isEmpty) {
+    if (withBytes.isEmpty && inlineParts.isEmpty) {
       final body = '<m:CreateItem MessageDisposition="SendAndSaveCopy">'
           '<m:SavedItemFolderId><t:DistinguishedFolderId Id="sentitems"/></m:SavedItemFolderId>'
           '<m:Items><t:Message>$messageFields</t:Message></m:Items></m:CreateItem>';
@@ -334,6 +340,15 @@ class EwsEngine implements MailEngine {
         '${(a.contentType != null && a.contentType!.isNotEmpty) ? '<t:ContentType>${esc(a.contentType!)}</t:ContentType>' : ''}'
         '<t:IsInline>false</t:IsInline>'
         '<t:Content>${base64.encode(a.bytes!)}</t:Content>'
+        '</t:FileAttachment>').join() +
+        // Порядок по схеме EWS: Name, ContentType, ContentId, IsInline, Content.
+        inlineParts.map((p) =>
+        '<t:FileAttachment>'
+        '<t:Name>${esc(p.name)}</t:Name>'
+        '<t:ContentType>${esc(p.mimeType)}</t:ContentType>'
+        '<t:ContentId>${esc(p.cid)}</t:ContentId>'
+        '<t:IsInline>true</t:IsInline>'
+        '<t:Content>${base64.encode(p.bytes)}</t:Content>'
         '</t:FileAttachment>').join();
     final createAttBody = '<m:CreateAttachment>'
         '<m:ParentItemId Id="$itemId" ChangeKey="$changeKey"/>'
@@ -351,7 +366,7 @@ class EwsEngine implements MailEngine {
         '<m:SavedItemFolderId><t:DistinguishedFolderId Id="sentitems"/></m:SavedItemFolderId>'
         '</m:SendItem>';
     _checkSend(await _soap(sendBody));
-    log.info(_t, 'EWS send с вложениями (${withBytes.length}): успех');
+    log.info(_t, 'EWS send с вложениями (${withBytes.length}, встроенных картинок ${inlineParts.length}): успех');
   }
 
   /// Проверка ответа EWS на успех; иначе бросает с текстом ошибки.

@@ -16,6 +16,7 @@ export 'src/transport/net_proxy.dart';
 export 'src/transport/autodiscover.dart';
 export 'src/transport/base64_off.dart';
 export 'src/transport/preheader.dart';
+export 'src/transport/inline_images.dart';
 export 'src/transport/dav_client.dart';
 export 'src/transport/wbxml_codec.dart';
 export 'src/debug_log.dart';

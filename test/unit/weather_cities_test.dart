@@ -1,4 +1,4 @@
-// Несколько городов погоды (2.7.1, просьба владельца 24.11.2026): часы и
+// Несколько городов погоды (2.7.2, просьба владельца 24.11.2026): часы и
 // погода до пяти городов в «Моём дне», в виджетах — отмеченные (не больше
 // двух); часовой пояс — от сервера поиска (GeoNames).
 import 'dart:convert';
@@ -24,7 +24,7 @@ void main() {
     prefs = await SharedPreferences.getInstance();
   });
 
-  test('города до 2.7.1 — первым и вторым, оба в виджетах', () async {
+  test('города до 2.7.2 — первым и вторым, оба в виджетах', () async {
     await prefs.setBool('weather_on', true);
     await prefs.setString(WeatherSettingsNotifier.kPlace, jsonEncode(_ekb.toJson()));
     await prefs.setString(WeatherSettingsNotifier.kSecond, jsonEncode(_msk.toJson()));

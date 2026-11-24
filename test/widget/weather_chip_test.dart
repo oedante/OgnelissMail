@@ -1,6 +1,6 @@
 // Погода в «Моём дне»: город под температурой (2.7.2, просьба пользователей
 // 23.11.2026); несколько городов — листанием, с часами каждого в его поясе
-// (2.7.1, просьба владельца 24.11.2026).
+// (2.7.2, просьба владельца 24.11.2026).
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -60,7 +60,7 @@ void main() {
     expect(find.text('Екатеринбург'), findsOneWidget);
   });
 
-  testWidgets('города до 2.7.1 (первый и второй) — листанием; часы города в его поясе', (t) async {
+  testWidgets('города до 2.7.2 (первый и второй) — листанием; часы города в его поясе', (t) async {
     await _pump(t, const CityClocks(reduceMotion: true),
         prefs: {'weather_place_v1': jsonEncode(_ekb), 'weather_place2_v1': jsonEncode(_msk)});
     expect(find.byKey(const ValueKey('city_pages')), findsOneWidget);

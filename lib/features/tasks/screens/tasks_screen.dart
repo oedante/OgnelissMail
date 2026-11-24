@@ -601,7 +601,7 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         final e = sorted[i];
         final w = at(e);
         final followUp = e.remindAt == null;
-        // Флажок со сроком (2.7.1) — «С флажком», просрочен со следующего дня.
+        // Флажок со сроком (2.7.2) — «С флажком», просрочен со следующего дня.
         final flag = followUp && e.isFlagged && e.controlState == 0;
         final due = flag ? FlagDues.overdue(w, now) : w.isBefore(now);
         return ListTile(

@@ -1,4 +1,4 @@
-// Срок флажка, как в Outlook (2.7.1, просьба владельца 24.11.2026:
+// Срок флажка, как в Outlook (2.7.2, просьба владельца 24.11.2026:
 // «флажок устанавливается без даты — нужно, как в Outlook, „сегодня“»).
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';

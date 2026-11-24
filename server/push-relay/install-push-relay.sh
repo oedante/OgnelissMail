@@ -305,7 +305,7 @@ prepare_env() {
       env_set PUSH_API_KEY "$pk" "$ENV_FILE"
       ok "ключ приложения взят из $OAUTH_ENV (PROXY_API_KEY)"
     else
-      warn "не найден PROXY_API_KEY в $OAUTH_ENV — регистрация будет без ключа приложения"
+      warn "не найден PROXY_API_KEY в $OAUTH_ENV — без ключа приложения служба не запустится"
       warn "задайте PUSH_API_KEY в $ENV_FILE (= OAUTH_PROXY_KEY из сборки) и выполните: sudo bash $0 update"
     fi
   fi
@@ -605,7 +605,7 @@ cmd_check() {
     ok "служба отвечает: установок $(json_val "$tok" total) (production $(json_val "$tok" production), sandbox $(json_val "$tok" sandbox), android $(json_val "$tok" fcm)); сигналов отправлено $(json_val "$h" sent), ошибок $(json_val "$h" failed), токенов удалено $(json_val "$h" removed)"
     local le; le="$(json_val "$h" lastError)"
     [ -n "$le" ] && [ "$le" != null ] && warn "последняя ошибка отправки: $le"
-    [ "$(json_val "$h" apiKey)" = true ] && ok "ключ приложения (x-api-key) задан" || warn "PUSH_API_KEY пуст — регистрация без ключа приложения"
+    [ "$(json_val "$h" apiKey)" = true ] && ok "ключ приложения (x-api-key) задан" || warn "PUSH_API_KEY пуст (PUSH_ALLOW_NO_KEY=1) — регистрация без ключа, только для внутренней сети"
     if [ "$(json_val "$keys" team)" != true ]; then bad "нет APNS_TEAM_ID: sudo bash $0 key --team TEAMID"; fails=$((fails + 1))
     elif [ "$(json_val "$keys" production)" != true ]; then bad "нет ключа APNs: sudo bash $0 key --key AuthKey_<KEYID>.p8"; fails=$((fails + 1))
     else probe_report || fails=$((fails + 1)); fi

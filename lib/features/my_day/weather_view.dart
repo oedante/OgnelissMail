@@ -100,7 +100,7 @@ class _SourceLink extends StatelessWidget {
   }
 }
 
-/// Время в городе (2.7.1): «настенные» часы его пояса; null — пояс
+/// Время в городе (2.7.2): «настенные» часы его пояса; null — пояс
 /// неизвестен.
 DateTime? cityNow(WeatherPlace p, [DateTime? at]) {
   final zone = p.tz;
@@ -181,7 +181,7 @@ class WeatherChip extends ConsumerWidget {
   }
 }
 
-/// Часы и погода в карточке «Сейчас» (2.7.1, просьба владельца 24.11.2026:
+/// Часы и погода в карточке «Сейчас» (2.7.2, просьба владельца 24.11.2026:
 /// «часы и погоду для нескольких городов — перелистывать»). Первая
 /// страница — часы телефона и свой город, следующие — часы и погода
 /// каждого города в его поясе; точки внизу. Один город или погода
@@ -198,7 +198,7 @@ class _CityClocksState extends ConsumerState<CityClocks> {
   final _pages = PageController();
   int _page = 0;
 
-  /// Пояса городов, выбранных до 2.7.1, — один раз за запуск.
+  /// Пояса городов, выбранных до 2.7.2, — один раз за запуск.
   static bool _tzAsked = false;
 
   @override
@@ -394,7 +394,7 @@ class _WeatherSheet extends ConsumerWidget {
             ),
           ],
         ],
-        // Города (2.7.1): сейчас и сегодня, «в виджетах», добавить, убрать.
+        // Города (2.7.2): сейчас и сегодня, «в виджетах», добавить, убрать.
         const SizedBox(height: Space.m),
         const _Cities(),
         const SizedBox(height: Space.s),
@@ -430,7 +430,7 @@ class _WeatherSheet extends ConsumerWidget {
   }
 }
 
-/// Города в окне погоды (2.7.1): у каждого — сейчас и сегодня, «в
+/// Города в окне погоды (2.7.2): у каждого — сейчас и сегодня, «в
 /// виджетах» (не больше двух) и меню «Сделать первым», «Убрать»; внизу —
 /// «Добавить город» (до пяти).
 class _Cities extends ConsumerWidget {
@@ -519,7 +519,7 @@ class _Cities extends ConsumerWidget {
 
 /// Выбор города: поиск по нажатию «Найти» (как было с OpenStreetMap — не
 /// подсказки на каждую букву), список найденного. [add] — ещё один город
-/// (2.7.1, до пяти), иначе — свой (первый).
+/// (2.7.2, до пяти), иначе — свой (первый).
 Future<void> showWeatherPlacePicker(BuildContext context, {bool add = false}) => showAppSheet<void>(
       context: context,
       isScrollControlled: true,

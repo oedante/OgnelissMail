@@ -2554,7 +2554,7 @@ class AppDatabase extends _$AppDatabase {
     return (select(emails)
           ..where((e) => e.followUpAt.isNotNull())
           ..where((e) => e.followUpAt.isSmallerOrEqualValue(now))
-          // Срок флажка (2.7.1, письмо с флажком без «На контроле») — не
+          // Срок флажка (2.7.2, письмо с флажком без «На контроле») — не
           // напоминание «нет ответа»: остаётся, просроченный виден красным.
           ..where((e) => e.controlState.isBiggerThanValue(0) | e.isFlagged.equals(false))
           ..limit(limit))
@@ -3198,7 +3198,7 @@ LazyDatabase _openSecondary(String path, String? dbKey) {
 
 /// В сборке нет шифрования базы (библиотека SQLite без sqlite3mc): почту
 /// хранить открытым текстом нельзя — приложение не открывает базу
-/// (2.7.1, обзор безопасности п. 1). Данные на диске не трогаются.
+/// (2.7.2, обзор безопасности п. 1). Данные на диске не трогаются.
 class DbEncryptionUnavailableException implements Exception {
   const DbEncryptionUnavailableException();
   @override
@@ -3271,7 +3271,7 @@ class DbEncryption {
   @visibleForTesting
   static bool Function() cipherProbe = cipherAvailable;
 
-  /// База — только зашифрованная (2.7.1, внешний обзор безопасности
+  /// База — только зашифрованная (2.7.2, внешний обзор безопасности
   /// 23.11.2026, п. 1): в выпуске библиотека без шифрования — ошибка
   /// запуска с понятным текстом, а не база открытым текстом. Без
   /// шифрования — только отладка и тесты.

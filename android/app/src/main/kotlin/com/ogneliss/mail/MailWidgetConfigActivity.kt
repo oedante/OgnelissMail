@@ -25,7 +25,7 @@ class MailWidgetConfigActivity : Activity() {
             ?: AppWidgetManager.INVALID_APPWIDGET_ID
         setResult(RESULT_CANCELED, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id))
         // Окно доступно другим приложениям (так требует система): чужой
-        // номер виджета — не наш виджет, ничего не меняем (2.7.1, обзор
+        // номер виджета — не наш виджет, ничего не меняем (2.7.2, обзор
         // безопасности п. 9).
         val provider = runCatching { AppWidgetManager.getInstance(this).getAppWidgetInfo(id)?.provider }.getOrNull()
         if (id == AppWidgetManager.INVALID_APPWIDGET_ID || provider?.packageName != packageName) {

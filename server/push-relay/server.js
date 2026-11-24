@@ -63,6 +63,17 @@ const HOST = process.env.HOST || '127.0.0.1';
 const BASE_PATH = (process.env.BASE_PATH || '/push').replace(/\/+$/, '');
 const DATA_FILE = process.env.DATA_FILE || path.join(__dirname, 'data', 'tokens.json');
 const API_KEY = process.env.PUSH_API_KEY || '';
+// Без ключа приложения служба не запускается (безопасность, этап 2,
+// 24.11.2026): раньше пустой PUSH_API_KEY молча открывал /register и
+// /unregister всем. Служба только во внутренней сети, без доступа извне, —
+// явная переменная PUSH_ALLOW_NO_KEY=1.
+const ALLOW_NO_KEY = /^(1|true|yes|on)$/i.test(String(process.env.PUSH_ALLOW_NO_KEY || '').trim());
+if (!ALLOW_NO_KEY && API_KEY.length < 16) {
+  console.error('push-relay: PUSH_API_KEY не задан или короче 16 символов — запуск остановлен '
+    + '(служба только во внутренней сети — PUSH_ALLOW_NO_KEY=1)');
+  process.exit(1);
+}
+if (!API_KEY) console.warn('push-relay: PUSH_API_KEY не задан, PUSH_ALLOW_NO_KEY=1 — регистрация без ключа (только внутренняя сеть)');
 const TEAM_ID = process.env.APNS_TEAM_ID || '';
 const TOPIC = process.env.APNS_TOPIC || 'com.ogneliss.mail';
 const KEYS = {

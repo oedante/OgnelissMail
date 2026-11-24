@@ -992,7 +992,7 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> setActiveAccountId(String? id) async {
-    // Смена ящика — меткой для журнала медленных кадров (2.7.1).
+    // Смена ящика — меткой для журнала медленных кадров (2.7.2).
     PerfMark.begin('смена ящика', limit: const Duration(seconds: 2));
     if (id != null) {
       await _p.setString(_K.activeAccount, id);

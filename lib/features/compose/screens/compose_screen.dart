@@ -74,6 +74,7 @@ import '../../../services/mail/attachment_hint_service.dart';
 import '../../../services/mail/paste_cleaner.dart';
 import '../../../widgets/common/shared_mailbox_badge.dart';
 import '../../../widgets/common/dlp_warning_dialog.dart';
+import '../../mail/providers/mail_open_cache.dart' show mailOpenCacheProvider;
 import '../../mail/providers/mail_providers.dart';
 import '../../settings/providers/settings_provider.dart';
 import '../providers/attachment_limit_provider.dart';
@@ -274,6 +275,29 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Пустая строка между подписью и линией цитаты, как в Outlook: с одним
     // <br> исходное письмо начиналось вплотную под подписью (27.10.2026).
     return _quoteHtml == null ? body : '$body<div><br></div>${_quoteHtml!}';
+  }
+
+  /// Картинки исходного письма в цитате (cid:) — в само письмо (2.7.2,
+  /// замечание владельца 24.11.2026: первый ответ ушёл с пустым местом
+  /// вместо скриншота). Ответ и пересылку, собранные приложением, раньше
+  /// отправляли ссылку на картинку исходного письма без самой картинки.
+  /// Не получилось (нет связи, письма нет) — как раньше.
+  Future<String> _embedQuoteImages(String html) async {
+    final srcId = widget.replyToId ?? widget.forwardFromId;
+    if (srcId == null || !html.toLowerCase().contains('cid:')) return html;
+    try {
+      final row = await ref
+          .read(databaseProvider)
+          .getEmailById(srcId, accountId: widget.accountId ?? _fromAccount?.id);
+      if (row == null) return html;
+      return await ref
+          .read(mailOpenCacheProvider)
+          .embedInlineImages(row.accountId, emailModelFromRow(row), html)
+          .timeout(const Duration(seconds: 45));
+    } catch (e) {
+      AppLogger.warning('Картинки цитаты не вложены: $e');
+      return html;
+    }
   }
 
   /// «Изменить цитату»: перенести её в редактор.
@@ -4768,7 +4792,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     try {
       final account = _fromAccount!;
       // Отложенная отправка уходит обычным путём — с цитатой.
-      final bodyHtml = _withQuote(await _getBodyHtmlAsync());
+      final bodyHtml = await _embedQuoteImages(_withQuote(await _getBodyHtmlAsync()));
       await _awaitRunningDownloads();
       await ref.read(offlineSendProvider).scheduleSend(
             accountId: account.id,
@@ -5102,7 +5126,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final bodyPlain = _bodyPlain;
     // Прежде здесь уходил текст без оформления (`<br>` вместо HTML редактора):
     // таблицы, списки и выделение терялись при «отправке с отменой».
-    final bodyHtml = _withQuote(await _getBodyHtmlAsync());
+    final bodyHtml = await _embedQuoteImages(_withQuote(await _getBodyHtmlAsync()));
     final offlineSend = ref.read(offlineSendProvider);
 
     await _awaitRunningDownloads();
@@ -5442,7 +5466,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             cc: _ccRecipients,
             bcc: _bccRecipients,
             subject: subject,
-            bodyHtml: _withQuote(bodyHtml),
+            bodyHtml: await _embedQuoteImages(_withQuote(bodyHtml)),
             inReplyTo: _inReplyTo,
             remoteAttachments: remote,
             from: _fromOverride,

@@ -3,16 +3,22 @@
 // Mail OAuth Proxy
 // Серверный посредник OAuth для организации: хранит client_secret провайдеров,
 // ловит redirect, меняет код на токены и ОБНОВЛЯЕТ их по refresh-токену,
-// чтобы пользователь не логинился заново.
+// чтобы пользователь не логинился заново. Токенов сервер не хранит:
+// refresh-токен зашифрован в blob rt, который держит приложение.
 //
 // Эндпоинты:
-//   GET  /healthz                          — проверка живости и настройки
-//   GET  /oauth/:provider/login?redirect=  — старт авторизации (редирект к провайдеру)
-//   GET  /oauth/callback?code&state        — приём кода, обмен на токены, редирект в приложение
-//   GET  /token?session=...                — выдать действующий access_token (с авто-refresh)
-//   POST /refresh                          — принудительное обновление (body: {session})
-//   POST /revoke                           — отозвать доступ (body: {session} | {rt, provider})
-//   GET  /bimi?d=<домен>[&s=<селектор>]    — политика DMARC и логотип BIMI (1.9.x, bimi.js)
+//   GET  /healthz                              — проверка живости и настройки
+//   GET  /oauth/:provider/login?redirect&cc=   — старт авторизации (редирект к провайдеру)
+//   GET  /oauth/callback?code&state            — приём кода, обмен на токены, одноразовый код oc в приложение
+//   POST /exchange                             — токены по oc и code_verifier (body: {oc, cv})
+//   POST /token                                — новый access_token по blob rt (body: {provider, rt[, resource]})
+//   POST /revoke                               — отозвать доступ (body: {rt, provider})
+//   GET  /bimi?d=<домен>[&s=<селектор>]        — политика DMARC и логотип BIMI (1.9.x, bimi.js)
+//
+// Безопасность, этап 2 (24.11.2026): убраны режим хранения токенов на сервере
+// (store.json, GET /token?session, POST /refresh) и вход без PKCE (токены в
+// адресе возврата); ограничение частоты на вход, возврат, обмен и обновление;
+// подпись id_token проверяется по ключам провайдера (oidc.js).
 //
 // Требует Node.js >= 18 (встроенный fetch). Зависимость: express.
 // Все секреты — только в переменных окружения (.env), НЕ в приложении.
@@ -23,6 +29,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 const { createBimi } = require('./bimi');
+const { createIdTokenVerifier } = require('./oidc');
+const { createLimits, ipKey } = require('./limits');
 
 // ── Конфигурация из окружения ──
 const PORT = parseInt(process.env.PORT || '8787', 10);
@@ -55,11 +63,14 @@ for (const name of ['STATE_SECRET', 'PROXY_API_KEY']) {
   }
 }
 const STATE_SECRET = process.env.STATE_SECRET;
-const STORE_PATH = process.env.STORE_PATH || '/var/lib/oauth-proxy/store.json';
-// Разрешённые схемы/URL для возврата в приложение (защита open-redirect)
-// Кэш логотипов BIMI (1.9.x) — рядом с хранилищем сессий; в контейнере
-// только для чтения запись не удастся, и кэш останется в памяти.
-const BIMI_CACHE_PATH = process.env.BIMI_CACHE_PATH || path.join(path.dirname(STORE_PATH), 'bimi-cache.json');
+// Папка данных службы (кэш логотипов BIMI). Раньше её задавал STORE_PATH —
+// путь к хранилищу сессий store.json (режим убран 24.11.2026); старый .env
+// со STORE_PATH работает как прежде: кэш остаётся в той же папке.
+const DATA_DIR = process.env.DATA_DIR
+  || (process.env.STORE_PATH ? path.dirname(process.env.STORE_PATH) : '/var/lib/oauth-proxy');
+// Кэш логотипов BIMI (1.9.x); в контейнере только для чтения запись не
+// удастся, и кэш останется в памяти.
+const BIMI_CACHE_PATH = process.env.BIMI_CACHE_PATH || path.join(DATA_DIR, 'bimi-cache.json');
 const BIMI_ENABLED = process.env.BIMI !== '0';
 // Лимит пользователей Google исчерпан (2.5.4): у непроверенного приложения
 // Google пускает не больше 100 новых пользователей. Владелец ставит
@@ -70,6 +81,7 @@ const BIMI_ENABLED = process.env.BIMI !== '0';
 // добавленный ящик (reauth=1) — как обычно: прежних пользователей Google
 // пускает.
 const GOOGLE_USER_CAP = /^(1|true|yes|on)$/i.test(String(process.env.GOOGLE_USER_CAP || '').trim());
+// Разрешённые схемы/URL для возврата в приложение (защита open-redirect).
 const ALLOWED_REDIRECTS = (process.env.ALLOWED_REDIRECTS ||
   'com.ogneliss.mail://oauth,https://mail.example.com/oauth2redirect.html')
   .split(',').map((s) => s.trim()).filter(Boolean);
@@ -227,16 +239,12 @@ function decRt(blob) {
   return Buffer.concat([d.update(ct), d.final()]).toString('utf8');
 }
 
-// ── Простое файловое хранилище сессий (sessionId -> {provider, refresh, access, expiry}) ──
-function loadStore() {
-  try { return JSON.parse(fs.readFileSync(STORE_PATH, 'utf8')); }
-  catch { return {}; }
-}
-function saveStore(store) {
-  fs.mkdirSync(path.dirname(STORE_PATH), { recursive: true });
-  const tmp = STORE_PATH + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(store), { mode: 0o600 });
-  fs.renameSync(tmp, STORE_PATH);
+// Хранилище сессий store.json (GET /token?session, POST /refresh) убрано
+// 24.11.2026: приложения 2.x им не пользуются, а refresh-токены на диске
+// сервера — лишний риск. Файл, если остался, служба не читает; удалить его
+// может владелец (docs/release/OWNER_STEPS_2.7.2.md).
+if (process.env.STORE_PATH && fs.existsSync(process.env.STORE_PATH)) {
+  console.warn(`oauth-proxy: найден ${process.env.STORE_PATH} — хранение токенов на сервере убрано, файл не используется; его можно удалить`);
 }
 
 // ── Подпись state (HMAC) против CSRF/подмены ──
@@ -299,11 +307,11 @@ function requireApiKey(req, res, next) {
 // ── Одноразовые коды возврата (PKCE между приложением и прокси) ──
 // Раньше access- и refresh-токены передавались в адресе возврата
 // (com.ogneliss.mail://oauth?at=…&rt=…). Свою схему может зарегистрировать
-// любое приложение на устройстве и перехватить токены. Теперь, если
-// приложение прислало code_challenge (cc), в адрес возврата уходит только
-// одноразовый код (oc) на 2 минуты, а токены выдаются по POST /exchange
-// тому, кто знает code_verifier. Старые версии приложения (без cc)
-// работают по-прежнему.
+// любое приложение на устройстве и перехватить токены. Приложение
+// присылает code_challenge (cc), в адрес возврата уходит только одноразовый
+// код (oc) на 2 минуты, а токены выдаются по POST /exchange тому, кто знает
+// code_verifier. Вход без cc (сборки до PKCE) не принимается с 24.11.2026:
+// такой сборке сервер отвечает «обновите приложение» (error=update_required).
 const PENDING = new Map();
 const PENDING_TTL_MS = 2 * 60 * 1000;
 setInterval(() => {
@@ -393,7 +401,68 @@ app.use((_req, res, next) => {
   res.set('Cache-Control', 'no-store');
   next();
 });
-app.set('trust proxy', true);
+// Адрес клиента (журнал, лимиты частоты) — из X-Forwarded-For, но только
+// от прокси во внутренней сети (Nginx Proxy Manager в Docker, nginx на том же
+// сервере). Раньше доверялось всему заголовку (true): клиент мог вписать в
+// него любой адрес и обойти лимиты. TRUST_PROXY — значение Express «trust
+// proxy» (например, 1 — один прокси перед службой).
+function trustProxySetting(v) {
+  const s = String(v || '').trim();
+  if (!s) return 'loopback, linklocal, uniquelocal';
+  if (/^(true|false)$/i.test(s)) return /^true$/i.test(s);
+  if (/^\d+$/.test(s)) return Number(s);
+  return s;
+}
+app.set('trust proxy', trustProxySetting(process.env.TRUST_PROXY));
+
+// ── Ограничение частоты (безопасность, этап 2, 24.11.2026; limits.js) ──
+// На адрес клиента: вход, возврат от провайдера, обмен кода, обновление и
+// отзыв токена. На провайдера: возвраты от провайдера — каждый обмен кода
+// идёт от сервера к провайдеру, и поток мусорных кодов испортил бы репутацию
+// адреса сервера у Google или Microsoft. Пауза после неудач: неверный state
+// на возврате, неверный одноразовый код или code_verifier при обмене.
+// Обычному человеку лимиты не мешают: вход — раз в несколько дней,
+// обновление — раз в час на ящик.
+const limits = createLimits();
+setInterval(() => limits.sweep(), 60 * 1000).unref();
+const MIN = 60 * 1000;
+const LIMITS = {
+  login: { max: 20, windowMs: 10 * MIN },
+  callback: { max: 40, windowMs: 10 * MIN, perProvider: 300, fails: 10, pauseMs: 15 * MIN },
+  exchange: { max: 30, windowMs: 10 * MIN, fails: 10, pauseMs: 15 * MIN },
+  token: { max: 120, windowMs: MIN },
+  revoke: { max: 30, windowMs: 10 * MIN },
+  bimi: { max: 120, windowMs: MIN },
+};
+
+// Ответ 429: браузеру (вход, возврат) — текстом, приложению — JSON.
+function tooMany(res, wait, browser) {
+  res.set('Retry-After', String(wait));
+  if (browser) return plain(res, 429, `Слишком много попыток входа. Повторите через ${Math.ceil(wait / 60)} мин.\nToo many sign-in attempts, try again later.`);
+  return res.status(429).json({ error: 'too_many_requests', retry_after: wait });
+}
+
+function limit(name, { browser = false, provider } = {}) {
+  const c = LIMITS[name];
+  return (req, res, next) => {
+    const ip = ipKey(req.ip);
+    let wait = limits.paused(name, ip) || limits.hit(name, ip, c.max, c.windowMs);
+    if (!wait && c.perProvider && provider) {
+      const pr = provider(req);
+      if (pr) wait = limits.hit(`${name}:provider`, pr, c.perProvider, c.windowMs);
+    }
+    if (wait) return tooMany(res, wait, browser);
+    next();
+  };
+}
+
+// Неудачная попытка (неверный state, код или verifier) — к паузе адреса.
+function noteFailure(name, req) {
+  const c = LIMITS[name];
+  if (limits.fail(name, ipKey(req.ip), c.fails, c.windowMs, c.pauseMs)) {
+    console.warn(`oauth-proxy: ${name} — пауза ${Math.round(c.pauseMs / MIN)} мин для ip=${req.ip} после ${c.fails} неудачных попыток`);
+  }
+}
 
 // Журнал запросов: одна строка на запрос — метод, путь БЕЗ параметров
 // (в них коды и сессии), статус, время, адрес клиента. healthz — только
@@ -444,12 +513,15 @@ router.get('/healthz', (_req, res) => res.json({
     api: fingerprint(API_KEY),
     enc: fingerprint(process.env.ENC_SECRET || process.env.STATE_SECRET),
   },
+  // Отказы по лимитам частоты и проверки id_token с запуска — только счётчики.
+  limits: limits.stats(),
+  idToken: idTokens.stats(),
   // Только счётчики, без доменов.
   ...(bimi ? { bimi: bimi.stats() } : {}),
 }));
 
 // 1) Старт авторизации
-router.get('/oauth/:provider/login', (req, res) => {
+router.get('/oauth/:provider/login', limit('login', { browser: true }), (req, res) => {
   const p = PROVIDERS[req.params.provider];
   if (!p) return plain(res, 404, 'unknown provider');
   if (!p.clientId || !p.clientSecret) return plain(res, 500, 'provider not configured');
@@ -457,8 +529,14 @@ router.get('/oauth/:provider/login', (req, res) => {
   const redirect = String(req.query.redirect || ALLOWED_REDIRECTS[0]);
   if (!isAllowedRedirect(redirect)) return plain(res, 400, 'redirect not allowed');
 
+  // Без code_challenge — сборка до PKCE (токены пришли бы в адресе возврата):
+  // такой вход не начинается, приложение получает error=update_required.
   const cc = req.query.cc ? String(req.query.cc) : '';
-  if (cc && !/^[A-Za-z0-9_-]{43}$/.test(cc)) return plain(res, 400, 'bad code_challenge');
+  if (!cc) {
+    console.warn(`[${req.params.provider}] вход без PKCE (старая сборка) — ответ «обновите приложение»`);
+    return res.redirect(errorBack(redirect, req.params.provider, 'update_required'));
+  }
+  if (!/^[A-Za-z0-9_-]{43}$/.test(cc)) return plain(res, 400, 'bad code_challenge');
   if (req.params.provider === 'google' && GOOGLE_USER_CAP && req.query.reauth !== '1') {
     console.warn('[google] новый вход не начат: GOOGLE_USER_CAP=1 (лимит пользователей Google)');
     return res.redirect(errorBack(redirect, 'google', 'user_cap'));
@@ -469,7 +547,7 @@ router.get('/oauth/:provider/login', (req, res) => {
   const state = makeState(p, {
     provider: req.params.provider,
     redirect,
-    cc: cc || undefined,
+    cc,
     nonce,
     g,
     ts: Date.now(),
@@ -527,12 +605,32 @@ function authUrl(p, state, scope, nonce) {
 }
 
 // 2) Callback от провайдера
-router.get(['/oauth/callback', '/callback'], async (req, res) => {
+// Провайдер возврата для лимита — из state без проверки подписи (лимит до
+// разбора; подлинность state проверяется ниже).
+function callbackProvider(req) {
+  const st = String(req.query.state || '');
+  const short = SHORT_STATES.get(st);
+  if (short) return short.provider;
+  try {
+    const pr = JSON.parse(Buffer.from(st.split('.')[0], 'base64url').toString('utf8')).provider;
+    return PROVIDERS[pr] ? pr : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+router.get(['/oauth/callback', '/callback'], limit('callback', { browser: true, provider: callbackProvider }), async (req, res) => {
   const data = verifyState(req.query.state);
-  if (!data) return plain(res, 400, 'invalid state');
+  if (!data) {
+    noteFailure('callback', req);
+    return plain(res, 400, 'invalid state');
+  }
   if (Date.now() - data.ts > 10 * 60 * 1000) return plain(res, 400, 'state expired');
   const p = PROVIDERS[data.provider];
   if (!p) return plain(res, 400, 'unknown provider');
+  // State без cc — только от прежней версии сервера (до 24.11.2026), не
+  // старше 10 минут: такой вход заканчивается «обновите приложение».
+  if (!data.cc) return res.redirect(errorBack(data.redirect, data.provider, 'update_required'));
   // text/plain: значение error приходит из адреса и раньше попадало в HTML
   // как есть (отражённый XSS на домене прокси).
   if (req.query.error) {
@@ -586,27 +684,20 @@ router.get(['/oauth/callback', '/callback'], async (req, res) => {
     const access = tok.access_token || '';
     const expMs = Date.now() + ((tok.expires_in || 3600) * 1000);
     const rt = tok.refresh_token ? encRt(tok.refresh_token) : '';
-    // Адрес и имя — из id_token (получен напрямую от провайдера по TLS,
-    // подпись не проверяем). Токен Microsoft для outlook.office.com у личных
-    // ящиков непрозрачный — узнать адрес иначе нельзя.
+    // Адрес и имя — из id_token с проверенной подписью (oidc.js). Токен
+    // Microsoft для outlook.office.com у личных ящиков непрозрачный — узнать
+    // адрес иначе нельзя.
     if (data.fb) console.warn(`[${data.provider}] вход с запасным набором прав №${data.fb} — отметьте недостающие права в приложении провайдера`);
-    let ident = idTokenIdentity(tok.id_token);
+    let ident = await idTokenIdentity(data.provider, p, tok.id_token);
     // Mail.ru id_token не присылает — адрес и имя из userinfo.
     if (!ident.email && p.userinfoUrl && access) ident = await userinfoIdentity(p, access);
 
     // Возврат в приложение: deep link или web-redirect страница
     const back = new URL(data.redirect);
     back.searchParams.set('provider', data.provider);
-    if (data.cc) {
-      const oc = crypto.randomBytes(24).toString('base64url');
-      PENDING.set(oc, { at: access, exp: expMs, rt, provider: data.provider, cc: data.cc, email: ident.email, name: ident.name, graph: Boolean(data.g), until: Date.now() + PENDING_TTL_MS });
-      back.searchParams.set('oc', oc);
-    } else {
-      back.searchParams.set('at', access);
-      back.searchParams.set('exp', String(expMs));
-      if (rt) back.searchParams.set('rt', rt);
-      if (ident.email) back.searchParams.set('email', ident.email);
-    }
+    const oc = crypto.randomBytes(24).toString('base64url');
+    PENDING.set(oc, { at: access, exp: expMs, rt, provider: data.provider, cc: data.cc, email: ident.email, name: ident.name, graph: Boolean(data.g), until: Date.now() + PENDING_TTL_MS });
+    back.searchParams.set('oc', oc);
     if (data.redirect.startsWith('http')) {
       // web: маленькая страница, шлёт session в открывающее окно и закрывается
       res.set('Content-Type', 'text/html; charset=utf-8');
@@ -662,80 +753,54 @@ async function userinfoIdentity(p, access) {
   return {};
 }
 
-function idTokenIdentity(idt) {
+// Адрес и имя из id_token — только если подпись, издатель, получатель и
+// срок верны (oidc.js). Иначе адреса нет: приложение узнает его само
+// (userinfo) или спросит у человека.
+const idTokens = createIdTokenVerifier();
+async function idTokenIdentity(provider, p, idt) {
+  if (!idt) return {};
   try {
-    if (!idt) return {};
-    const payload = JSON.parse(Buffer.from(String(idt).split('.')[1], 'base64url').toString('utf8'));
-    const email = payload.email || payload.preferred_username || payload.upn || '';
+    const v = await idTokens.verify(provider, idt, p.clientId);
+    if (!v.claims) {
+      console.warn(`[${provider}] id_token не принят (${v.error}) — адрес из токена не взят`);
+      return {};
+    }
+    const c = v.claims;
+    const email = String(c.email || c.preferred_username || c.upn || '');
     return {
-      email: /^[^@\s]+@[^@\s]+$/.test(email) ? String(email).toLowerCase() : '',
-      name: typeof payload.name === 'string' ? payload.name.slice(0, 120) : '',
+      email: /^[^@\s]+@[^@\s]+$/.test(email) ? email.toLowerCase() : '',
+      name: typeof c.name === 'string' ? c.name.slice(0, 120) : '',
     };
-  } catch (_) {
+  } catch (e) {
+    console.warn(`[${provider}] id_token: ${e && e.message || e}`);
     return {};
   }
 }
 
 // Обмен одноразового кода на токены (только с code_verifier).
-router.post('/exchange', requireApiKey, (req, res) => {
+router.post('/exchange', limit('exchange'), requireApiKey, (req, res) => {
   const oc = String(req.body.oc || '');
   const cv = String(req.body.cv || '');
   const entry = PENDING.get(oc);
   PENDING.delete(oc); // одноразовый — даже при неверном verifier
-  if (!entry || entry.until < Date.now()) return res.status(400).json({ error: 'invalid or expired code' });
+  if (!entry || entry.until < Date.now()) {
+    noteFailure('exchange', req);
+    return res.status(400).json({ error: 'invalid or expired code' });
+  }
   const challenge = crypto.createHash('sha256').update(cv).digest('base64url');
-  if (!safeEqual(challenge, entry.cc)) return res.status(400).json({ error: 'invalid verifier' });
+  if (!safeEqual(challenge, entry.cc)) {
+    noteFailure('exchange', req);
+    return res.status(400).json({ error: 'invalid verifier' });
+  }
   res.json({ access_token: entry.at, expires_at: entry.exp, rt: entry.rt, provider: entry.provider, email: entry.email || '', name: entry.name || '', ...(entry.graph ? { graph: true } : {}) });
 });
 
-// 3) Выдать действующий access_token (с авто-обновлением)
-async function ensureFreshAccess(session) {
-  const store = loadStore();
-  const s = store[session];
-  if (!s) { const e = new Error('unknown session'); e.status = 404; throw e; }
-  // Запас 60 секунд до истечения
-  if (s.access && Date.now() < s.expiry - 60 * 1000) {
-    return { access: s.access, expiry: s.expiry, provider: s.provider };
-  }
-  if (!s.refresh) { const e = new Error('no refresh token; re-login required'); e.status = 410; throw e; }
-  const p = PROVIDERS[s.provider];
-  const tok = await tokenRequest(p, { grant_type: 'refresh_token', refresh_token: s.refresh });
-  s.access = tok.access_token || s.access;
-  if (tok.refresh_token) s.refresh = tok.refresh_token; // некоторые провайдеры ротируют refresh
-  s.expiry = Date.now() + ((tok.expires_in || 3600) * 1000);
-  store[session] = s;
-  saveStore(store);
-  return { access: s.access, expiry: s.expiry, provider: s.provider };
-}
-
-router.get('/token', requireApiKey, async (req, res) => {
-  try {
-    const out = await ensureFreshAccess(String(req.query.session || ''));
-    res.json({ access_token: out.access, expires_at: out.expiry, provider: out.provider });
-  } catch (e) {
-    res.status(e.status || 502).json({ error: e.message });
-  }
-});
-
-router.post('/refresh', requireApiKey, async (req, res) => {
-  try {
-    const out = await ensureFreshAccess(String(req.body.session || ''));
-    res.json({ access_token: out.access, expires_at: out.expiry, provider: out.provider });
-  } catch (e) {
-    res.status(e.status || 502).json({ error: e.message });
-  }
-});
-
-// Отзыв доступа при удалении аккаунта в приложении.
-//  · {session} — старая stateful-сессия: удаляется из хранилища;
-//  · {rt, provider} — stateless: refresh-токен расшифровывается и отзывается
-//    у провайдера, где это возможно без участия пользователя (Google —
-//    oauth2.googleapis.com/revoke; у Microsoft, Яндекса, Mail.ru и Yahoo
-//    публичного отзыва refresh-токена нет — токен просто перестаёт храниться
-//    на телефоне и истекает сам).
-router.post('/revoke', requireApiKey, async (req, res) => {
-  const store = loadStore();
-  if (req.body.session && store[req.body.session]) { delete store[req.body.session]; saveStore(store); }
+// Отзыв доступа при удалении аккаунта в приложении: {rt, provider} —
+// refresh-токен расшифровывается и отзывается у провайдера, где это возможно
+// без участия пользователя (Google — oauth2.googleapis.com/revoke; у
+// Microsoft, Яндекса, Mail.ru и Yahoo публичного отзыва refresh-токена нет —
+// токен просто перестаёт храниться на телефоне и истекает сам).
+router.post('/revoke', limit('revoke'), requireApiKey, async (req, res) => {
   let revoked = false;
   const provider = String(req.body.provider || '');
   const rt = String(req.body.rt || '');
@@ -757,7 +822,7 @@ router.post('/revoke', requireApiKey, async (req, res) => {
 // resource=graph (Exchange Online, 1.8.11) — токен Microsoft Graph тем же
 // входом; в ответе тогда resource: 'graph' (по нему приложение отличает
 // новый сервер от прежнего, который resource не знает).
-router.post('/token', requireApiKey, async (req, res) => {
+router.post('/token', limit('token'), requireApiKey, async (req, res) => {
   try {
     const provider = String(req.body.provider || '');
     const rt = String(req.body.rt || '');
@@ -788,16 +853,10 @@ router.post('/token', requireApiKey, async (req, res) => {
 // только отсюда: домены отправителей не уходят к третьим лицам. Домен — в
 // параметре запроса, а в журнал пишется путь без параметров (см. выше);
 // счётчики — в /healthz. Ограничение — 120 запросов в минуту с адреса
-// (счётчик только в памяти, как у push-relay).
+// (LIMITS.bimi, счётчик только в памяти).
 const bimi = BIMI_ENABLED ? createBimi({ cachePath: BIMI_CACHE_PATH }) : null;
-const bimiHits = new Map();
-setInterval(() => bimiHits.clear(), 60 * 1000).unref();
-router.get('/bimi', requireApiKey, async (req, res) => {
+router.get('/bimi', limit('bimi'), requireApiKey, async (req, res) => {
   if (!bimi) return res.status(404).json({ error: 'disabled' });
-  const ip = req.ip || '';
-  const hits = (bimiHits.get(ip) || 0) + 1;
-  bimiHits.set(ip, hits);
-  if (hits > 120) return res.status(429).json({ error: 'too_many_requests' });
   const out = await bimi.lookup(req.query.d, req.query.s);
   if (out.bad) return res.status(400).json({ error: 'bad domain' });
   if (out.transient) return res.status(503).json({ error: 'unavailable' });
@@ -819,7 +878,7 @@ process.on('unhandledRejection', (e) => console.error(`oauth-proxy: unhandledRej
 process.on('uncaughtException', (e) => { console.error(`oauth-proxy: uncaughtException: ${e && e.stack || e}`); process.exit(1); });
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(`oauth-proxy listening on ${HOST}:${PORT} (base ${BASE_URL}, path '${BASE_PATH || '/'}')`);
+  console.log(`oauth-proxy listening on ${HOST}:${server.address().port} (base ${BASE_URL}, path '${BASE_PATH || '/'}')`);
   console.log(`redirect_uri для консолей провайдеров: ${CALLBACK_URL}`);
 });
 

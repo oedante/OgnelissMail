@@ -29,6 +29,7 @@ import 'package:mail_engine/mail_engine.dart'
         DsnRequest,
         ImapNotifyChange,
         ImapNotifyRejected,
+        MimeInlineImages,
         NotifyImapClient,
         Preheader,
         SmtpNotSentException,
@@ -2437,13 +2438,42 @@ class ImapService {
     // (текст + HTML) и файлы. Раньше файлы добавлялись прямо в
     // multipart/alternative: почтовые программы считали вложение «ещё одним
     // вариантом текста» и показывали его вместо письма либо прятали.
+    // Картинки data: в тексте (вставленный скриншот, картинки цитаты) —
+    // частями multipart/related с Content-ID: Outlook и Gmail картинки data:
+    // в письмах не показывают (24.11.2026, пропавшая картинка в цитате).
+    final domain = fromEmail.contains('@') ? fromEmail.split('@').last : 'ogneliss';
+    final inl = MimeInlineImages.extract(bodyHtml, domain: domain);
+    // Текст HTML: с картинками — multipart/related (HTML + картинки).
+    void addHtml(PartBuilder alt) {
+      if (inl.parts.isEmpty) {
+        alt.addTextHtml(bodyHtml);
+        return;
+      }
+      final rel = alt.addPart(mediaSubtype: MediaSubtype.multipartRelated);
+      rel.addTextHtml(inl.html);
+      for (final p in inl.parts) {
+        rel.addBinary(
+          p.bytes,
+          MediaType.fromText(p.mimeType),
+          filename: p.name,
+          disposition: ContentDispositionHeader.from(ContentDisposition.inline, filename: p.name, size: p.bytes.length),
+        ).setHeader('Content-ID', '<${p.cid}>');
+      }
+    }
+
     final MessageBuilder builder;
-    if (files.isEmpty) {
+    if (files.isEmpty && inl.parts.isEmpty) {
       builder = MessageBuilder.prepareMultipartAlternativeMessage(
           plainText: plain, htmlText: bodyHtml);
+    } else if (files.isEmpty) {
+      builder = MessageBuilder.prepareMultipartAlternativeMessage();
+      builder.addTextPlain(plain);
+      addHtml(builder);
     } else {
-      builder = MessageBuilder.prepareMultipartMixedMessage()
-        ..addMultipartAlternative(plainText: plain, htmlText: bodyHtml);
+      builder = MessageBuilder.prepareMultipartMixedMessage();
+      final alt = builder.addPart(mediaSubtype: MediaSubtype.multipartAlternative);
+      alt.addTextPlain(plain);
+      addHtml(alt);
       for (final a in files) {
         // Параметры типа («; method=REPLY») — отдельно: MediaType их не хранит.
         final type = (a.contentType != null && a.contentType!.isNotEmpty)

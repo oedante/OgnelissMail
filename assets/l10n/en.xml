@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Which services and messages, trusted senders</string>
     <string name="weatherAddSecond">Add a second city</string>
     <string name="weatherRemoveSecond">Remove</string>
+    <string name="flagDueTitle">Flag due date</string>
+    <string name="flagToday">Today</string>
+    <string name="flagTomorrow">Tomorrow</string>
+    <string name="flagThisWeek">This week</string>
+    <string name="flagNextWeek">Next week</string>
+    <string name="flagNoDate">No date</string>
+    <string name="flagClear">Clear flag</string>
+    <string name="phoneSms">Send SMS</string>
 </resources>

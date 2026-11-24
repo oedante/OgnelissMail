@@ -4499,4 +4499,12 @@
     <string name="trackerDetailsDesc">أي الخدمات والرسائل، والمرسلون الموثوقون</string>
     <string name="weatherAddSecond">إضافة مدينة ثانية</string>
     <string name="weatherRemoveSecond">إزالة</string>
+    <string name="flagDueTitle">موعد العلامة</string>
+    <string name="flagToday">اليوم</string>
+    <string name="flagTomorrow">غدًا</string>
+    <string name="flagThisWeek">هذا الأسبوع</string>
+    <string name="flagNextWeek">الأسبوع القادم</string>
+    <string name="flagNoDate">بلا تاريخ</string>
+    <string name="flagClear">إزالة العلامة</string>
+    <string name="phoneSms">إرسال رسالة نصية</string>
 </resources>

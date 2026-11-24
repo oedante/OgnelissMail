@@ -4436,4 +4436,12 @@
     <string name="trackerDetailsDesc">Ktoré služby a správy, dôveryhodní odosielatelia</string>
     <string name="weatherAddSecond">Pridať druhé mesto</string>
     <string name="weatherRemoveSecond">Odstrániť</string>
+    <string name="flagDueTitle">Termín príznaku</string>
+    <string name="flagToday">Dnes</string>
+    <string name="flagTomorrow">Zajtra</string>
+    <string name="flagThisWeek">Tento týždeň</string>
+    <string name="flagNextWeek">Budúci týždeň</string>
+    <string name="flagNoDate">Bez dátumu</string>
+    <string name="flagClear">Zrušiť príznak</string>
+    <string name="phoneSms">Poslať SMS</string>
 </resources>

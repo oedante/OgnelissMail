@@ -2554,6 +2554,9 @@ class AppDatabase extends _$AppDatabase {
     return (select(emails)
           ..where((e) => e.followUpAt.isNotNull())
           ..where((e) => e.followUpAt.isSmallerOrEqualValue(now))
+          // Срок флажка (2.7.1, письмо с флажком без «На контроле») — не
+          // напоминание «нет ответа»: остаётся, просроченный виден красным.
+          ..where((e) => e.controlState.isBiggerThanValue(0) | e.isFlagged.equals(false))
           ..limit(limit))
         .get();
   }

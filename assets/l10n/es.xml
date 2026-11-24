@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Qué servicios y mensajes, remitentes de confianza</string>
     <string name="weatherAddSecond">Añadir una segunda ciudad</string>
     <string name="weatherRemoveSecond">Quitar</string>
+    <string name="flagDueTitle">Vencimiento de la marca</string>
+    <string name="flagToday">Hoy</string>
+    <string name="flagTomorrow">Mañana</string>
+    <string name="flagThisWeek">Esta semana</string>
+    <string name="flagNextWeek">La próxima semana</string>
+    <string name="flagNoDate">Sin fecha</string>
+    <string name="flagClear">Quitar marca</string>
+    <string name="phoneSms">Enviar SMS</string>
 </resources>

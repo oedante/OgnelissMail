@@ -18,6 +18,7 @@ import '../../../widgets/common/peek_card.dart' show AppMenuEntry, PeekAction, P
 import '../message_window.dart';
 import '../../assignments/assign_sheet.dart' show showAssignSheet;
 import '../../assignments/assignment_widgets.dart';
+import '../../../services/mail/flag_due.dart';
 import '../../../services/assignments/assignment_service.dart';
 import '../widgets/mail_peek_card.dart' show showMailPeek;
 import '../widgets/unsubscribe_banner.dart';
@@ -1853,14 +1854,19 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         actions: [
           // Флаг «К исполнению» — на виду: в меню «…» его не находили.
           // На широком экране он в панели команд.
-          if (!wide) IconButton(
-            tooltip: l10n.tr('flag'),
-            icon: Icon(
-              AppIcons.flag,
-              fill: email.isFlagged ? 1 : 0,
-              color: email.isFlagged ? AppColors.errorRed : null,
+          // Удержание — срок флажка (2.7.1, как в Outlook): сегодня,
+          // завтра, на этой неделе, на следующей, без даты.
+          if (!wide) GestureDetector(
+            onLongPress: () => unawaited(_pickFlagDue(email, l10n)),
+            child: IconButton(
+              tooltip: l10n.tr('flag'),
+              icon: Icon(
+                AppIcons.flag,
+                fill: email.isFlagged ? 1 : 0,
+                color: email.isFlagged ? AppColors.errorRed : null,
+              ),
+              onPressed: () => _toggleFlag(email),
             ),
-            onPressed: () => _toggleFlag(email),
           ),
           if (widget.pagerLabel != null) ...[
             IconButton(
@@ -2732,6 +2738,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
       [
         _Cmd(AppIcons.flag, l10n.tr('flag'), () => _toggleFlag(email),
             selected: email.isFlagged, color: email.isFlagged ? AppColors.errorRed : null),
+        _Cmd(AppIcons.event, l10n.tr('flagDueTitle'), () => unawaited(_pickFlagDue(email, l10n))),
         _Cmd(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
             l10n.tr(email.isRead ? 'markUnread' : 'markRead'), () => _setReadKey(email, !email.isRead)),
         if (!draft)
@@ -3196,6 +3203,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           }),
           _peekAction(AppIcons.flag, l10n.tr('flag'), fill: email.isFlagged,
               () => _toggleFlag(email)),
+          _peekAction(AppIcons.event, l10n.tr('flagDueTitle'), () => unawaited(_pickFlagDue(email, l10n))),
           // Важность (замечание 07.10.2026: поставить было нельзя)
           _peekAction(AppIcons.priority_high, l10n.tr('importance'),
               () => unawaited(_pickImportance(email, l10n))),
@@ -3633,14 +3641,63 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   }
 
   /// Флаг «К исполнению»: сервер, список писем и этот экран — сразу.
-  void _toggleFlag(EmailModel email) {
+  /// Поставленный — со сроком «Сегодня», как быстрый флажок Outlook (2.7.1).
+  void _toggleFlag(EmailModel email) => _setFlag(email, !email.isFlagged, FlagDue.today);
+
+  void _setFlag(EmailModel email, bool flagged, FlagDue due) {
     final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
     if (acc == null) return;
-    final flagged = !email.isFlagged;
     HapticFeedback.selectionClick();
-    ref.read(emailActionsProvider).setFlag(acc, email.id, email.folderId, flagged);
+    unawaited(ref.read(emailActionsProvider).setFlag(acc, email.id, email.folderId, flagged, due: due));
     ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isFlagged: flagged);
-    safeSetState(() => _email = email.copyWith(isFlagged: flagged));
+    final dueAt = flagged ? FlagDues.atFor(due) : null;
+    // У письма «На контроле» срок — его, флажок срок не меняет.
+    final keepDue = email.controlState != ControlState.none;
+    safeSetState(() => _email = keepDue
+        ? email.copyWith(isFlagged: flagged)
+        : email.copyWith(isFlagged: flagged, followUpAt: dueAt, clearFollowUp: dueAt == null));
+  }
+
+  /// Срок флажка (как в Outlook): сегодня, завтра, на этой неделе, на
+  /// следующей неделе, без даты; «Снять флажок» — если флажок стоит.
+  Future<void> _pickFlagDue(EmailModel email, AppLocalizations l10n) async {
+    final own = email.controlState == ControlState.none;
+    final hasDue = email.isFlagged && email.followUpAt != null && own;
+    String? sub(FlagDue d) {
+      final at = FlagDues.atFor(d);
+      return at == null ? null : FlagDues.label(at, l10n);
+    }
+
+    final picked = await showActionSheet<String>(
+      context,
+      title: l10n.tr('flagDueTitle'),
+      leading: const Icon(AppIcons.flag),
+      items: [
+        ActionSheetItem(icon: AppIcons.today, label: l10n.tr('flagToday'), value: 'today'),
+        ActionSheetItem(icon: AppIcons.event, label: l10n.tr('flagTomorrow'), subtitle: sub(FlagDue.tomorrow), value: 'tomorrow'),
+        ActionSheetItem(icon: AppIcons.date_range, label: l10n.tr('flagThisWeek'), subtitle: sub(FlagDue.thisWeek), value: 'week'),
+        ActionSheetItem(icon: AppIcons.next_week, label: l10n.tr('flagNextWeek'), subtitle: sub(FlagDue.nextWeek), value: 'next'),
+        ActionSheetItem(icon: AppIcons.flag, label: l10n.tr('flagNoDate'), value: 'none',
+            checked: email.isFlagged && own && !hasDue),
+        if (email.isFlagged) ActionSheetItem(icon: AppIcons.clear, label: l10n.tr('flagClear'), value: 'clear'),
+      ],
+    );
+    if (!mounted || picked == null) return;
+    final current = _email ?? email;
+    switch (picked) {
+      case 'clear':
+        _setFlag(current, false, FlagDue.none);
+      case 'tomorrow':
+        _setFlag(current, true, FlagDue.tomorrow);
+      case 'week':
+        _setFlag(current, true, FlagDue.thisWeek);
+      case 'next':
+        _setFlag(current, true, FlagDue.nextWeek);
+      case 'none':
+        _setFlag(current, true, FlagDue.none);
+      default:
+        _setFlag(current, true, FlagDue.today);
+    }
   }
 
   /// Кнопка «Ещё» письма (1.8.8) — круглая, как в карточке по удержанию.

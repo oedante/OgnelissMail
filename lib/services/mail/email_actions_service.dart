@@ -8,6 +8,8 @@ import '../../data/models/folder_model.dart';
 import 'dart:async';
 import '../notifications/notification_service.dart';
 import 'engine/mail_engine_service.dart';
+import 'flag_due.dart';
+import 'package:mail_engine/mail_engine.dart' as me show MailFollowUp;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:drift/drift.dart';
 
@@ -79,16 +81,37 @@ class EmailActionsService {
     }
   }
 
-  Future<void> setFlag(AccountModel account, String emailId, String folderId, bool isFlagged) async {
+  /// Флажок письма. [due] — срок (2.7.1, как в Outlook): по умолчанию
+  /// «Сегодня». Срок — в follow_up_at, если у письма нет «На контроле» (у
+  /// него свой срок); снятый флажок снимает и срок. В Exchange (ActiveSync)
+  /// срок уходит датами флажка — Outlook показывает «Сегодня»; письмо с
+  /// «На контроле» или «Позже» (их флажок — свой) — простым флажком, как
+  /// раньше.
+  Future<void> setFlag(AccountModel account, String emailId, String folderId, bool isFlagged,
+      {FlagDue due = FlagDue.today}) async {
     await (_db.update(_db.emails)..where((e) => _mine(e, account.id, emailId)))
         .write(EmailsCompanion(isFlagged: Value(isFlagged), isLocallyModified: const Value(true)));
+    final dates = isFlagged ? FlagDues.datesOf(due) : null;
+    await (_db.update(_db.emails)
+          ..where((e) => _mine(e, account.id, emailId) & e.controlState.equals(0)))
+        .write(EmailsCompanion(followUpAt: Value(dates == null ? null : FlagDues.at(dates.due))));
     if (folderId == 'search' && account.usesEas) {
       await _applyToSearchHit(account, emailId, flagged: isFlagged);
       return;
     }
     if (_deviceOnly(emailId)) return;
     try {
-      await _transport(account).setFlag(account, emailId: emailId, folderId: folderId, isFlagged: isFlagged);
+      final row = isFlagged && dates != null && account.usesEas
+          ? await (_db.select(_db.emails)..where((e) => _mine(e, account.id, emailId))).getSingleOrNull()
+          : null;
+      if (row != null && row.controlState == 0 && row.laterState == 0) {
+        await _ref.read(mailEngineServiceProvider).setFollowUp(account,
+            folderId: folderId,
+            serverId: emailId,
+            followUp: me.MailFollowUp(flagType: 'Flag for follow up', start: dates!.start, due: dates.due));
+      } else {
+        await _transport(account).setFlag(account, emailId: emailId, folderId: folderId, isFlagged: isFlagged);
+      }
       await _clearLocalMark(account, emailId);
     } catch (e) {
       AppLogger.warning('setFlag remote failed (локально применено, в очередь): $e');

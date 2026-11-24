@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">कौन-सी सेवाएँ और संदेश, विश्वसनीय प्रेषक</string>
     <string name="weatherAddSecond">दूसरा शहर जोड़ें</string>
     <string name="weatherRemoveSecond">हटाएँ</string>
+    <string name="flagDueTitle">फ़्लैग की नियत तारीख</string>
+    <string name="flagToday">आज</string>
+    <string name="flagTomorrow">कल</string>
+    <string name="flagThisWeek">इस सप्ताह</string>
+    <string name="flagNextWeek">अगले सप्ताह</string>
+    <string name="flagNoDate">कोई तारीख नहीं</string>
+    <string name="flagClear">फ़्लैग हटाएँ</string>
+    <string name="phoneSms">SMS भेजें</string>
 </resources>

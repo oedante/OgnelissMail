@@ -4394,4 +4394,12 @@
     <string name="trackerDetailsDesc">哪些服务和邮件、受信任的发件人</string>
     <string name="weatherAddSecond">添加第二个城市</string>
     <string name="weatherRemoveSecond">移除</string>
+    <string name="flagDueTitle">标记截止日期</string>
+    <string name="flagToday">今天</string>
+    <string name="flagTomorrow">明天</string>
+    <string name="flagThisWeek">本周</string>
+    <string name="flagNextWeek">下周</string>
+    <string name="flagNoDate">无日期</string>
+    <string name="flagClear">清除标记</string>
+    <string name="phoneSms">发送短信</string>
 </resources>

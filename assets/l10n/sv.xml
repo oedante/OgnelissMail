@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Vilka tjänster och meddelanden, betrodda avsändare</string>
     <string name="weatherAddSecond">Lägg till en andra stad</string>
     <string name="weatherRemoveSecond">Ta bort</string>
+    <string name="flagDueTitle">Förfallodatum för flagga</string>
+    <string name="flagToday">I dag</string>
+    <string name="flagTomorrow">I morgon</string>
+    <string name="flagThisWeek">Den här veckan</string>
+    <string name="flagNextWeek">Nästa vecka</string>
+    <string name="flagNoDate">Inget datum</string>
+    <string name="flagClear">Ta bort flagga</string>
+    <string name="phoneSms">Skicka sms</string>
 </resources>

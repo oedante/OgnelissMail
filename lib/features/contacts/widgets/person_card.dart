@@ -5,6 +5,7 @@
 // кабинет, руководитель, фото. Нужна, чтобы понять, кто написал, не уходя
 // из письма.
 
+import '../phone_actions.dart';
 import '../../../widgets/ui/section_band.dart';
 import '../../../widgets/ui/settings_group.dart' show SettingsGroup, SettingsSectionTitle;
 import 'dart:async';
@@ -170,11 +171,13 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
         .map((v) => v!.trim())
         .toList();
 
-    Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing}) => ListTile(
+    Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing, bool phone = false}) => ListTile(
           leading: Icon(icon),
           title: Text(value),
           subtitle: Text(label),
           onTap: onTap,
+          // Удержание номера — позвонить, SMS, мессенджеры (2.7.1).
+          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : null,
           trailing: trailing,
           minTileHeight: Sizes.tapTarget,
           contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
@@ -313,9 +316,10 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                           onPressed: () => Clipboard.setData(ClipboardData(text: widget.email)),
                         )),
                     if ((p?.phoneWork ?? '').trim().isNotEmpty)
-                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), onTap: () => _call(p.phoneWork!)),
+                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), phone: true, onTap: () => _call(p.phoneWork!)),
                     if ((p?.phoneMobile ?? '').trim().isNotEmpty)
-                      row(AppIcons.smartphone, p!.phoneMobile!, l10n.tr('phoneMobile'), onTap: () => _call(p.phoneMobile!)),
+                      row(AppIcons.smartphone, p!.phoneMobile!, l10n.tr('phoneMobile'), phone: true,
+                          onTap: () => _call(p.phoneMobile!)),
                     if ((p?.department ?? '').trim().isNotEmpty)
                       row(AppIcons.account_tree, p!.department!, l10n.tr('department')),
                     if ((p?.office ?? '').trim().isNotEmpty)

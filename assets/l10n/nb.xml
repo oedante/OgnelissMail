@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Hvilke tjenester og meldinger, klarerte avsendere</string>
     <string name="weatherAddSecond">Legg til en by til</string>
     <string name="weatherRemoveSecond">Fjern</string>
+    <string name="flagDueTitle">Forfall for flagg</string>
+    <string name="flagToday">I dag</string>
+    <string name="flagTomorrow">I morgen</string>
+    <string name="flagThisWeek">Denne uken</string>
+    <string name="flagNextWeek">Neste uke</string>
+    <string name="flagNoDate">Ingen dato</string>
+    <string name="flagClear">Fjern flagg</string>
+    <string name="phoneSms">Send SMS</string>
 </resources>

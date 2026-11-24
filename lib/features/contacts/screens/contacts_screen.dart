@@ -1,4 +1,5 @@
 // lib/features/contacts/screens/contacts_screen.dart
+import '../phone_actions.dart';
 import '../my_contact.dart' show showContactQr;
 import '../../../core/utils/text_safe.dart';
 import '../../settings/providers/module_settings_provider.dart';
@@ -1540,10 +1541,12 @@ class _ContactCard extends ConsumerWidget {
       ),
     ];
 
-    Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing}) => InkWell(
+    // Удержание номера телефона — позвонить, SMS, мессенджеры, скопировать
+    // (2.7.1); остального — скопировать.
+    Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing, bool phone = false}) => InkWell(
           onTap: onTap ?? () => copy(value),
-          onLongPress: () => copy(value),
-          onSecondaryTapUp: secondaryAsHold(() => copy(value)),
+          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : () => copy(value),
+          onSecondaryTapUp: secondaryAsHold(phone ? () => unawaited(PhoneActions.show(context, value)) : () => copy(value)),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: Sizes.tapTarget + Space.s),
             child: Padding(
@@ -1573,9 +1576,10 @@ class _ContactCard extends ConsumerWidget {
     final info = <Widget>[
       if (email.isNotEmpty) row(AppIcons.mail, email, l10n.tr('email'), onTap: write),
       if (work.isNotEmpty)
-        row(AppIcons.phone, work, l10n.tr('phoneWork'), onTap: () => unawaited(tile._callPhone(context, work))),
+        row(AppIcons.phone, work, l10n.tr('phoneWork'), phone: true, onTap: () => unawaited(tile._callPhone(context, work))),
       if (mobile.isNotEmpty)
-        row(AppIcons.smartphone, mobile, l10n.tr('phoneMobile'), onTap: () => unawaited(tile._callPhone(context, mobile))),
+        row(AppIcons.smartphone, mobile, l10n.tr('phoneMobile'), phone: true,
+            onTap: () => unawaited(tile._callPhone(context, mobile))),
       if ((c.office ?? '').trim().isNotEmpty) row(AppIcons.place, c.office!.trim(), l10n.tr('officeLocation')),
       if ((c.manager ?? '').trim().isNotEmpty)
         row(AppIcons.supervisor_account, c.manager!.trim(), l10n.tr('manager')),

@@ -4394,4 +4394,12 @@
     <string name="trackerDetailsDesc">Layanan dan pesan mana, pengirim tepercaya</string>
     <string name="weatherAddSecond">Tambah kota kedua</string>
     <string name="weatherRemoveSecond">Hapus</string>
+    <string name="flagDueTitle">Tenggat bendera</string>
+    <string name="flagToday">Hari ini</string>
+    <string name="flagTomorrow">Besok</string>
+    <string name="flagThisWeek">Minggu ini</string>
+    <string name="flagNextWeek">Minggu depan</string>
+    <string name="flagNoDate">Tanpa tanggal</string>
+    <string name="flagClear">Hapus bendera</string>
+    <string name="phoneSms">Kirim SMS</string>
 </resources>

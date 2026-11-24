@@ -18,6 +18,7 @@ import 'dart:typed_data';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:mail_engine/mail_engine.dart' as me;
+import '../flag_due.dart';
 import 'package:drift/drift.dart';
 
 import '../../../core/logging/app_logger.dart';
@@ -4417,6 +4418,10 @@ class MailEngineService {
       isRead: m.isRead,
       // Флажок «На контроле» или «Позже» — не флажок пользователя.
       isFlagged: m.isFlagged && MarkFlag.codeOf(m.followUp?.flagType) == null,
+      // Срок флажка из Outlook («Сегодня», «Завтра»…) — срок письма (2.7.1).
+      followUpAt: m.isFlagged && MarkFlag.codeOf(m.followUp?.flagType) == null
+          ? FlagDues.fromServer(m.followUp?.due)
+          : null,
       hasAttachments: m.hasAttachments,
       meetingJson: m.meeting == null
           ? null

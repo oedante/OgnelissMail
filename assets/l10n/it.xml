@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Quali servizi e messaggi, mittenti attendibili</string>
     <string name="weatherAddSecond">Aggiungi una seconda città</string>
     <string name="weatherRemoveSecond">Rimuovi</string>
+    <string name="flagDueTitle">Scadenza contrassegno</string>
+    <string name="flagToday">Oggi</string>
+    <string name="flagTomorrow">Domani</string>
+    <string name="flagThisWeek">Questa settimana</string>
+    <string name="flagNextWeek">La prossima settimana</string>
+    <string name="flagNoDate">Nessuna data</string>
+    <string name="flagClear">Rimuovi contrassegno</string>
+    <string name="phoneSms">Invia SMS</string>
 </resources>

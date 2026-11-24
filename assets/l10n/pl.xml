@@ -4457,4 +4457,12 @@
     <string name="trackerDetailsDesc">Które usługi i wiadomości, zaufani nadawcy</string>
     <string name="weatherAddSecond">Dodaj drugie miasto</string>
     <string name="weatherRemoveSecond">Usuń</string>
+    <string name="flagDueTitle">Termin flagi</string>
+    <string name="flagToday">Dzisiaj</string>
+    <string name="flagTomorrow">Jutro</string>
+    <string name="flagThisWeek">W tym tygodniu</string>
+    <string name="flagNextWeek">W przyszłym tygodniu</string>
+    <string name="flagNoDate">Bez daty</string>
+    <string name="flagClear">Usuń flagę</string>
+    <string name="phoneSms">Wyślij SMS</string>
 </resources>

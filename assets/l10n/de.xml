@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Welche Dienste und Nachrichten, vertrauenswürdige Absender</string>
     <string name="weatherAddSecond">Zweite Stadt hinzufügen</string>
     <string name="weatherRemoveSecond">Entfernen</string>
+    <string name="flagDueTitle">Fälligkeit der Kennzeichnung</string>
+    <string name="flagToday">Heute</string>
+    <string name="flagTomorrow">Morgen</string>
+    <string name="flagThisWeek">Diese Woche</string>
+    <string name="flagNextWeek">Nächste Woche</string>
+    <string name="flagNoDate">Kein Datum</string>
+    <string name="flagClear">Kennzeichnung entfernen</string>
+    <string name="phoneSms">SMS senden</string>
 </resources>

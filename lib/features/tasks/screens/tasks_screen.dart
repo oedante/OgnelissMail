@@ -11,6 +11,7 @@
 //  · список обновляется сам (поток из базы) — синхронизация, кнопка
 //    «Выполнено» в уведомлении и календарь видны сразу.
 
+import '../../../services/mail/flag_due.dart';
 import '../../../widgets/common/section_search_button.dart';
 import '../../../widgets/ui/section_band.dart';
 import 'dart:async';
@@ -600,17 +601,21 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         final e = sorted[i];
         final w = at(e);
         final followUp = e.remindAt == null;
-        final due = w.isBefore(now);
+        // Флажок со сроком (2.7.1) — «С флажком», просрочен со следующего дня.
+        final flag = followUp && e.isFlagged && e.controlState == 0;
+        final due = flag ? FlagDues.overdue(w, now) : w.isBefore(now);
         return ListTile(
           leading: CircleAvatar(
             backgroundColor: (due ? AppColors.errorRed : theme.colorScheme.primary).withValues(alpha: 0.12),
-            child: Icon(followUp ? AppIcons.reply : AppIcons.alarm,
+            child: Icon(flag ? AppIcons.flag : (followUp ? AppIcons.reply : AppIcons.alarm),
                 color: due ? AppColors.errorRed : theme.colorScheme.primary, size: 20),
           ),
           title: Text(e.subject.isEmpty ? l10n.tr('noSubject') : e.subject, maxLines: 1, overflow: TextOverflow.ellipsis),
           subtitle: Text(
-            '${followUp ? l10n.tr('followUpNoReply') : l10n.tr('remindMe')} · '
-            '${capitalize(DateFormat('EEE, d MMM, HH:mm', locale).format(w))}',
+            flag
+                ? '${l10n.tr('flagged')} · ${FlagDues.label(w, l10n)}'
+                : '${followUp ? l10n.tr('followUpNoReply') : l10n.tr('remindMe')} · '
+                    '${capitalize(DateFormat('EEE, d MMM, HH:mm', locale).format(w))}',
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
             style: TextStyle(color: due ? AppColors.errorTextOn(theme) : null),

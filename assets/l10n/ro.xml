@@ -4436,4 +4436,12 @@
     <string name="trackerDetailsDesc">Ce servicii și mesaje, expeditori de încredere</string>
     <string name="weatherAddSecond">Adaugă un al doilea oraș</string>
     <string name="weatherRemoveSecond">Elimină</string>
+    <string name="flagDueTitle">Termenul marcajului</string>
+    <string name="flagToday">Astăzi</string>
+    <string name="flagTomorrow">Mâine</string>
+    <string name="flagThisWeek">Săptămâna aceasta</string>
+    <string name="flagNextWeek">Săptămâna viitoare</string>
+    <string name="flagNoDate">Fără dată</string>
+    <string name="flagClear">Elimină marcajul</string>
+    <string name="phoneSms">Trimite SMS</string>
 </resources>

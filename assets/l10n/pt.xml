@@ -4415,4 +4415,12 @@
     <string name="trackerDetailsDesc">Quais serviços e mensagens, remetentes confiáveis</string>
     <string name="weatherAddSecond">Adicionar uma segunda cidade</string>
     <string name="weatherRemoveSecond">Remover</string>
+    <string name="flagDueTitle">Prazo do sinalizador</string>
+    <string name="flagToday">Hoje</string>
+    <string name="flagTomorrow">Amanhã</string>
+    <string name="flagThisWeek">Esta semana</string>
+    <string name="flagNextWeek">Próxima semana</string>
+    <string name="flagNoDate">Sem data</string>
+    <string name="flagClear">Remover sinalizador</string>
+    <string name="phoneSms">Enviar SMS</string>
 </resources>

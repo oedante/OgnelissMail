@@ -96,7 +96,7 @@ class FileOpener {
   static String safeName(String name) {
     var n = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F\x7F]'), '_');
     // Символы направления и невидимые — убрать: сохранённое имя читается
-    // как есть («счёт.exe», а не «счёт» с перевёрнутым «exe.pdf»), 2.7.1.
+    // как есть («счёт.exe», а не «счёт» с перевёрнутым «exe.pdf»), 2.7.2.
     n = n.replaceAll(RegExp('[\u202A-\u202E\u2066-\u2069\u200B-\u200F\u2060-\u2064\uFEFF]'), '').trim();
     while (n.startsWith('.')) {
       n = n.substring(1);

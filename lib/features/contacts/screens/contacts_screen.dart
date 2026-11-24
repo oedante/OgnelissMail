@@ -1542,7 +1542,7 @@ class _ContactCard extends ConsumerWidget {
     ];
 
     // Удержание номера телефона — позвонить, SMS, мессенджеры, скопировать
-    // (2.7.1); остального — скопировать.
+    // (2.7.2); остального — скопировать.
     Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing, bool phone = false}) => InkWell(
           onTap: onTap ?? () => copy(value),
           onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : () => copy(value),

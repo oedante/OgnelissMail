@@ -101,7 +101,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/splash',
     debugLogDiagnostics: false,
-    // Открытый экран — в строках журнала о медленных кадрах (2.7.1).
+    // Открытый экран — в строках журнала о медленных кадрах (2.7.2).
     observers: [JankMonitor.observer()],
     routes: [
       GoRoute(path: '/splash', name: 'splash', builder: (_, __) => const SplashScreen()),

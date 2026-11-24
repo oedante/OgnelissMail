@@ -157,7 +157,7 @@ function loadCities(dir) {
   });
   const regionIndex = new Map();
   const regions = [];
-  // Часовые пояса (2.7.1: часы городов в «Моём дне») — номер в списке.
+  // Часовые пояса (2.7.2: часы городов в «Моём дне») — номер в списке.
   const zoneIndex = new Map();
   const zones = [];
   const seenIds = new Set();
@@ -302,7 +302,7 @@ function searchCities(places, query, limit = 6) {
       display_name: [shown, region].filter(Boolean).join(', '),
       lat: places.lat[idx].toFixed(4),
       lon: places.lon[idx].toFixed(4),
-      // Часовой пояс места (IANA) — для часов города в приложении (2.7.1).
+      // Часовой пояс места (IANA) — для часов города в приложении (2.7.2).
       ...(timezone ? { timezone } : {}),
     };
   });

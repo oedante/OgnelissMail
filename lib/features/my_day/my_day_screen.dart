@@ -398,7 +398,7 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Часы — перелистывающиеся (1.15.1), справа — погода, если включена.
-        // 2.7.1: несколько городов — листанием (часы и погода каждого).
+        // 2.7.2: несколько городов — листанием (часы и погода каждого).
         const MyDayCityClocks(),
         if (counts.isNotEmpty || (next == null && live.isEmpty)) ...[
           const SizedBox(height: Space.s),

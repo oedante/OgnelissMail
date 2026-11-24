@@ -547,7 +547,7 @@ class EmailListTile extends ConsumerWidget {
                                 final later = showLaterTime && email.remindAt != null && email.laterState == 1;
                                 final due = showControlDue && email.followUpAt != null &&
                                     ControlState.isActive(email.controlState);
-                                // Флажок со сроком (2.7.1, как в Outlook):
+                                // Флажок со сроком (2.7.2, как в Outlook):
                                 // «до сегодня», просроченный — со следующего
                                 // дня, красным.
                                 final flagDue = !due && showControlDue && email.isFlagged &&

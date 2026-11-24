@@ -127,7 +127,7 @@ class MainActivity : FlutterFragmentActivity() {
         return ENGINE_ID
     }
 
-    // Сторож главного потока — только пока окно на экране (2.7.1).
+    // Сторож главного потока — только пока окно на экране (2.7.2).
     override fun onResume() {
         super.onResume()
         MainThreadWatchdog.start()
@@ -164,7 +164,7 @@ class MainActivity : FlutterFragmentActivity() {
         // Без сервисов Google (1.10.x): UnifiedPush.
         PushWakeUnifiedPush.register(messenger, this)
         TranslationBridge.register(messenger)
-        // Сторож главного потока (2.7.1): замирания системы — в журнал.
+        // Сторож главного потока (2.7.2): замирания системы — в журнал.
         MainThreadWatchdog.register(messenger)
         // mailto и «Написать письмо» из других приложений.
         MailtoBridge.register(messenger)

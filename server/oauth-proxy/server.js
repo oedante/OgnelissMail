@@ -242,7 +242,7 @@ function decRt(blob) {
 // Хранилище сессий store.json (GET /token?session, POST /refresh) убрано
 // 24.11.2026: приложения 2.x им не пользуются, а refresh-токены на диске
 // сервера — лишний риск. Файл, если остался, служба не читает; удалить его
-// может владелец (docs/release/OWNER_STEPS_2.7.1.md).
+// может владелец (docs/release/OWNER_STEPS_2.7.2.md).
 if (process.env.STORE_PATH && fs.existsSync(process.env.STORE_PATH)) {
   console.warn(`oauth-proxy: найден ${process.env.STORE_PATH} — хранение токенов на сервере убрано, файл не используется; его можно удалить`);
 }

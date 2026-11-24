@@ -46,7 +46,7 @@ class WeatherPlace {
   final double lat, lon;
 
   /// Часовой пояс города (IANA, «Asia/Yekaterinburg») — для часов города в
-  /// «Моём дне» (2.7.1); null — неизвестен (город выбран до 2.7.1 или сервер
+  /// «Моём дне» (2.7.2); null — неизвестен (город выбран до 2.7.2 или сервер
   /// поиска его не прислал).
   final String? tz;
   const WeatherPlace({required this.name, this.region = '', required this.lat, required this.lon, this.tz});
@@ -226,7 +226,7 @@ class WeatherApi {
       if (parts.isNotEmpty && parts.first == name) parts.removeAt(0);
       // Уточнение — область и страна (последние две части), не весь адрес.
       final region = parts.length > 2 ? parts.sublist(parts.length - 2).join(', ') : parts.join(', ');
-      // Часовой пояс (2.7.1) — сервер поиска Ogneliss берёт его из GeoNames.
+      // Часовой пояс (2.7.2) — сервер поиска Ogneliss берёт его из GeoNames.
       final zone = '${e['timezone'] ?? ''}'.trim();
       out.add(WeatherPlace(
           name: name, region: region, lat: round2(lat), lon: round2(lon), tz: validTz(zone) ? zone : null));
@@ -351,7 +351,7 @@ final weatherApprovedProvider = Provider<bool>((ref) => WeatherApi.termsAccepted
 class WeatherSettings {
   final bool enabled;
 
-  /// Города (2.7.1, просьба владельца 24.11.2026: часы и погода нескольких
+  /// Города (2.7.2, просьба владельца 24.11.2026: часы и погода нескольких
   /// городов в «Моём дне», листанием): первый — свой, всего до
   /// [WeatherSettingsNotifier.maxPlaces].
   final List<WeatherPlace> places;
@@ -384,11 +384,11 @@ class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
 
   static const _kOn = 'weather_on';
 
-  /// Города до 2.7.1 (первый и второй) — читаются, если списка ещё нет.
+  /// Города до 2.7.2 (первый и второй) — читаются, если списка ещё нет.
   static const kPlace = 'weather_place_v1';
   static const kSecond = 'weather_place2_v1';
 
-  /// Список городов (2.7.1): `[{…город…, "w": true}]`, «w» — в виджетах.
+  /// Список городов (2.7.2): `[{…город…, "w": true}]`, «w» — в виджетах.
   static const kPlaces = 'weather_places_v2';
 
   static WeatherPlace? readPlace(SharedPreferences p, String key) {
@@ -399,7 +399,7 @@ class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
     return null;
   }
 
-  /// Города и отметки «в виджетах» из настроек; до 2.7.1 — первый и второй
+  /// Города и отметки «в виджетах» из настроек; до 2.7.2 — первый и второй
   /// город, оба в виджетах. Читает и обновление виджетов (без Riverpod).
   static ({List<WeatherPlace> places, Set<String> widgets}) readPlaces(SharedPreferences p) {
     try {
@@ -519,7 +519,7 @@ class WeatherSettingsNotifier extends StateNotifier<WeatherSettings> {
     return true;
   }
 
-  /// Часовые пояса городов, выбранных до 2.7.1: тот же поиск по имени,
+  /// Часовые пояса городов, выбранных до 2.7.2: тот же поиск по имени,
   /// город с теми же координатами (до 0,1°). Не нашёлся — останется без
   /// часов.
   Future<void> fillTimeZones(Future<List<WeatherPlace>> Function(String name) search) async {
@@ -573,10 +573,11 @@ class WeatherCache {
   WeatherCache._();
   static const key = 'weather_cache_v1';
 
-  /// Кэш второго города (2.7.2; с 2.7.1 списка — не пишется, стирается).
+  /// Кэш второго города (первый вариант второго города; со списком городов
+  /// не пишется, стирается).
   static const secondKey = 'weather_cache2_v1';
 
-  /// Кэш остальных городов (2.7.1): префикс + ключ города.
+  /// Кэш остальных городов (2.7.2): префикс + ключ города.
   static const cityPrefix = 'weather_cache_city:';
 
   static ({double lat, double lon, DateTime expires, String? lastModified, String body, DateTime? fetched})? read(
@@ -650,7 +651,7 @@ final weatherSecondProvider = FutureProvider.autoDispose<WeatherForecast?>((ref)
   return ref.watch(weatherForProvider(key).future);
 });
 
-/// Прогноз города по ключу ([WeatherPlace.key], 2.7.1); null — такого города
+/// Прогноз города по ключу ([WeatherPlace.key], 2.7.2); null — такого города
 /// нет, погода выключена или запрещена.
 final weatherForProvider = FutureProvider.autoDispose.family<WeatherForecast?, String>((ref, key) async {
   final settings = ref.watch(weatherSettingsProvider);

@@ -1854,7 +1854,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         actions: [
           // Флаг «К исполнению» — на виду: в меню «…» его не находили.
           // На широком экране он в панели команд.
-          // Удержание — срок флажка (2.7.1, как в Outlook): сегодня,
+          // Удержание — срок флажка (2.7.2, как в Outlook): сегодня,
           // завтра, на этой неделе, на следующей, без даты.
           if (!wide) GestureDetector(
             onLongPress: () => unawaited(_pickFlagDue(email, l10n)),
@@ -3641,7 +3641,7 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   }
 
   /// Флаг «К исполнению»: сервер, список писем и этот экран — сразу.
-  /// Поставленный — со сроком «Сегодня», как быстрый флажок Outlook (2.7.1).
+  /// Поставленный — со сроком «Сегодня», как быстрый флажок Outlook (2.7.2).
   void _toggleFlag(EmailModel email) => _setFlag(email, !email.isFlagged, FlagDue.today);
 
   void _setFlag(EmailModel email, bool flagged, FlagDue due) {

@@ -1757,7 +1757,7 @@ class SyncService {
             isRead: c.read == null ? const Value.absent() : Value(c.read!),
             isFlagged: c.flagged == null ? const Value.absent() : Value(c.flagged! && !ours.contains(c.id)),
           ));
-          // Срок флажка пользователя (2.7.1): поставили в Outlook «Сегодня»
+          // Срок флажка пользователя (2.7.2): поставили в Outlook «Сегодня»
           // или «Завтра» — тот же срок здесь; сняли флажок — срок тоже. У
           // письма с «На контроле» срок — его (флажок не трогает).
           if (!ours.contains(c.id) && c.flagged != null && (c.flagged == false || c.followUp != null)) {
@@ -4046,7 +4046,7 @@ class SyncService {
               sentAt: Value(email.sentAt),
               isRead: Value(email.isRead),
               isFlagged: Value(email.isFlagged),
-              // Флажок со сроком из Outlook (2.7.1).
+              // Флажок со сроком из Outlook (2.7.2).
               followUpAt: Value(email.followUpAt),
               // Письмо из серверных «Черновиков» — черновик (2.6.8): IMAP
               // отметку не присылает, и беседа показывала его как обычное

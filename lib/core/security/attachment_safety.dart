@@ -42,7 +42,7 @@ class AttachmentSafety {
     'settingcontent-ms', 'search-ms', 'searchconnector-ms', 'chm', 'hlp',
     'apk', 'xapk', 'appx', 'appxbundle', 'msix', 'msixbundle',
     'sh', 'command', 'app', 'pkg', 'run', 'desktop', 'deb', 'rpm',
-    // 2.7.1 (обзор безопасности п. 4): по списку блокировки Outlook (Level 1)
+    // 2.7.2 (обзор безопасности п. 4): по списку блокировки Outlook (Level 1)
     // — Java Web Start, оболочки и скрипты Windows, базы Access с кодом,
     // установщики и пакеты подготовки Windows.
     'jnlp', 'ws', 'msh', 'msh1', 'msh2', 'mshxml', 'msh1xml', 'msh2xml', 'ps1xml', 'ps2', 'ps2xml',
@@ -56,7 +56,7 @@ class AttachmentSafety {
     'iso', 'img', 'vhd', 'vhdx', 'dmg', 'one', 'svg', 'html', 'htm', 'xhtml',
     'mht', 'mhtml', 'rtf', 'iqy', 'slk',
     // Сертификаты (ставятся в доверенные), темы Windows (тянут ресурсы из
-    // сети), архивы CAB, скрипты Python/Perl/Ruby (2.7.1).
+    // сети), архивы CAB, скрипты Python/Perl/Ruby (2.7.2).
     'cer', 'crt', 'der', 'p7b', 'theme', 'themepack', 'cab', 'py', 'pyw', 'pyz', 'pyc', 'pl', 'rb',
   };
 

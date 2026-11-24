@@ -133,7 +133,7 @@ command -v docker >/dev/null || die "Нет docker"
 if docker compose version >/dev/null 2>&1; then DC=(docker compose)
 elif command -v docker-compose >/dev/null; then DC=(docker-compose)
 else die "Нет docker compose"; fi
-for f in server.js bimi.js package.json package-lock.json Dockerfile; do
+for f in server.js bimi.js oidc.js limits.js package.json package-lock.json Dockerfile; do
   [ -f "$SCRIPT_DIR/$f" ] || die "Рядом со скриптом нет $f — запускайте из каталога server/oauth-proxy архива"
 done
 grep -q "authStyle: 'basic'" "$SCRIPT_DIR/server.js" || die "server.js рядом со скриптом — старый (нет Basic для Яндекса)"
@@ -334,18 +334,16 @@ else
   warn "старых секретов нет — будут созданы новые (приложение придётся собрать с новым ключом)"
   : > "$TMP/source.env"
 fi
-# Хранилище сессий старого режима (/token?session=…). Основной вход —
-# stateless (rt в приложении), но сессии тоже переносим, чтобы никого не выкинуть.
+# Хранилище сессий старого режима (/token?session=…) убрано из сервера
+# 24.11.2026: store.json не переносится. Если он нашёлся — только копия в
+# резервную папку (его можно удалить).
 OLD_STORE=""
 for f in "$ROOT$(env_get STORE_PATH "$TMP/source.env")" "$ROOT/var/lib/oauth-proxy/store.json" \
          "$APP_DIR/data/store.json" "$ROOT/opt/oauth-proxy/data/store.json"; do
   [ -n "${f#$ROOT}" ] && [ -s "$f" ] && { OLD_STORE="$f"; break; }
 done
-if [ -z "$OLD_STORE" ] && [ $HAVE_CONTAINER = 1 ]; then
-  docker cp "$CONTAINER:/data/store.json" "$TMP/store.json" >/dev/null 2>&1 && OLD_STORE="$TMP/store.json" || true
-fi
 [ -n "$OLD_STORE" ] && cp "$OLD_STORE" "$TMP/store.json" 2>/dev/null || true
-[ -n "$OLD_STORE" ] && ok "хранилище сессий: ${OLD_STORE#$ROOT} (будет перенесено)" || info "хранилища сессий нет (нужно только для старого режима)"
+[ -n "$OLD_STORE" ] && warn "найден ${OLD_STORE#$ROOT} — сервер его больше не читает (копия — в резервной папке)" || true
 
 [ -z "$BASE_URL" ] && BASE_URL="$(env_get BASE_URL "$TMP/source.env")"
 BASE_URL="${BASE_URL:-https://www.ogneliss.ru/oauth}"; BASE_URL="${BASE_URL%/}"
@@ -443,13 +441,13 @@ fi
 step "Установка в ${APP_DIR#$ROOT}"
 gen() { head -c 48 /dev/urandom | base64 | tr -d '/+=\n' | cut -c1-48; }
 run mkdir -p "$APP_DIR"
-for f in server.js bimi.js package.json package-lock.json Dockerfile; do run cp "$SCRIPT_DIR/$f" "$APP_DIR/"; done
+for f in server.js bimi.js oidc.js limits.js package.json package-lock.json Dockerfile; do run cp "$SCRIPT_DIR/$f" "$APP_DIR/"; done
 # umask 077 (ради .env) дал бы файлам кода права 600: в контейнере Node
 # работает от пользователя node и не прочитал бы их («Cannot read package
 # config /app/package.json: permission denied», 07.10.2026). Код — 644,
 # каталог — 755; секреты — только .env (600), в образ он не попадает.
 run chmod 755 "$APP_DIR"
-for f in server.js bimi.js package.json package-lock.json Dockerfile; do run chmod 644 "$APP_DIR/$f"; done
+for f in server.js bimi.js oidc.js limits.js package.json package-lock.json Dockerfile; do run chmod 644 "$APP_DIR/$f"; done
 printf '.env\n*.env\nnode_modules\n' > "$TMP/dockerignore"
 run cp "$TMP/dockerignore" "$APP_DIR/.dockerignore"
 [ "$DRY" = 1 ] || chmod 644 "$APP_DIR/.dockerignore"
@@ -460,9 +458,9 @@ run cp "$TMP/dockerignore" "$APP_DIR/.dockerignore"
   echo "# Секреты перенесены из ${SRC#$ROOT}"
   grep -E '^[[:space:]]*(export[[:space:]]+)?[A-Z_][A-Z0-9_]*=' "$TMP/source.env" \
     | sed -E 's/^[[:space:]]*export[[:space:]]+//' \
-    | grep -vE '^(HOST|PORT|BASE_URL|STORE_PATH|NODE_ENV|PATH|HOSTNAME|HOME|NODE_VERSION|YARN_VERSION)=' || true
+    | grep -vE '^(HOST|PORT|BASE_URL|STORE_PATH|DATA_DIR|NODE_ENV|PATH|HOSTNAME|HOME|NODE_VERSION|YARN_VERSION)=' || true
   echo "BASE_URL=$BASE_URL"
-  echo "STORE_PATH=/data/store.json"
+  echo "DATA_DIR=/data"
 } > "$TMP/new.env"
 for k in STATE_SECRET PROXY_API_KEY ENC_SECRET; do
   if [ -z "$(env_get "$k" "$TMP/new.env")" ]; then
@@ -540,13 +538,8 @@ else
     tail -n 40 "$TMP/compose.log" >&2
     die "docker compose не собрал/не запустил контейнер (журнал выше). Секреты: $BACKUP"
   fi
-  # Том /data — владельцу node (uid 1000) внутри контейнера; перенос сессий.
+  # Том /data — владельцу node (uid 1000) внутри контейнера (кэш BIMI).
   VOL="oauth-proxy_oauth-proxy-data"
-  if [ -s "$TMP/store.json" ]; then
-    docker run --rm -v "$VOL:/data" -v "$TMP:/src:ro" alpine:3 \
-      sh -c 'cp /src/store.json /data/store.json && chmod 600 /data/store.json' >/dev/null 2>&1 \
-      && ok "хранилище сессий перенесено в том $VOL" || warn "не удалось перенести store.json (копия: $BACKUP)"
-  fi
   docker run --rm -v "$VOL:/data" alpine:3 chown -R 1000:1000 /data >/dev/null 2>&1 || warn "chown тома $VOL не выполнен"
   docker restart "$CONTAINER" >/dev/null
   ok "контейнер $CONTAINER собран и запущен"

@@ -52,10 +52,14 @@ async function waitFor(fn, ms = 8000) {
   return false;
 }
 
+// Ключ приложения: без него служба не запускается (этап 2, 24.11.2026).
+const API_KEY = 'test-push-key-0123456789';
+
 async function request(port, method, p, body, headers = {}) {
+  const h = { 'x-api-key': API_KEY, ...headers };
   const r = await fetch(`http://127.0.0.1:${port}/push${p}`, {
     method,
-    headers: body ? { 'content-type': 'application/json', ...headers } : headers,
+    headers: body ? { 'content-type': 'application/json', ...h } : h,
     body: body ? JSON.stringify(body) : undefined,
   });
   const text = await r.text();
@@ -120,6 +124,7 @@ test('FCM: отправка, удаление недействительных �
       PATH: process.env.PATH,
       PORT: String(port),
       HOST: '127.0.0.1',
+      PUSH_API_KEY: API_KEY,
       DATA_FILE: dataFile,
       TICK_MS: '1000',
       FCM_SERVICE_ACCOUNT_FILE: saFile,

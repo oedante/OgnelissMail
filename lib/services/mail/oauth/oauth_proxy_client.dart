@@ -4,13 +4,13 @@
 // клиента как «blob» (rt). Сервер БД не нужен.
 //
 // Поток:
-//   1) loginUrl(provider) → системный браузер → согласие
-//   2) прокси редиректит в приложение:
-//      com.ogneliss.mail://oauth?at=..&exp=..&rt=<blob>&provider=..
-//   3) handleRedirect(accountId, uri) — сохранить токены
-//   4) getAccessToken(accountId) — отдаёт кэшированный access или обновляет
+//   1) вход — OAuthProxyFlow: системный браузер, возврат в приложение с
+//      одноразовым кодом oc, токены — по POST /exchange {oc, cv} (PKCE);
+//   2) getAccessToken(accountId) — отдаёт кэшированный access или обновляет
 //      через POST /token {rt, provider}; прокси вернёт новый access (+ при
 //      ротации новый rt).
+// Приём токенов прямо из адреса возврата (?at=..&rt=..) убран 24.11.2026
+// (безопасность, этап 2): сервер входа их так больше не отдаёт.
 
 import 'dart:convert';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,24 +48,6 @@ class OAuthProxyClient {
   /// 2.2.0): к серверу входа Ogneliss приложение не обращается — ни за
   /// токеном, ни с отзывом.
   static bool get blockedByPolicy => ManagedPolicy.current.blockExternalServices;
-
-  /// URL для старта авторизации в браузере.
-  Uri loginUrl(String provider, {String? redirect}) {
-    return Uri.parse('$_base/oauth/$provider/login').replace(queryParameters: {
-      'redirect': redirect ?? AppConstants.oauthProxyRedirect,
-    });
-  }
-
-  /// Разобрать redirect от прокси (?at&exp&rt&provider) и сохранить.
-  Future<bool> handleRedirect(String accountId, Uri uri) async {
-    final at = uri.queryParameters['at'];
-    final rt = uri.queryParameters['rt'];
-    final provider = uri.queryParameters['provider'] ?? '';
-    final exp = int.tryParse(uri.queryParameters['exp'] ?? '') ?? 0;
-    if (at == null || at.isEmpty) return false;
-    await _save(accountId, at: at, rt: rt ?? '', provider: provider, exp: exp);
-    return true;
-  }
 
   /// Причина последнего отказа обновления по blob (для журнала и экрана
   /// переподключения). null — последнее обновление прошло.

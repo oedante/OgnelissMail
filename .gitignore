@@ -103,3 +103,6 @@ pubspec.lock
 
 # Рабочие копии агентов Claude (git worktree) — только в контейнере сеанса.
 .claude/worktrees/
+
+# Пакеты серверов (npm ci для проверок)
+server/*/node_modules/

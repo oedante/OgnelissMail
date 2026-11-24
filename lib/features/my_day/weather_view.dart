@@ -9,6 +9,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
+import 'package:timezone/data/latest.dart' as tzdata;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/theme/app_icons.dart';
@@ -19,6 +21,8 @@ import '../../l10n/app_localizations.dart';
 import '../../services/security/managed_config.dart';
 import '../../services/weather/weather_service.dart';
 import '../../widgets/common/app_sheet.dart';
+import '../settings/providers/settings_provider.dart';
+import 'flip_clock.dart';
 
 IconData weatherIcon(WeatherKind? k, {bool night = false}) => switch (k) {
       WeatherKind.clear => night ? AppIcons.clear_night : AppIcons.clear_day,
@@ -96,30 +100,53 @@ class _SourceLink extends StatelessWidget {
   }
 }
 
-/// Значок, температура и город для карточки «Сейчас»; второй город — строкой
-/// ниже (2.7.2, просьба пользователей 23.11.2026: «название города у значка
-/// погоды», «погода в двух городах»). Нажатие — окно погоды. Погода
-/// выключена — ничего.
+/// Время в городе (2.7.1): «настенные» часы его пояса; null — пояс
+/// неизвестен.
+DateTime? cityNow(WeatherPlace p, [DateTime? at]) {
+  final zone = p.tz;
+  if (zone == null) return null;
+  try {
+    if (tz.timeZoneDatabase.locations.isEmpty) tzdata.initializeTimeZones();
+    final t = tz.TZDateTime.from(at ?? DateTime.now(), tz.getLocation(zone));
+    return DateTime(t.year, t.month, t.day, t.hour, t.minute, t.second);
+  } catch (_) {
+    return null;
+  }
+}
+
+/// Разница с часами телефона: «+2:00», «−1:30», '' — то же время.
+String cityShift(WeatherPlace p, [DateTime? at]) {
+  final now = at ?? DateTime.now();
+  final there = cityNow(p, now);
+  if (there == null) return '';
+  final local = DateTime(now.year, now.month, now.day, now.hour, now.minute, now.second);
+  final m = (there.difference(local).inSeconds / 60).round();
+  if (m == 0) return '';
+  final a = m.abs();
+  return '${m > 0 ? '+' : '−'}${a ~/ 60}:${(a % 60).toString().padLeft(2, '0')}';
+}
+
+/// Значок, температура и город для карточки «Сейчас» (2.7.2, просьба
+/// пользователей 23.11.2026: «название города у значка погоды»). [placeKey]
+/// — город ([WeatherPlace.key]); null — свой (первый). Нажатие — окно
+/// погоды. Погода выключена — ничего.
 class WeatherChip extends ConsumerWidget {
-  const WeatherChip({super.key});
+  final String? placeKey;
+  const WeatherChip({super.key, this.placeKey});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(weatherSettingsProvider);
     if (!settings.active || !weatherAllowed(ref)) return const SizedBox.shrink();
+    final place = placeKey == null ? settings.place : settings.byKey(placeKey!);
+    if (place == null) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final muted = AppColors.mutedText(context);
-    final place = settings.place!;
-    final second = settings.second;
-    final f = ref.watch(weatherProvider).value;
-    final f2 = second == null ? null : ref.watch(weatherSecondProvider).value;
-    String said(WeatherPlace p, WeatherForecast w) =>
-        '${p.name}: ${temperatureText(w.now.temp)}, ${weatherLabel(w.now.kind, l10n)}';
-    final label = [
-      f == null ? l10n.tr('weather') : said(place, f),
-      if (second != null && f2 != null) said(second, f2),
-    ].join('; ');
+    final f = ref.watch(weatherForProvider(place.key)).value;
+    final label = f == null
+        ? '${l10n.tr('weather')}: ${place.name}'
+        : '${place.name}: ${temperatureText(f.now.temp)}, ${weatherLabel(f.now.kind, l10n)}';
     return Semantics(
       button: true,
       label: label,
@@ -142,31 +169,141 @@ class WeatherChip extends ConsumerWidget {
                       style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w600)),
                 ]),
               Text(place.name,
-                  key: const ValueKey('weather_city'),
+                  key: ValueKey(placeKey == null ? 'weather_city' : 'weather_city_${place.key}'),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.labelSmall?.copyWith(color: muted)),
-              if (second != null && f2 != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: 2),
-                  child: Row(mainAxisSize: MainAxisSize.min, children: [
-                    Icon(weatherIcon(f2.now.kind, night: f2.now.night), size: 16, color: theme.colorScheme.primary),
-                    const SizedBox(width: 4),
-                    Flexible(
-                      child: Text('${temperatureText(f2.now.temp)} ${second.name}',
-                          key: const ValueKey('weather_city2'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelMedium),
-                    ),
-                  ]),
-                ),
             ]),
           ),
         ),
       ),
     );
   }
+}
+
+/// Часы и погода в карточке «Сейчас» (2.7.1, просьба владельца 24.11.2026:
+/// «часы и погоду для нескольких городов — перелистывать»). Первая
+/// страница — часы телефона и свой город, следующие — часы и погода
+/// каждого города в его поясе; точки внизу. Один город или погода
+/// выключена — как раньше: часы и значок погоды.
+class CityClocks extends ConsumerStatefulWidget {
+  final bool reduceMotion;
+  const CityClocks({super.key, this.reduceMotion = false});
+
+  @override
+  ConsumerState<CityClocks> createState() => _CityClocksState();
+}
+
+class _CityClocksState extends ConsumerState<CityClocks> {
+  final _pages = PageController();
+  int _page = 0;
+
+  /// Пояса городов, выбранных до 2.7.1, — один раз за запуск.
+  static bool _tzAsked = false;
+
+  @override
+  void dispose() {
+    _pages.dispose();
+    super.dispose();
+  }
+
+  void _fillTimeZones(WeatherSettings s) {
+    if (_tzAsked || s.places.every((p) => p.tz != null)) return;
+    _tzAsked = true;
+    final lang = AppLocalizations.of(context).localeCode;
+    final client = ref.read(weatherHttpProvider);
+    final prefs = ref.read(sharedPrefsProvider);
+    unawaited(() async {
+      try {
+        final ends = await WeatherEndpoints.load(prefs, client);
+        if (ends.geocoder.isEmpty) return;
+        await ref
+            .read(weatherSettingsProvider.notifier)
+            .fillTimeZones((name) => WeatherApi.search(client, name, lang, url: ends.geocoder));
+      } catch (_) {}
+    }());
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = ref.watch(weatherSettingsProvider);
+    final clock = FlipClock(height: 40, reduceMotion: widget.reduceMotion);
+    final on = s.active && weatherAllowed(ref);
+    // Прогнозы городов виджетов — свежими, даже если их страницу не листали
+    // (виджет берёт сохранённый прогноз).
+    if (on) {
+      for (final k in s.widgetKeys) {
+        ref.watch(weatherForProvider(k));
+      }
+    }
+    if (!on || s.places.length < 2) {
+      return Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+        clock,
+        const Spacer(),
+        const WeatherChip(),
+      ]);
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) _fillTimeZones(s);
+    });
+    final theme = Theme.of(context);
+    final muted = AppColors.mutedText(context);
+    final pages = <Widget>[
+      Row(crossAxisAlignment: CrossAxisAlignment.center, children: [clock, const Spacer(), const WeatherChip()]),
+      for (final p in s.places.skip(1))
+        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+          Expanded(
+            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.start, children: [
+              if (cityNow(p) != null)
+                FlipClock(height: 30, reduceMotion: widget.reduceMotion, clock: () => cityNow(p) ?? DateTime.now()),
+              Text(
+                [p.name, cityShift(p)].where((x) => x.isNotEmpty).join(' · '),
+                key: ValueKey('city_clock_${p.key}'),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: cityNow(p) == null
+                    ? theme.textTheme.titleMedium
+                    : theme.textTheme.labelMedium?.copyWith(color: muted),
+              ),
+            ]),
+          ),
+          WeatherChip(placeKey: p.key),
+        ]),
+    ];
+    return Column(mainAxisSize: MainAxisSize.min, children: [
+      SizedBox(
+        height: 60,
+        child: PageView(
+          key: const ValueKey('city_pages'),
+          controller: _pages,
+          onPageChanged: (i) => setState(() => _page = i),
+          children: pages,
+        ),
+      ),
+      const SizedBox(height: Space.xs),
+      Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+        for (var i = 0; i < pages.length; i++)
+          Container(
+            width: 6,
+            height: 6,
+            margin: const EdgeInsets.symmetric(horizontal: 3),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: i == _page ? theme.colorScheme.primary : muted.withValues(alpha: 0.35),
+            ),
+          ),
+      ]),
+    ]);
+  }
+}
+
+/// Часы и погода в «Моём дне» — с настройкой «уменьшить движение».
+class MyDayCityClocks extends ConsumerWidget {
+  const MyDayCityClocks({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      CityClocks(reduceMotion: ref.watch(settingsProvider.select((s) => s.reduceMotion)));
 }
 
 /// Окно погоды: сейчас, сегодня, по часам, источник; сменить город,
@@ -257,9 +394,9 @@ class _WeatherSheet extends ConsumerWidget {
             ),
           ],
         ],
-        // Второй город (2.7.2): сейчас и сегодня; добавить или убрать.
+        // Города (2.7.1): сейчас и сегодня, «в виджетах», добавить, убрать.
         const SizedBox(height: Space.m),
-        const _SecondCity(),
+        const _Cities(),
         const SizedBox(height: Space.s),
         if (f?.fetchedAt case final at?)
           Text(l10n.tr('weatherFetchedAt').replaceAll('{time}', _when(at, l10n)),
@@ -293,77 +430,106 @@ class _WeatherSheet extends ConsumerWidget {
   }
 }
 
-/// Второй город в окне погоды: строка «значок, температура, город, сегодня»
-/// и «Убрать»; нет — кнопка «Добавить второй город».
-class _SecondCity extends ConsumerWidget {
-  const _SecondCity();
+/// Города в окне погоды (2.7.1): у каждого — сейчас и сегодня, «в
+/// виджетах» (не больше двух) и меню «Сделать первым», «Убрать»; внизу —
+/// «Добавить город» (до пяти).
+class _Cities extends ConsumerWidget {
+  const _Cities();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final muted = AppColors.mutedText(context);
-    final second = ref.watch(weatherSettingsProvider).second;
-    if (second == null) {
-      return Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: TextButton.icon(
-          key: const ValueKey('weather_add_second'),
-          icon: const Icon(AppIcons.add_location_alt, size: 18),
-          label: Text(l10n.tr('weatherAddSecond')),
-          onPressed: () {
-            Navigator.of(context).pop();
-            unawaited(showWeatherPlacePicker(context, second: true));
-          },
-        ),
-      );
-    }
-    final f = ref.watch(weatherSecondProvider).value;
-    return Row(children: [
-      Icon(f == null ? AppIcons.cloud : weatherIcon(f.now.kind, night: f.now.night),
-          size: 28, color: f == null ? muted : theme.colorScheme.primary),
-      const SizedBox(width: Space.m),
-      Expanded(
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(f == null ? second.name : '${temperatureText(f.now.temp)} · ${second.name}',
-              maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
-          Text(
-            f == null
-                ? (second.region.isEmpty ? l10n.tr('weatherUnavailable') : second.region)
-                : [
-                    weatherLabel(f.now.kind, l10n),
-                    l10n
-                        .tr('weatherTodayRange')
-                        .replaceAll('{min}', temperatureText(f.min))
-                        .replaceAll('{max}', temperatureText(f.max)),
-                  ].where((x) => x.isNotEmpty).join(' · '),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: theme.textTheme.bodySmall?.copyWith(color: muted),
+    final s = ref.watch(weatherSettingsProvider);
+    final n = ref.read(weatherSettingsProvider.notifier);
+    final full = s.widgetKeys.length >= WeatherSettingsNotifier.maxWidget;
+    return Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: [
+      for (final (i, p) in s.places.indexed)
+        Builder(builder: (context) {
+          final f = ref.watch(weatherForProvider(p.key)).value;
+          final inWidgets = s.widgetKeys.contains(p.key);
+          final time = cityNow(p);
+          return Padding(
+            key: ValueKey('weather_place_${p.key}'),
+            padding: const EdgeInsets.symmetric(vertical: Space.xs),
+            child: Row(children: [
+              Icon(f == null ? AppIcons.cloud : weatherIcon(f.now.kind, night: f.now.night),
+                  size: 28, color: f == null ? muted : theme.colorScheme.primary),
+              const SizedBox(width: Space.m),
+              Expanded(
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text(f == null ? p.name : '${temperatureText(f.now.temp)} · ${p.name}',
+                      maxLines: 1, overflow: TextOverflow.ellipsis, style: theme.textTheme.titleMedium),
+                  Text(
+                    [
+                      if (i > 0 && time != null) DateFormat('HH:mm').format(time),
+                      if (f != null) ...[
+                        weatherLabel(f.now.kind, l10n),
+                        l10n
+                            .tr('weatherTodayRange')
+                            .replaceAll('{min}', temperatureText(f.min))
+                            .replaceAll('{max}', temperatureText(f.max)),
+                      ] else
+                        p.region.isEmpty ? l10n.tr('weatherUnavailable') : p.region,
+                    ].where((x) => x.isNotEmpty).join(' · '),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(color: muted),
+                  ),
+                ]),
+              ),
+              IconButton(
+                key: ValueKey('weather_widget_${p.key}'),
+                tooltip: l10n.tr(inWidgets ? 'weatherInWidgets' : (full ? 'weatherWidgetLimit' : 'weatherShowInWidgets')),
+                isSelected: inWidgets,
+                icon: Icon(AppIcons.widgets, color: inWidgets ? theme.colorScheme.primary : muted),
+                onPressed: !inWidgets && full ? null : () => unawaited(n.setInWidgets(p.key, !inWidgets)),
+              ),
+              PopupMenuButton<String>(
+                key: ValueKey('weather_menu_${p.key}'),
+                icon: Icon(AppIcons.more_vert, color: muted),
+                onSelected: (v) => unawaited(v == 'first' ? n.makeFirst(p.key) : n.removePlace(p.key)),
+                itemBuilder: (_) => [
+                  if (i > 0) PopupMenuItem(value: 'first', child: Text(l10n.tr('weatherMakeFirst'))),
+                  PopupMenuItem(value: 'remove', child: Text(l10n.tr('weatherRemoveSecond'))),
+                ],
+              ),
+            ]),
+          );
+        }),
+      if (full)
+        Text(l10n.tr('weatherWidgetLimit'), style: theme.textTheme.bodySmall?.copyWith(color: muted)),
+      if (s.places.length < WeatherSettingsNotifier.maxPlaces)
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: TextButton.icon(
+            key: const ValueKey('weather_add_city'),
+            icon: const Icon(AppIcons.add_location_alt, size: 18),
+            label: Text(l10n.tr('weatherAddCity')),
+            onPressed: () {
+              Navigator.of(context).pop();
+              unawaited(showWeatherPlacePicker(context, add: true));
+            },
           ),
-        ]),
-      ),
-      TextButton(
-        key: const ValueKey('weather_remove_second'),
-        onPressed: () => unawaited(ref.read(weatherSettingsProvider.notifier).removeSecond()),
-        child: Text(l10n.tr('weatherRemoveSecond')),
-      ),
+        ),
     ]);
   }
 }
 
 /// Выбор города: поиск по нажатию «Найти» (как было с OpenStreetMap — не
-/// подсказки на каждую букву), список найденного. [second] — второй город.
-Future<void> showWeatherPlacePicker(BuildContext context, {bool second = false}) => showAppSheet<void>(
+/// подсказки на каждую букву), список найденного. [add] — ещё один город
+/// (2.7.1, до пяти), иначе — свой (первый).
+Future<void> showWeatherPlacePicker(BuildContext context, {bool add = false}) => showAppSheet<void>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => _PlacePicker(second: second),
+      builder: (_) => _PlacePicker(add: add),
     );
 
 class _PlacePicker extends ConsumerStatefulWidget {
-  final bool second;
-  const _PlacePicker({this.second = false});
+  final bool add;
+  const _PlacePicker({this.add = false});
 
   @override
   ConsumerState<_PlacePicker> createState() => _PlacePickerState();
@@ -486,7 +652,11 @@ class _PlacePickerState extends ConsumerState<_PlacePicker> {
                     subtitle: p.region.isEmpty ? null : Text(p.region),
                     onTap: () async {
                       final n = ref.read(weatherSettingsProvider.notifier);
-                      await (widget.second ? n.setSecond(p) : n.setPlace(p));
+                      if (widget.add) {
+                        await n.addPlace(p);
+                      } else {
+                        await n.setPlace(p);
+                      }
                       if (context.mounted) Navigator.of(context).pop();
                     },
                   ),

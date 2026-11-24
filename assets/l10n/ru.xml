@@ -4457,4 +4457,17 @@
     <string name="trackerDetailsDesc">Какие сервисы и письма, доверенные отправители</string>
     <string name="weatherAddSecond">Добавить второй город</string>
     <string name="weatherRemoveSecond">Убрать</string>
+    <string name="flagDueTitle">Срок флажка</string>
+    <string name="flagToday">Сегодня</string>
+    <string name="flagTomorrow">Завтра</string>
+    <string name="flagThisWeek">На этой неделе</string>
+    <string name="flagNextWeek">На следующей неделе</string>
+    <string name="flagNoDate">Без даты</string>
+    <string name="flagClear">Снять флажок</string>
+    <string name="phoneSms">Написать SMS</string>
+    <string name="weatherAddCity">Добавить город</string>
+    <string name="weatherInWidgets">В виджетах — убрать</string>
+    <string name="weatherShowInWidgets">Показывать в виджетах</string>
+    <string name="weatherWidgetLimit">В виджетах — не больше двух городов</string>
+    <string name="weatherMakeFirst">Сделать первым</string>
 </resources>

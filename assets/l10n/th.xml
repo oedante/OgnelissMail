@@ -4394,4 +4394,17 @@
     <string name="trackerDetailsDesc">บริการและข้อความใดบ้าง ผู้ส่งที่เชื่อถือได้</string>
     <string name="weatherAddSecond">เพิ่มเมืองที่สอง</string>
     <string name="weatherRemoveSecond">นำออก</string>
+    <string name="flagDueTitle">กำหนดของธง</string>
+    <string name="flagToday">วันนี้</string>
+    <string name="flagTomorrow">พรุ่งนี้</string>
+    <string name="flagThisWeek">สัปดาห์นี้</string>
+    <string name="flagNextWeek">สัปดาห์หน้า</string>
+    <string name="flagNoDate">ไม่มีวันที่</string>
+    <string name="flagClear">ล้างธง</string>
+    <string name="phoneSms">ส่ง SMS</string>
+    <string name="weatherAddCity">เพิ่มเมือง</string>
+    <string name="weatherInWidgets">อยู่ในวิดเจ็ต — นำออก</string>
+    <string name="weatherShowInWidgets">แสดงในวิดเจ็ต</string>
+    <string name="weatherWidgetLimit">วิดเจ็ตแสดงได้ไม่เกินสองเมือง</string>
+    <string name="weatherMakeFirst">ย้ายไปเป็นอันดับแรก</string>
 </resources>

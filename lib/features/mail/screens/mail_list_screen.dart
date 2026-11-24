@@ -554,6 +554,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     // Набранный поиск ещё ждал паузы (300 мс), а лента ушла — без отмены
     // таймер обращался к ушедшему экрану (1.12.x).
     _searchDebounce?.cancel();
+    _skeletonTimer?.cancel();
     FocusManager.instance.removeListener(_onFocusChanged);
     _listFocus.dispose();
     // Экран ушёл в режиме выбора — вернуть кнопку «Написать» оболочке.
@@ -1043,7 +1044,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         position: panePos,
         body: Focus(
           focusNode: _listFocus,
-          child: _withBottomStrips(_buildBody(emailState, theme, l10n, settings)),
+          child: _withBottomStrips(_buildBodyKeepingPrevious(emailState, theme, l10n, settings)),
         ),
       ),
     )),
@@ -1468,6 +1469,52 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           ),
       ],
     );
+  }
+
+  /// Прежняя лента, пока грузится новая (2.7.1, «немного моргает» —
+  /// запись владельца 24.11.2026): при смене ящика или папки список
+  /// пересоздаётся, и на 4–5 кадров вместо писем были серые заготовки
+  /// строк. Теперь до [_keepPreviousFor] остаётся прежний список (нажатия
+  /// по нему не проходят), заготовки — только если загрузка дольше.
+  static const _keepPreviousFor = Duration(milliseconds: 350);
+  EmailListState? _lastLoaded;
+  DateTime? _loadingSince;
+  Timer? _skeletonTimer;
+  bool _showedPrevious = false;
+
+  Widget _buildBodyKeepingPrevious(
+    EmailListState emailState,
+    ThemeData theme,
+    AppLocalizations l10n,
+    AppSettings settings,
+  ) {
+    if (!emailState.isLoading) {
+      _loadingSince = null;
+      _skeletonTimer?.cancel();
+      _skeletonTimer = null;
+      if (_showedPrevious) {
+        // Новый список — с начала, как раньше после заготовок (список
+        // прежнего ящика мог быть прокручен).
+        _showedPrevious = false;
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (mounted && _scrollController.hasClients && _scrollController.offset > 0) _scrollController.jumpTo(0);
+        });
+      }
+      if (!_isSearching) _lastLoaded = emailState;
+      return _buildBody(emailState, theme, l10n, settings);
+    }
+    final prev = _lastLoaded;
+    final since = _loadingSince ??= DateTime.now();
+    final waited = DateTime.now().difference(since);
+    if (prev != null && !_isSearching && waited < _keepPreviousFor) {
+      _skeletonTimer ??= Timer(_keepPreviousFor - waited, () {
+        _skeletonTimer = null;
+        if (mounted) setState(() {});
+      });
+      _showedPrevious = true;
+      return IgnorePointer(child: _buildBody(prev, theme, l10n, settings));
+    }
+    return _buildBody(emailState, theme, l10n, settings);
   }
 
   Widget _buildBody(

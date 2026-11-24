@@ -4415,4 +4415,17 @@
     <string name="trackerDetailsDesc">Welke diensten en berichten, vertrouwde afzenders</string>
     <string name="weatherAddSecond">Tweede stad toevoegen</string>
     <string name="weatherRemoveSecond">Verwijderen</string>
+    <string name="flagDueTitle">Vervaldatum vlag</string>
+    <string name="flagToday">Vandaag</string>
+    <string name="flagTomorrow">Morgen</string>
+    <string name="flagThisWeek">Deze week</string>
+    <string name="flagNextWeek">Volgende week</string>
+    <string name="flagNoDate">Geen datum</string>
+    <string name="flagClear">Vlag wissen</string>
+    <string name="phoneSms">Sms sturen</string>
+    <string name="weatherAddCity">Stad toevoegen</string>
+    <string name="weatherInWidgets">In widgets — verwijderen</string>
+    <string name="weatherShowInWidgets">Tonen in widgets</string>
+    <string name="weatherWidgetLimit">Widgets tonen hoogstens twee steden</string>
+    <string name="weatherMakeFirst">Als eerste</string>
 </resources>

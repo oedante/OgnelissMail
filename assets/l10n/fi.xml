@@ -4415,4 +4415,17 @@
     <string name="trackerDetailsDesc">Mitkä palvelut ja viestit, luotetut lähettäjät</string>
     <string name="weatherAddSecond">Lisää toinen kaupunki</string>
     <string name="weatherRemoveSecond">Poista</string>
+    <string name="flagDueTitle">Lipun eräpäivä</string>
+    <string name="flagToday">Tänään</string>
+    <string name="flagTomorrow">Huomenna</string>
+    <string name="flagThisWeek">Tällä viikolla</string>
+    <string name="flagNextWeek">Ensi viikolla</string>
+    <string name="flagNoDate">Ei päivämäärää</string>
+    <string name="flagClear">Poista lippu</string>
+    <string name="phoneSms">Lähetä tekstiviesti</string>
+    <string name="weatherAddCity">Lisää kaupunki</string>
+    <string name="weatherInWidgets">Widgeteissä — poista</string>
+    <string name="weatherShowInWidgets">Näytä widgeteissä</string>
+    <string name="weatherWidgetLimit">Widgeteissä enintään kaksi kaupunkia</string>
+    <string name="weatherMakeFirst">Siirrä ensimmäiseksi</string>
 </resources>

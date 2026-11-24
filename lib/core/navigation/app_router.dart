@@ -1,6 +1,7 @@
 // lib/core/navigation/app_router.dart
 // Финальный роутер — ВСЕ маршруты приложения.
 
+import '../logging/jank_monitor.dart';
 import '../../features/mail/screens/mail_list_pager.dart';
 import '../../features/mail/screens/outbox_screen.dart';
 import '../../features/mail/screens/attachment_preview_screen.dart' show AttachmentPreviewScreen, PreviewItem;
@@ -100,6 +101,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     initialLocation: '/splash',
     debugLogDiagnostics: false,
+    // Открытый экран — в строках журнала о медленных кадрах (2.7.1).
+    observers: [JankMonitor.observer()],
     routes: [
       GoRoute(path: '/splash', name: 'splash', builder: (_, __) => const SplashScreen()),
       GoRoute(path: '/onboarding', name: 'onboarding', builder: (_, __) => const OnboardingScreen()),
@@ -112,6 +115,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
 
       // Main Shell
       ShellRoute(
+        observers: [JankMonitor.observer()],
         builder: (_, state, child) => MainShell(child: child),
         routes: [
           GoRoute(

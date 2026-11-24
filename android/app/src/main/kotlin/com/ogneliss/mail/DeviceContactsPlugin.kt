@@ -12,8 +12,13 @@ package com.ogneliss.mail
 // Разрешения READ_CONTACTS/WRITE_CONTACTS уже объявлены в AndroidManifest.xml;
 // запрос у пользователя выполняется на стороне Dart (permission_handler).
 
+import android.Manifest
 import android.content.ContentProviderOperation
+import android.content.ContentUris
 import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Handler
 import android.os.Looper
 import android.provider.ContactsContract
@@ -60,9 +65,94 @@ object DeviceContactsPlugin {
                         }
                     }
                 }
+                // Удержание номера телефона (2.7.1, просьба пользователя):
+                // мессенджеры, привязанные к номеру в контактах телефона
+                // (WhatsApp, Telegram, Viber…), — как в системных «Контактах».
+                "phoneApps" -> {
+                    val number = call.argument<String>("phone") ?: ""
+                    worker.execute {
+                        val list = try {
+                            phoneApps(app, number)
+                        } catch (e: Exception) {
+                            emptyList<Map<String, Any?>>()
+                        }
+                        main.post { result.success(list) }
+                    }
+                }
+                "openData" -> {
+                    val id = call.argument<Number>("id")?.toLong()
+                    val mime = call.argument<String>("mime")
+                    if (id == null || mime == null) {
+                        result.success(false)
+                    } else {
+                        val ok = try {
+                            val uri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, id)
+                            app.startActivity(
+                                Intent(Intent.ACTION_VIEW).setDataAndType(uri, mime).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            )
+                            true
+                        } catch (e: Exception) {
+                            false
+                        }
+                        result.success(ok)
+                    }
+                }
                 else -> result.notImplemented()
             }
         }
+    }
+
+    /// Строки приложений-мессенджеров у контактов телефона с этим номером:
+    /// id строки, её тип (mimetype), подпись действия («Сообщение +7 …»,
+    /// «Голосовой звонок …» — её задаёт само приложение) и название
+    /// приложения. Без разрешения на контакты — пусто.
+    private fun phoneApps(context: Context, number: String): List<Map<String, Any?>> {
+        if (number.isBlank()) return emptyList()
+        if (context.checkSelfPermission(Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
+            return emptyList()
+        }
+        val cr = context.contentResolver
+        val ids = HashSet<Long>()
+        val lookup = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number))
+        cr.query(lookup, arrayOf(ContactsContract.PhoneLookup._ID), null, null, null)?.use { c ->
+            while (c.moveToNext()) ids.add(c.getLong(0))
+        }
+        if (ids.isEmpty()) return emptyList()
+        val pm = context.packageManager
+        val labels = HashMap<String, String?>()
+        val out = ArrayList<Map<String, Any?>>()
+        val seen = HashSet<String>()
+        cr.query(
+            ContactsContract.Data.CONTENT_URI,
+            arrayOf(
+                ContactsContract.Data._ID,
+                ContactsContract.Data.MIMETYPE,
+                ContactsContract.Data.DATA1,
+                ContactsContract.Data.DATA3,
+            ),
+            "${ContactsContract.Data.CONTACT_ID} IN (${ids.joinToString(",")}) AND " +
+                "${ContactsContract.Data.MIMETYPE} LIKE 'vnd.android.cursor.item/vnd.%'",
+            null,
+            null,
+        )?.use { c ->
+            while (c.moveToNext() && out.size < 8) {
+                val id = c.getLong(0)
+                val mime = c.getString(1) ?: continue
+                val action = (c.getString(3) ?: c.getString(2) ?: "").trim()
+                if (action.isEmpty() || !seen.add("$mime|$action")) continue
+                val uri = ContentUris.withAppendedId(ContactsContract.Data.CONTENT_URI, id)
+                val appName = labels.getOrPut(mime) {
+                    try {
+                        pm.queryIntentActivities(Intent(Intent.ACTION_VIEW).setDataAndType(uri, mime), 0)
+                            .firstOrNull()?.loadLabel(pm)?.toString()
+                    } catch (e: Exception) {
+                        null
+                    }
+                } ?: continue // приложения нет — открыть нечем
+                out.add(mapOf("id" to id, "mime" to mime, "label" to action, "app" to appName))
+            }
+        }
+        return out
     }
 
     /// Читает контакты с e-mail. Возвращает список Map с ключами, которые ждёт Dart:

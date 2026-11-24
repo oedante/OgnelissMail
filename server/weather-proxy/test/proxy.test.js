@@ -116,6 +116,8 @@ test('поиск: посёлки и аэропорты России, повто�
   let s = searchCities(cities, 'Сабетта');
   assert.deepStrictEqual(s.map((x) => x.name), ['Сабетта', 'Международный аэропорт Сабетта']);
   assert.strictEqual(s[0].display_name, 'Сабетта, Yamalo-Nenets, Russia');
+  // 2.7.1: часовой пояс места — для часов города в «Моём дне».
+  assert.strictEqual(s[0].timezone, 'Asia/Yekaterinburg');
   s = searchCities(cities, 'Sabetta');
   assert.deepStrictEqual(s.map((x) => x.name), ['Sabetta', 'Sabetta International Airport']);
   // По коду аэропорта IATA — тоже, с названием, а не кодом.

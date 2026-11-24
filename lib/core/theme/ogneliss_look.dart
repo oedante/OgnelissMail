@@ -33,6 +33,15 @@ class OgnelissLook extends ThemeExtension<OgnelissLook> {
   OgnelissLook copyWith({bool? outlined, bool? cardBorder}) =>
       OgnelissLook(outlined: outlined ?? this.outlined, cardBorder: cardBorder ?? this.cardBorder);
 
+  // Сравнение по значению — см. AppearanceLook (тема из тех же настроек —
+  // та же тема, без анимации перехода).
+  @override
+  bool operator ==(Object other) =>
+      other is OgnelissLook && other.outlined == outlined && other.cardBorder == cardBorder;
+
+  @override
+  int get hashCode => Object.hash(outlined, cardBorder);
+
   @override
   OgnelissLook lerp(covariant OgnelissLook? other, double t) => t < 0.5 || other == null ? this : other;
 }

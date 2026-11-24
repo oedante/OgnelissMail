@@ -4415,4 +4415,17 @@
     <string name="trackerDetailsDesc">Services et messages concernés, expéditeurs de confiance</string>
     <string name="weatherAddSecond">Ajouter une deuxième ville</string>
     <string name="weatherRemoveSecond">Retirer</string>
+    <string name="flagDueTitle">Échéance de l\'indicateur</string>
+    <string name="flagToday">Aujourd\'hui</string>
+    <string name="flagTomorrow">Demain</string>
+    <string name="flagThisWeek">Cette semaine</string>
+    <string name="flagNextWeek">La semaine prochaine</string>
+    <string name="flagNoDate">Sans date</string>
+    <string name="flagClear">Supprimer l\'indicateur</string>
+    <string name="phoneSms">Envoyer un SMS</string>
+    <string name="weatherAddCity">Ajouter une ville</string>
+    <string name="weatherInWidgets">Dans les widgets — retirer</string>
+    <string name="weatherShowInWidgets">Afficher dans les widgets</string>
+    <string name="weatherWidgetLimit">Les widgets affichent deux villes au plus</string>
+    <string name="weatherMakeFirst">Mettre en premier</string>
 </resources>

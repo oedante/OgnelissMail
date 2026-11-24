@@ -27,7 +27,7 @@
 //   GET /forecast?lat=..&lon=..  — тело ответа MET как есть (JSON), Expires
 //                                  и Last-Modified; If-Modified-Since → 304
 //   GET /search?q=..&accept-language=ru&limit=6
-//                                — [{name, display_name, lat, lon}] (как у
+//                                — [{name, display_name, lat, lon, timezone}] (как у
 //                                  Nominatim format=jsonv2 — приложение
 //                                  разбирает тем же кодом)
 //   GET /bimi?d=<домен>[&s=<селектор>]
@@ -157,11 +157,15 @@ function loadCities(dir) {
   });
   const regionIndex = new Map();
   const regions = [];
+  // Часовые пояса (2.7.1: часы городов в «Моём дне») — номер в списке.
+  const zoneIndex = new Map();
+  const zones = [];
   const seenIds = new Set();
   const lat = [];
   const lon = [];
   const pop = [];
   const reg = [];
+  const zone = [];
   const keyStart = [];
   const nameStart = [];
   const keyChunks = [];
@@ -212,10 +216,18 @@ function loadCities(dir) {
         regions.push([admin1.get(regionKey), countries.get(p[8]) || p[8]].filter(Boolean).join(', '));
         regionIndex.set(regionKey, r);
       }
+      const tzName = String(p[17] || '').trim();
+      let z = zoneIndex.get(tzName);
+      if (z === undefined) {
+        z = zones.length;
+        zones.push(tzName);
+        zoneIndex.set(tzName, z);
+      }
       lat.push(la);
       lon.push(lo);
       pop.push(Number(p[14]) || 0);
       reg.push(r);
+      zone.push(z);
       keyStart.push(keyLen);
       nameStart.push(nameLen);
       keyParts.push(k);
@@ -237,6 +249,8 @@ function loadCities(dir) {
     population: Int32Array.from(pop),
     region: Int32Array.from(reg),
     regions,
+    zone: Int32Array.from(zone),
+    zones,
   };
 }
 
@@ -282,11 +296,14 @@ function searchCities(places, query, limit = 6) {
   return scored.slice(0, Math.max(1, Math.min(limit, 10))).map(([idx]) => {
     const shown = shownName(places, idx, q, query);
     const region = places.regions[places.region[idx]];
+    const timezone = places.zones && places.zone ? places.zones[places.zone[idx]] : '';
     return {
       name: shown,
       display_name: [shown, region].filter(Boolean).join(', '),
       lat: places.lat[idx].toFixed(4),
       lon: places.lon[idx].toFixed(4),
+      // Часовой пояс места (IANA) — для часов города в приложении (2.7.1).
+      ...(timezone ? { timezone } : {}),
     };
   });
 }

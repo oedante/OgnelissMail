@@ -4394,4 +4394,17 @@
     <string name="trackerDetailsDesc">Dịch vụ và thư nào, người gửi tin cậy</string>
     <string name="weatherAddSecond">Thêm thành phố thứ hai</string>
     <string name="weatherRemoveSecond">Bỏ</string>
+    <string name="flagDueTitle">Hạn của cờ</string>
+    <string name="flagToday">Hôm nay</string>
+    <string name="flagTomorrow">Ngày mai</string>
+    <string name="flagThisWeek">Tuần này</string>
+    <string name="flagNextWeek">Tuần sau</string>
+    <string name="flagNoDate">Không có ngày</string>
+    <string name="flagClear">Bỏ cờ</string>
+    <string name="phoneSms">Gửi SMS</string>
+    <string name="weatherAddCity">Thêm thành phố</string>
+    <string name="weatherInWidgets">Trong tiện ích — bỏ</string>
+    <string name="weatherShowInWidgets">Hiển thị trong tiện ích</string>
+    <string name="weatherWidgetLimit">Tiện ích hiển thị tối đa hai thành phố</string>
+    <string name="weatherMakeFirst">Đặt lên đầu</string>
 </resources>

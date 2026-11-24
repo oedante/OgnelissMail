@@ -23,6 +23,7 @@ import '../../features/settings/providers/module_settings_provider.dart' show mo
 import '../contacts/colleague_directory.dart';
 import '../../core/utils/mail_domains.dart' show mailDomainOf, isPublicMailDomain;
 import '../../core/errors/app_exceptions.dart' show looksLikeAuthError, looksTransientError, OAuthRefreshFailure;
+import '../mail/flag_due.dart';
 import '../mail/offline_send_service.dart';
 import '../mail/draft_sync_service.dart';
 import '../mail/dav/dav_pim_service.dart';
@@ -573,7 +574,14 @@ class SyncService {
       if (mine.isEmpty || isPublicMailDomain(mine)) return;
       final db = _ref.read(databaseProvider);
       final dayAgo = DateTime.now().subtract(const Duration(hours: 24));
-      final rows = await (db.select(db.contacts)..where((t) => t.accountId.equals(acc.id))).get();
+      // Только те, что пора сверять: раньше каждый проход читал все
+      // контакты ящика целиком, с фото (мегабайты в главном потоке —
+      // микрофризы, 24.11.2026).
+      final rows = await (db.select(db.contacts)
+            ..where((t) =>
+                t.accountId.equals(acc.id) &
+                (force ? const Constant(true) : (t.dirCheckedAt.isNull() | t.dirCheckedAt.isSmallerThanValue(dayAgo)))))
+          .get();
       final due = [
         for (final r in rows)
           if (isColleagueEmail(r.email, acc.email) &&
@@ -1749,6 +1757,19 @@ class SyncService {
             isRead: c.read == null ? const Value.absent() : Value(c.read!),
             isFlagged: c.flagged == null ? const Value.absent() : Value(c.flagged! && !ours.contains(c.id)),
           ));
+          // Срок флажка пользователя (2.7.1): поставили в Outlook «Сегодня»
+          // или «Завтра» — тот же срок здесь; сняли флажок — срок тоже. У
+          // письма с «На контроле» срок — его (флажок не трогает).
+          if (!ours.contains(c.id) && c.flagged != null && (c.flagged == false || c.followUp != null)) {
+            await (db.update(db.emails)
+                  ..where((e) =>
+                      e.accountId.equals(accountId) &
+                      e.id.equals(c.id) &
+                      e.isLocallyModified.equals(false) &
+                      e.controlState.equals(0)))
+                .write(EmailsCompanion(
+                    followUpAt: Value(c.flagged! ? FlagDues.fromServer(c.followUp?.due) : null)));
+          }
         }
       });
       final marks = _ref.read(markSyncProvider);
@@ -4025,6 +4046,8 @@ class SyncService {
               sentAt: Value(email.sentAt),
               isRead: Value(email.isRead),
               isFlagged: Value(email.isFlagged),
+              // Флажок со сроком из Outlook (2.7.1).
+              followUpAt: Value(email.followUpAt),
               // Письмо из серверных «Черновиков» — черновик (2.6.8): IMAP
               // отметку не присылает, и беседа показывала его как обычное
               // письмо — с «Ответить», без «Редактировать».

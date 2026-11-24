@@ -4415,4 +4415,17 @@
     <string name="trackerDetailsDesc">Hangi hizmetler ve iletiler, güvenilen gönderenler</string>
     <string name="weatherAddSecond">İkinci şehir ekle</string>
     <string name="weatherRemoveSecond">Kaldır</string>
+    <string name="flagDueTitle">Bayrak bitiş tarihi</string>
+    <string name="flagToday">Bugün</string>
+    <string name="flagTomorrow">Yarın</string>
+    <string name="flagThisWeek">Bu hafta</string>
+    <string name="flagNextWeek">Gelecek hafta</string>
+    <string name="flagNoDate">Tarih yok</string>
+    <string name="flagClear">Bayrağı kaldır</string>
+    <string name="phoneSms">SMS gönder</string>
+    <string name="weatherAddCity">Şehir ekle</string>
+    <string name="weatherInWidgets">Widget\'larda — kaldır</string>
+    <string name="weatherShowInWidgets">Widget\'larda göster</string>
+    <string name="weatherWidgetLimit">Widget\'lar en fazla iki şehir gösterir</string>
+    <string name="weatherMakeFirst">İlk yap</string>
 </resources>

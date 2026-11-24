@@ -10,12 +10,15 @@
 // отчества тоже нет (замечание 09.10.2026).
 
 import 'dart:async';
-import 'dart:convert';
+import 'dart:isolate';
 
 import 'package:drift/drift.dart' show TableUpdateQuery;
+import 'package:flutter/foundation.dart' show visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/logging/perf_mark.dart';
 import '../../core/utils/person_names.dart';
+import '../../data/database/app_database.dart' show AppDatabase;
 import '../../data/providers/database_provider.dart';
 import '../../services/contacts/person_name_directory.dart';
 import '../../services/mail/own_addresses.dart';
@@ -88,35 +91,47 @@ final _contactsTickProvider = StreamProvider<int>((ref) {
 /// Адрес → самое полное имя. Перечитывается, когда меняются контакты
 /// (1.8.0: исправленное в контакте ФИО раньше доходило до писем и встреч
 /// только после перезапуска).
-final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
+///
+/// 2.7.1 (микрофризы 24.11.2026: «Новое сообщение» открылось, но ~1,5 с не
+/// реагировало на нажатия): раньше читались ВСЕ поля всех контактов — с
+/// фото из CardDAV (Google, iCloud), которые хранятся в базе текстом
+/// data:image, это мегабайты; и до 4000 строк JSON адресатов разбирались
+/// в главном потоке. Теперь из базы — только адрес и имена (адресаты
+/// разбираются самим SQLite), а сборка словаря при большом объёме — в
+/// отдельном изоляте. Пересчёт — при смене контактов и имён или адресов
+/// своих ящиков, а не при каждом обновлении счётчика непрочитанных.
+final personNamesProvider = FutureProvider<Map<String, String>>((ref) {
   ref.watch(_contactsTickProvider);
   final db = ref.watch(databaseProvider);
-  final out = <String, String>{};
-  void offer(String? email, String? name) {
-    if (email == null || name == null) return;
-    final e = email.trim().toLowerCase();
-    if (e.isEmpty) return;
-    final n = normalizePersonName(name);
-    if (n.isEmpty || n.contains('@') || !n.contains(' ')) return;
-    // Текст вместо имени (спам: «Вам перевод … получить тут https://…») —
-    // не имя, каким бы «полным» ни был (2.3.2).
-    if (!PersonNames.plausible(n)) return;
-    // Битое имя («Ермишин Ол� 5г»: закодированное слово заголовка From
-    // разорвано посреди буквы) не берём — иначе оно, «длиннее» на слово,
-    // вытесняло правильное и попадало в адресата и приветствие (1.6.33).
-    if (n.contains('\uFFFD')) return;
-    final prev = out[e];
-    if (prev == null || _words(n).length > _words(prev).length) out[e] = n;
-  }
-
+  // Свои адреса — именем своего ящика (2.3.2): в письмах с подделанным
+  // отправителем или получателем «ваш» адрес подписан чужим текстом.
+  ref.watch(accountsProvider.select((list) => [
+        for (final a in list) '${a.id}|${a.displayName}|${OwnAddresses.of(a).join(',')}',
+      ].join('\n')));
+  final own = <(List<String>, String)>[];
   try {
-    for (final c in await db.select(db.contacts).get()) {
-      final composed = [c.lastName, c.firstName, c.middleName]
+    for (final a in ref.read(accountsProvider)) {
+      own.add((OwnAddresses.of(a).toList(), a.displayName));
+    }
+  } catch (_) {}
+
+  return PerfMark.run('имена из контактов и писем', () => _loadPersonNames(db, own));
+});
+
+Future<Map<String, String>> _loadPersonNames(AppDatabase db, List<(List<String>, String)> own) async {
+  final pairs = <(String?, String?)>[];
+  try {
+    final contacts = await db
+        .customSelect('SELECT email, display_name, first_name, middle_name, last_name FROM contacts')
+        .get();
+    for (final c in contacts) {
+      final email = c.read<String?>('email');
+      final composed = [c.read<String?>('last_name'), c.read<String?>('first_name'), c.read<String?>('middle_name')]
           .where((p) => p != null && p.trim().isNotEmpty)
           .map((p) => p!.trim())
           .join(' ');
-      offer(c.email, composed);
-      offer(c.email, c.displayName);
+      pairs.add((email, composed));
+      pairs.add((email, c.read<String?>('display_name')));
     }
     // Письма из «Спама» и «Корзины» имён не дают (2.3.2): в них имя
     // отправителя и адресата часто подделано.
@@ -128,42 +143,70 @@ final personNamesProvider = FutureProvider<Map<String, String>>((ref) async {
             'GROUP BY lower(from_email), from_name LIMIT 20000')
         .get();
     for (final r in senders) {
-      offer(r.read<String?>('e'), r.read<String?>('n'));
+      pairs.add((r.read<String?>('e'), r.read<String?>('n')));
     }
-    // Адресаты — из последних писем: по всем письмам разбирать JSON долго.
+    // Адресаты — из последних писем: JSON разбирает SQLite (json_each),
+    // в приложение приходят уже пары «адрес — имя» без повторов.
+    String recipients(String column) => 'SELECT json_extract(j.value, \'\$.email\') AS e, '
+        'COALESCE(json_extract(j.value, \'\$.displayName\'), json_extract(j.value, \'\$.name\')) AS n '
+        'FROM (SELECT $column AS js FROM emails WHERE $notJunk ORDER BY received_at DESC LIMIT 4000) m, '
+        "json_each(CASE WHEN json_valid(m.js) THEN m.js ELSE '[]' END) j "
+        "WHERE j.type = 'object'";
     final recips = await db
-        .customSelect('SELECT to_recipients AS t, cc_json AS c FROM emails WHERE $notJunk '
-            'ORDER BY received_at DESC LIMIT 4000')
+        .customSelect('SELECT e, n FROM (${recipients('to_recipients')} UNION ALL ${recipients('cc_json')}) '
+            "WHERE e IS NOT NULL AND n IS NOT NULL AND n != '' GROUP BY lower(e), n")
         .get();
     for (final r in recips) {
-      for (final js in [r.read<String?>('t'), r.read<String?>('c')]) {
-        if (js == null || js.isEmpty) continue;
-        try {
-          for (final m in (jsonDecode(js) as List).whereType<Map>()) {
-            offer(m['email']?.toString(), (m['displayName'] ?? m['name'])?.toString());
-          }
-        } catch (_) {}
-      }
+      pairs.add((r.data['e']?.toString(), r.data['n']?.toString()));
     }
   } catch (_) {
     // Имена — украшение: ошибка запроса не должна ломать список контактов.
   }
-  // Свои адреса — именем своего ящика (2.3.2): в письмах с подделанным
-  // отправителем или получателем «ваш» адрес подписан чужим текстом.
+  // Немного — сразу; много (тысячи писем) — в отдельном изоляте, чтобы
+  // разбор имён не держал экран.
+  if (pairs.length < 3000) return buildPersonNames(pairs, own);
   try {
-    for (final a in ref.watch(accountsProvider)) {
-      final name = normalizePersonName(a.displayName);
-      for (final e in OwnAddresses.of(a)) {
-        if (name.isNotEmpty && !name.contains('@')) {
-          out[e] = name;
-        } else {
-          out.remove(e);
-        }
+    return await Isolate.run(() => buildPersonNames(pairs, own));
+  } catch (_) {
+    return buildPersonNames(pairs, own);
+  }
+}
+
+/// Словарь «адрес → самое полное имя» из пар «адрес — имя» (контакты,
+/// отправители, адресаты — в этом порядке) и своих ящиков ([own]: адреса и
+/// имя ящика). Имя-адрес, однословные, «не имя» (текст спама) и битые имена
+/// не берутся; из двух — с большим числом слов.
+@visibleForTesting
+Map<String, String> buildPersonNames(List<(String?, String?)> pairs, List<(List<String>, String)> own) {
+  final out = <String, String>{};
+  for (final (email, name) in pairs) {
+    if (email == null || name == null) continue;
+    final e = email.trim().toLowerCase();
+    if (e.isEmpty) continue;
+    final n = normalizePersonName(name);
+    if (n.isEmpty || n.contains('@') || !n.contains(' ')) continue;
+    // Текст вместо имени (спам: «Вам перевод … получить тут https://…») —
+    // не имя, каким бы «полным» ни был (2.3.2).
+    if (!PersonNames.plausible(n)) continue;
+    // Битое имя («Ермишин Ол� 5г»: закодированное слово заголовка From
+    // разорвано посреди буквы) не берём — иначе оно, «длиннее» на слово,
+    // вытесняло правильное и попадало в адресата и приветствие (1.6.33).
+    if (n.contains('\uFFFD')) continue;
+    final prev = out[e];
+    if (prev == null || _words(n).length > _words(prev).length) out[e] = n;
+  }
+  for (final (addresses, displayName) in own) {
+    final name = normalizePersonName(displayName);
+    for (final e in addresses) {
+      if (name.isNotEmpty && !name.contains('@')) {
+        out[e] = name;
+      } else {
+        out.remove(e);
       }
     }
-  } catch (_) {}
+  }
   return out;
-});
+}
 
 /// Типы папок «Спам» и «Корзина» для запросов (индексы [FolderType]).
 const _junkTypes = '3, 4';

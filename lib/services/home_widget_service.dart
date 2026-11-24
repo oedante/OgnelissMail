@@ -38,7 +38,7 @@ import 'security/pin_lock_service.dart' show pinLockProvider;
 import '../l10n/app_localizations.dart';
 import 'mail/control_service.dart' show ControlState;
 import 'security/managed_config.dart' show ManagedPolicy;
-import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind, WeatherSettingsNotifier;
+import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind, WeatherSettings, WeatherSettingsNotifier;
 import 'accounts/account_labels.dart' show AccountLabels;
 import 'calendar/meeting_link_service.dart';
 import 'calendar/pending_invites.dart' show loadPendingInvites;
@@ -440,20 +440,28 @@ class HomeWidgetService {
   /// 23.11.2026: «название города к значку погоды», «погода в двух
   /// городах»). Погода выключена, запрещена организацией или прогноз старше
   /// 6 часов — null (виджет без неё).
+  ///
+  /// 2.7.1 (просьба владельца 24.11.2026): городов в «Моём дне» до пяти,
+  /// в виджетах — отмеченные «в виджетах» (не больше двух).
   static String? weatherLine(SharedPreferences prefs, DateTime now) {
     try {
       if (prefs.getBool('weather_on') != true) return null;
       if (ManagedPolicy.current.blockWeather) return null;
-      final first = _weatherOne(prefs, now, WeatherCache.key, WeatherSettingsNotifier.kPlace);
-      if (first == null) return null;
-      final second = _weatherOne(prefs, now, WeatherCache.secondKey, WeatherSettingsNotifier.kSecond);
-      return second == null ? first : '$first  ·  $second';
+      final r = WeatherSettingsNotifier.readPlaces(prefs);
+      final s = WeatherSettings(enabled: true, places: r.places, widgetKeys: r.widgets);
+      final parts = [
+        for (final p in s.widgetPlaces) ?_weatherOne(prefs, now, WeatherSettingsNotifier.cacheKeyFor(s, p), p.name),
+      ];
+      // Города в настройках нет (не записался), а прогноз своего города
+      // сохранён — без названия, как до 2.7.2.
+      if (parts.isEmpty && s.places.isEmpty) return _weatherOne(prefs, now, WeatherCache.key, '');
+      return parts.isEmpty ? null : parts.join('  ·  ');
     } catch (_) {
       return null;
     }
   }
 
-  static String? _weatherOne(SharedPreferences prefs, DateTime now, String cacheKey, String placeKey) {
+  static String? _weatherOne(SharedPreferences prefs, DateTime now, String cacheKey, String city) {
     final cached = WeatherCache.read(prefs, key: cacheKey);
     if (cached == null) return null;
     final fetched = cached.fetched;
@@ -474,7 +482,6 @@ class HomeWidgetService {
       WeatherKind.thunder => '⛈',
       null => '',
     };
-    final city = WeatherSettingsNotifier.readPlace(prefs, placeKey)?.name ?? '';
     return '${icon.isEmpty ? '' : '$icon '}${t < 0 ? '−${-t}' : '$t'}°${city.isEmpty ? '' : ' $city'}';
   }
 

@@ -4394,4 +4394,17 @@
     <string name="trackerDetailsDesc">どのサービスとメールか、信頼する送信者</string>
     <string name="weatherAddSecond">2つ目の都市を追加</string>
     <string name="weatherRemoveSecond">削除</string>
+    <string name="flagDueTitle">フラグの期限</string>
+    <string name="flagToday">今日</string>
+    <string name="flagTomorrow">明日</string>
+    <string name="flagThisWeek">今週</string>
+    <string name="flagNextWeek">来週</string>
+    <string name="flagNoDate">日付なし</string>
+    <string name="flagClear">フラグをクリア</string>
+    <string name="phoneSms">SMS を送信</string>
+    <string name="weatherAddCity">都市を追加</string>
+    <string name="weatherInWidgets">ウィジェットに表示中 — 外す</string>
+    <string name="weatherShowInWidgets">ウィジェットに表示</string>
+    <string name="weatherWidgetLimit">ウィジェットに表示できるのは2都市まで</string>
+    <string name="weatherMakeFirst">最初にする</string>
 </resources>

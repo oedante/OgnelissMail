@@ -20,12 +20,27 @@
 // (PerfMark): «главный поток: письмо: разбор HTML 420 мс; шло:
 // синхронизация: папка Входящие».
 
+//
+// 2.7.1 (микрофризы 24.11.2026: «Новое сообщение» открылось, но ~1,5 с не
+// реагировало на нажатия; в журнале — только «худший 223 мс» за минуту):
+// - подробная строка — для кадров от [_detail] (100 мс), не от 250;
+// - в строке — открытый экран и сколько он открыт («экран compose, 0,3 с»);
+// - сторож главного потока: замирание, когда кадров нет вовсе (интерфейс
+//   ничего не рисовал и не отвечал на касания), — «Главный поток занят»;
+// - на Android — такой же сторож главного потока системы (встроенные окна
+//   браузера, плагины): «Android: главный поток занят» — видно, чья это
+//   задержка, приложения или системы.
+
+import 'dart:async';
 import 'dart:developer' show Timeline;
+import 'dart:io' show Platform;
 import 'dart:ui' show FramePhase, FrameTiming;
 
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/widgets.dart' show AppLifecycleListener, AppLifecycleState;
+import 'package:flutter/services.dart' show MethodChannel;
+import 'package:flutter/widgets.dart'
+    show AppLifecycleListener, AppLifecycleState, NavigatorObserver, PopupRoute, Route, WidgetsBinding;
 
 import 'app_logger.dart';
 import 'perf_mark.dart';
@@ -33,9 +48,46 @@ import 'perf_mark.dart';
 class JankMonitor {
   JankMonitor._();
 
-  static const _slow = Duration(milliseconds: 250);
+  static const _detail = Duration(milliseconds: 100);
   static const _janky = Duration(milliseconds: 34); // два кадра при 60 Гц
   static const _perMinute = 5;
+
+  /// Сторож главного потока: шаг и с какого опоздания писать.
+  static const _tick = Duration(milliseconds: 250);
+  static const _stall = Duration(milliseconds: 300);
+  static Timer? _watch;
+  static Stopwatch? _clock;
+  static int _lastTickMs = 0;
+  static int _stallsLogged = 0;
+  static int _nativeTicks = 0;
+  static const _native = MethodChannel('ogneliss/main_thread');
+
+  /// Открытый экран (имя маршрута) и с какого времени — для строк журнала.
+  static String? _screen;
+  static DateTime? _screenAt;
+
+  /// Наблюдатель за экранами для навигатора: у каждого навигатора — свой
+  /// (общий и вложенный навигатор вкладок).
+  static NavigatorObserver observer() => _ScreenObserver();
+
+  static void _onScreen(Route<dynamic>? route) {
+    if (route == null) return;
+    final name = route.settings.name;
+    _screen = (name == null || name.isEmpty)
+        ? (route is PopupRoute ? 'окно поверх экрана' : null) ?? _screen
+        : (name.startsWith('/') ? name.split('/').where((p) => p.isNotEmpty && !p.startsWith(':')).take(2).join('/') : name);
+    _screenAt = DateTime.now();
+  }
+
+  /// «экран compose, открыт 0,3 с назад» — или '' (экран неизвестен).
+  @visibleForTesting
+  static String screenNote([DateTime? now]) {
+    final s = _screen, at = _screenAt;
+    if (s == null || at == null) return '';
+    final ms = (now ?? DateTime.now()).difference(at).inMilliseconds;
+    final ago = ms < 10000 ? '${(ms / 1000).toStringAsFixed(1).replaceAll('.', ',')} с' : '${(ms / 1000).round()} с';
+    return 'экран ${s.isEmpty ? '/' : s}, открыт $ago назад';
+  }
 
   static bool _started = false;
   static DateTime _windowStart = DateTime.now();
@@ -54,8 +106,66 @@ class JankMonitor {
     if (_started) return;
     _started = true;
     _windowStart = DateTime.now();
-    _lifecycle = AppLifecycleListener(onStateChange: (_) => _lifecycleAt = DateTime.now());
     SchedulerBinding.instance.addTimingsCallback(_onTimings);
+    _lifecycle = AppLifecycleListener(onStateChange: (state) {
+      _lifecycleAt = DateTime.now();
+      if (state == AppLifecycleState.resumed) {
+        _startWatch();
+      } else {
+        _stopWatch();
+      }
+    });
+    if (WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed ||
+        WidgetsBinding.instance.lifecycleState == null) {
+      _startWatch();
+    }
+  }
+
+  static void _startWatch() {
+    if (_watch != null) return;
+    final clock = _clock ??= (Stopwatch()..start());
+    _lastTickMs = clock.elapsedMilliseconds;
+    _watch = Timer.periodic(_tick, (_) => _onTick());
+  }
+
+  static void _stopWatch() {
+    _watch?.cancel();
+    _watch = null;
+  }
+
+  static void _onTick() {
+    final clock = _clock;
+    if (clock == null) return;
+    final now = clock.elapsedMilliseconds;
+    final late = now - _lastTickMs - _tick.inMilliseconds;
+    _lastTickMs = now;
+    final changed = _lifecycleAt;
+    final settled = changed == null || DateTime.now().difference(changed) > Duration(milliseconds: late + 1000);
+    if (late >= _stall.inMilliseconds && settled && _stallsLogged < _perMinute) {
+      _stallsLogged++;
+      final nowUs = Timeline.now;
+      final busy = PerfMark.describe(PerfMark.during(nowUs - (late + 250) * 1000, nowUs));
+      final where = screenNote();
+      AppLogger.info('Главный поток занят $late мс${where.isEmpty ? '' : ' ($where)'}${busy.isEmpty ? '' : ' — $busy'}');
+    }
+    // Сторож Android — раз в 5 с: что он насчитал, пока мы не спрашивали.
+    if (!kIsWeb && Platform.isAndroid && ++_nativeTicks % 20 == 0) unawaited(_takeNative());
+  }
+
+  static Future<void> _takeNative() async {
+    try {
+      final list = await _native.invokeListMethod<Object?>('take');
+      for (final e in list ?? const <Object?>[]) {
+        if (e is! List || e.length < 2) continue;
+        final at = DateTime.fromMillisecondsSinceEpoch((e[0] as num).toInt());
+        final ms = (e[1] as num).toInt();
+        final t = '${at.hour.toString().padLeft(2, '0')}:${at.minute.toString().padLeft(2, '0')}:'
+            '${at.second.toString().padLeft(2, '0')}';
+        AppLogger.info('Android: главный поток занят $ms мс (в $t)');
+      }
+    } catch (_) {
+      // Старая сборка без сторожа или канал занят — не важно.
+    }
   }
 
   static void _onTimings(List<FrameTiming> timings) {
@@ -71,11 +181,13 @@ class JankMonitor {
       _jankyFrames++;
       final ms = total.inMilliseconds;
       if (ms > _worstMs) _worstMs = ms;
-      if (total >= _slow && _logged < _perMinute) {
+      if (total >= _detail && _logged < _perMinute) {
         _logged++;
         final w = windowOf(t, Timeline.now);
         final busy = PerfMark.describe(PerfMark.during(w.from, w.to));
-        AppLogger.info('Медленный кадр: $ms мс (${phasesOf(t)})${busy.isEmpty ? '' : ' — $busy'}');
+        final where = screenNote();
+        AppLogger.info('Медленный кадр: $ms мс (${phasesOf(t)}${where.isEmpty ? '' : '; $where'})'
+            '${busy.isEmpty ? '' : ' — $busy'}');
       }
     }
     if (now.difference(_windowStart) >= const Duration(minutes: 1)) {
@@ -87,6 +199,7 @@ class JankMonitor {
       _jankyFrames = 0;
       _worstMs = 0;
       _logged = 0;
+      _stallsLogged = 0;
     }
   }
 
@@ -116,4 +229,19 @@ class JankMonitor {
         'очередь отрисовки ${ms(FramePhase.buildFinish, FramePhase.rasterStart)}, '
         'отрисовка ${t.rasterDuration.inMilliseconds}';
   }
+}
+
+/// Запоминает открытый экран для строк журнала ([JankMonitor.screenNote]).
+class _ScreenObserver extends NavigatorObserver {
+  @override
+  void didPush(Route<dynamic> route, Route<dynamic>? previousRoute) => JankMonitor._onScreen(route);
+
+  @override
+  void didPop(Route<dynamic> route, Route<dynamic>? previousRoute) => JankMonitor._onScreen(previousRoute);
+
+  @override
+  void didReplace({Route<dynamic>? newRoute, Route<dynamic>? oldRoute}) => JankMonitor._onScreen(newRoute);
+
+  @override
+  void didRemove(Route<dynamic> route, Route<dynamic>? previousRoute) => JankMonitor._onScreen(previousRoute);
 }

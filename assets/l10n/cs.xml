@@ -4436,4 +4436,17 @@
     <string name="trackerDetailsDesc">Které služby a zprávy, důvěryhodní odesílatelé</string>
     <string name="weatherAddSecond">Přidat druhé město</string>
     <string name="weatherRemoveSecond">Odebrat</string>
+    <string name="flagDueTitle">Termín příznaku</string>
+    <string name="flagToday">Dnes</string>
+    <string name="flagTomorrow">Zítra</string>
+    <string name="flagThisWeek">Tento týden</string>
+    <string name="flagNextWeek">Příští týden</string>
+    <string name="flagNoDate">Bez data</string>
+    <string name="flagClear">Zrušit příznak</string>
+    <string name="phoneSms">Poslat SMS</string>
+    <string name="weatherAddCity">Přidat město</string>
+    <string name="weatherInWidgets">Ve widgetech — odebrat</string>
+    <string name="weatherShowInWidgets">Zobrazit ve widgetech</string>
+    <string name="weatherWidgetLimit">Widgety ukazují nejvýše dvě města</string>
+    <string name="weatherMakeFirst">Dát jako první</string>
 </resources>

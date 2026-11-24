@@ -7,6 +7,7 @@
 // - Semantics для screen reader
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
+import '../../../services/mail/flag_due.dart';
 import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/text_safe.dart';
 import '../../../services/accounts/account_labels.dart';
@@ -546,11 +547,17 @@ class EmailListTile extends ConsumerWidget {
                                 final later = showLaterTime && email.remindAt != null && email.laterState == 1;
                                 final due = showControlDue && email.followUpAt != null &&
                                     ControlState.isActive(email.controlState);
-                                final overdue = due && email.followUpAt!.isBefore(DateTime.now());
+                                // Флажок со сроком (2.7.1, как в Outlook):
+                                // «до сегодня», просроченный — со следующего
+                                // дня, красным.
+                                final flagDue = !due && showControlDue && email.isFlagged &&
+                                    email.followUpAt != null && email.controlState == ControlState.none;
+                                final overdue = (due && email.followUpAt!.isBefore(DateTime.now())) ||
+                                    (flagDue && FlagDues.overdue(email.followUpAt!));
                                 final l10n = AppLocalizations.of(context);
                                 final text = later
                                     ? laterTimeLabel(email.remindAt!.toLocal(), l10n)
-                                    : due
+                                    : due || flagDue
                                         ? l10n.tr('controlUntil').replaceAll(
                                             '{when}', controlDeadlineLabel(email.followUpAt!.toLocal(), l10n))
                                         : _formatTime(context, email.receivedAt);
@@ -558,7 +565,7 @@ class EmailListTile extends ConsumerWidget {
                                 // «новые письма почти незаметны»; дизайн-система,
                                 // «Строка списка»): время — цветом акцента, точка —
                                 // на портрете (имя не сдвигает).
-                                final fresh = isUnread && !later && !due;
+                                final fresh = isUnread && !later && !due && !flagDue;
                                 return Text(
                                   text,
                                   style: theme.textTheme.bodySmall?.copyWith(

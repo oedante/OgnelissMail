@@ -725,16 +725,20 @@ class AccountsNotifier extends StateNotifier<List<AccountModel>> {
   /// раньше каждая синхронизация пересобирала список ящиков, и всё, что от
   /// него зависит (меню, лента, «Мой день»), перестраивалось (план
   /// 08.11.2026 п. 3).
+  /// Число непрочитанных ящика — только в базу (2.7.1, микрофризы
+  /// 24.11.2026). Раньше оно меняло и список ящиков, а за списком следят
+  /// десятки экранов и служб (лента, меню, «Мой день», календарь, словарь
+  /// имён): каждая синхронизация с новым письмом или прочтение пересобирали
+  /// их посреди перехода. Живые числа на экранах — из потоков базы
+  /// ([unifiedUnreadByKeyProvider]).
+  final Map<String, int> _unreadWritten = {};
+
   Future<void> updateUnreadCount(String accountId, int count) async {
-    final cur = state.where((a) => a.id == accountId).firstOrNull;
-    if (cur != null && cur.unreadCount == count) return;
+    final cur = _unreadWritten[accountId] ?? state.where((a) => a.id == accountId).firstOrNull?.unreadCount;
+    if (cur == count) return;
+    _unreadWritten[accountId] = count;
     await (_db.update(_db.accounts)..where((a) => a.id.equals(accountId)))
         .write(AccountsCompanion(unreadCount: Value(count)));
-
-    state = state.map((a) {
-      if (a.id == accountId) return a.copyWith(unreadCount: count);
-      return a;
-    }).toList();
   }
 
   /// Изменить порядок аккаунтов

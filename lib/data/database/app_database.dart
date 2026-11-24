@@ -2554,6 +2554,9 @@ class AppDatabase extends _$AppDatabase {
     return (select(emails)
           ..where((e) => e.followUpAt.isNotNull())
           ..where((e) => e.followUpAt.isSmallerOrEqualValue(now))
+          // Срок флажка (2.7.1, письмо с флажком без «На контроле») — не
+          // напоминание «нет ответа»: остаётся, просроченный виден красным.
+          ..where((e) => e.controlState.isBiggerThanValue(0) | e.isFlagged.equals(false))
           ..limit(limit))
         .get();
   }
@@ -3193,6 +3196,18 @@ LazyDatabase _openSecondary(String path, String? dbKey) {
   });
 }
 
+/// В сборке нет шифрования базы (библиотека SQLite без sqlite3mc): почту
+/// хранить открытым текстом нельзя — приложение не открывает базу
+/// (2.7.1, обзор безопасности п. 1). Данные на диске не трогаются.
+class DbEncryptionUnavailableException implements Exception {
+  const DbEncryptionUnavailableException();
+  @override
+  String toString() =>
+      'Эта сборка приложения не может зашифровать почту на устройстве, '
+      'поэтому не открывает её. Данные не потеряны. Установите приложение '
+      'заново из магазина приложений.';
+}
+
 /// Управление ключом шифрования БД.
 /// Хранилище ключей не отдало ключ шифрования базы. Повторить позже —
 /// база цела.
@@ -3238,17 +3253,39 @@ class DbEncryption {
     }
   }
 
-  static String? _prepareLocked(File file, String key) {
-    final k = key.replaceAll("'", "''");
-    // Есть ли шифрование в загруженной библиотеке.
+  /// Есть ли шифрование в загруженной библиотеке SQLite (sqlite3mc).
+  static bool cipherAvailable() {
     try {
       final probe = s3.sqlite3.openInMemory();
       try {
-        if (probe.select('PRAGMA cipher').isEmpty) return null;
+        return probe.select('PRAGMA cipher').isNotEmpty;
       } finally {
         probe.close();
       }
     } catch (_) {
+      return false;
+    }
+  }
+
+  /// Проверка шифрования в библиотеке (тесты подменяют).
+  @visibleForTesting
+  static bool Function() cipherProbe = cipherAvailable;
+
+  /// База — только зашифрованная (2.7.1, внешний обзор безопасности
+  /// 23.11.2026, п. 1): в выпуске библиотека без шифрования — ошибка
+  /// запуска с понятным текстом, а не база открытым текстом. Без
+  /// шифрования — только отладка и тесты.
+  @visibleForTesting
+  static bool requireCipher = kReleaseMode;
+
+  /// Открывать базу нельзя: шифрование обязательно, а его нет.
+  static bool mustRefuse() => requireCipher && !cipherProbe();
+
+  static String? _prepareLocked(File file, String key) {
+    final k = key.replaceAll("'", "''");
+    // Есть ли шифрование в загруженной библиотеке.
+    if (!cipherProbe()) {
+      if (requireCipher) throw const DbEncryptionUnavailableException();
       return null;
     }
     if (!file.existsSync()) return key;

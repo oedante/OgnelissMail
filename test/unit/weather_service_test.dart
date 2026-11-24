@@ -263,7 +263,7 @@ void main() {
       expect(await c.read(weatherSecondProvider.future), isNotNull);
       expect({for (final r in met()) r.url.queryParameters['lon']}, {'49.11', '37.62'});
       expect(prefs.getString(WeatherCache.key), isNotNull);
-      expect(prefs.getString(WeatherCache.secondKey), isNotNull);
+      expect(prefs.getString('${WeatherCache.cityPrefix}55.75,37.62'), isNotNull);
 
       // Виджет: город у каждой температуры.
       final line = HomeWidgetService.weatherLine(prefs, DateTime.now())!;
@@ -273,7 +273,7 @@ void main() {
 
       await n.removeSecond();
       expect(n.state.second, isNull);
-      expect(prefs.getString(WeatherCache.secondKey), isNull);
+      expect(prefs.getString('${WeatherCache.cityPrefix}55.75,37.62'), isNull);
       expect(await make().read(weatherSecondProvider.future), isNull);
       expect(HomeWidgetService.weatherLine(prefs, DateTime.now()), allOf(contains('Казань'), isNot(contains('Москва'))));
 

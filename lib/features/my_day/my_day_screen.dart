@@ -66,7 +66,6 @@ import '../../widgets/common/quick_long_press.dart' show secondaryAsHold;
 import '../../widgets/common/inline_notice.dart' show showInlineNotice;
 
 import 'day_stats.dart';
-import 'flip_clock.dart';
 import 'weather_view.dart';
 import '../../services/weather/weather_service.dart' show weatherProvider;
 import '../../core/theme/ogneliss_look.dart';
@@ -399,11 +398,8 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Часы — перелистывающиеся (1.15.1), справа — погода, если включена.
-        Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-          FlipClock(height: 40, reduceMotion: ref.watch(settingsProvider).reduceMotion),
-          const Spacer(),
-          const WeatherChip(),
-        ]),
+        // 2.7.1: несколько городов — листанием (часы и погода каждого).
+        const MyDayCityClocks(),
         if (counts.isNotEmpty || (next == null && live.isEmpty)) ...[
           const SizedBox(height: Space.s),
           Text(

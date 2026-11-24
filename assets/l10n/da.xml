@@ -4415,4 +4415,17 @@
     <string name="trackerDetailsDesc">Hvilke tjenester og beskeder, betroede afsendere</string>
     <string name="weatherAddSecond">Tilføj en anden by</string>
     <string name="weatherRemoveSecond">Fjern</string>
+    <string name="flagDueTitle">Forfald for flag</string>
+    <string name="flagToday">I dag</string>
+    <string name="flagTomorrow">I morgen</string>
+    <string name="flagThisWeek">Denne uge</string>
+    <string name="flagNextWeek">Næste uge</string>
+    <string name="flagNoDate">Ingen dato</string>
+    <string name="flagClear">Fjern flag</string>
+    <string name="phoneSms">Send sms</string>
+    <string name="weatherAddCity">Tilføj by</string>
+    <string name="weatherInWidgets">I widgets — fjern</string>
+    <string name="weatherShowInWidgets">Vis i widgets</string>
+    <string name="weatherWidgetLimit">Widgets viser højst to byer</string>
+    <string name="weatherMakeFirst">Gør til første</string>
 </resources>

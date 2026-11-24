@@ -235,6 +235,7 @@ class EmailModel {
     bool? isLocallyModified, DateTime? cachedAt, DateTime? remindAt, String? meetingJson,
     int? controlState, int? laterState, String? controlReplied, DateTime? followUpAt,
     bool clearBody = false, bool clearReminder = false, bool clearControl = false,
+    bool clearFollowUp = false,
   }) {
     return EmailModel(
       id: id ?? this.id, accountId: accountId ?? this.accountId,
@@ -270,7 +271,7 @@ class EmailModel {
       controlState: controlState ?? this.controlState,
       laterState: laterState ?? this.laterState,
       controlReplied: clearControl ? null : (controlReplied ?? this.controlReplied),
-      followUpAt: clearControl ? null : (followUpAt ?? this.followUpAt),
+      followUpAt: clearControl || clearFollowUp ? null : (followUpAt ?? this.followUpAt),
     );
   }
 }

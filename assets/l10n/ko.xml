@@ -4394,4 +4394,17 @@
     <string name="trackerDetailsDesc">어떤 서비스와 메일인지, 신뢰하는 보낸 사람</string>
     <string name="weatherAddSecond">두 번째 도시 추가</string>
     <string name="weatherRemoveSecond">제거</string>
+    <string name="flagDueTitle">플래그 기한</string>
+    <string name="flagToday">오늘</string>
+    <string name="flagTomorrow">내일</string>
+    <string name="flagThisWeek">이번 주</string>
+    <string name="flagNextWeek">다음 주</string>
+    <string name="flagNoDate">날짜 없음</string>
+    <string name="flagClear">플래그 지우기</string>
+    <string name="phoneSms">SMS 보내기</string>
+    <string name="weatherAddCity">도시 추가</string>
+    <string name="weatherInWidgets">위젯에 표시 중 — 빼기</string>
+    <string name="weatherShowInWidgets">위젯에 표시</string>
+    <string name="weatherWidgetLimit">위젯에는 최대 두 도시</string>
+    <string name="weatherMakeFirst">첫 번째로</string>
 </resources>

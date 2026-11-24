@@ -51,7 +51,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/theme/app_theme.dart';
-import 'core/theme/appearance.dart' show PresetSpec;
+import 'core/theme/appearance.dart' show Appearance, PresetSpec;
 import 'core/constants/app_constants.dart';
 import 'core/logging/app_logger.dart';
 import 'core/network/connectivity_service.dart';
@@ -619,12 +619,8 @@ class MailApp extends ConsumerWidget {
     // ролей surfaceContainer*, и карточки сливались с фоном.
     return DynamicColorBuilder(builder: (ColorScheme? lightDyn, ColorScheme? darkDyn) {
     final useDyn = settings.dynamicColor && !kIsWeb && Platform.isAndroid;
-    final lightScheme = useDyn && lightDyn != null
-        ? ColorScheme.fromSeed(seedColor: lightDyn.primary)
-        : null;
-    final darkScheme = useDyn && (darkDyn ?? lightDyn) != null
-        ? ColorScheme.fromSeed(seedColor: (darkDyn ?? lightDyn)!.primary, brightness: Brightness.dark)
-        : null;
+    final lightSeed = useDyn ? lightDyn?.primary : null;
+    final darkSeed = useDyn ? (darkDyn ?? lightDyn)?.primary : null;
     // Анимации отдельных элементов (появление строк, Hero, смена содержимого)
     // выключены навсегда (решение 09.10.2026: дёргались на тестовых
     // телефонах). Выезд, сдвиг и раскрытие панелей — обычные переходы.
@@ -639,14 +635,26 @@ class MailApp extends ConsumerWidget {
     final appearance =
         settings.appearance(systemNoAnimations: MediaQuery.maybeDisableAnimationsOf(context) ?? false);
     Radii.scale = appearance.radiusScale;
-    // Цвета обоев, пока обои их дают, заменяют цветовую тему и акцент — и
-    // чёрный тёмный вариант «Полночи» тоже.
-    final blackDark =
-        lightScheme == null && darkScheme == null && PresetSpec.of(appearance.preset).blackDark && !settings.highContrast;
     // Переходы между экранами — обычные (сдвиг, предиктивный «назад»);
     // «Уменьшить движение» выключает и их. Переменная пропала при удалении
     // настройки «Анимации интерфейса» — сборка 1.5.1 падала (10.10.2026).
     final animated = !settings.reduceMotion;
+    // Темы — из кэша, пока не поменялось то, из чего они собираются
+    // (2.7.1, микрофризы 24.11.2026): корень перестраивается при любой
+    // настройке, в том числе при смене ящика, а сборка двух тем (с цветами
+    // обоев — ещё и палитр) — заметная работа посреди перехода.
+    final themes = _AppThemes.of((
+      lightSeed: lightSeed,
+      darkSeed: darkSeed,
+      reading: settings.reading,
+      amoled: settings.amoled,
+      highContrast: settings.highContrast,
+      dyslexiaFont: settings.dyslexiaFont,
+      fontScale: settings.fontScale,
+      fontFamily: AppTheme.fontFamily,
+      appearance: appearance,
+      animated: animated,
+    ));
     final app = MaterialApp.router(
       routerConfig: router,
       // На десктопе/вебе список можно тянуть мышью (по умолчанию Flutter
@@ -658,28 +666,8 @@ class MailApp extends ConsumerWidget {
 
       // Темы (с учётом высокого контраста и шрифта для дислексии)
       // «Чтение» — своя тёплая светлая тема; высокий контраст важнее неё.
-      theme: AppTheme.withTransitions(
-          settings.reading && !settings.highContrast
-              ? AppTheme.readingTheme(settings.fontScale, dyslexiaFont: settings.dyslexiaFont, appearance: appearance)
-              : AppTheme.lightTheme(settings.fontScale,
-                  highContrast: settings.highContrast,
-                  dyslexiaFont: settings.dyslexiaFont,
-                  dynamicScheme: lightScheme,
-                  appearance: appearance),
-          animated),
-      darkTheme: AppTheme.withTransitions(
-          settings.amoled || blackDark
-              ? AppTheme.amoledTheme(settings.fontScale,
-                  highContrast: settings.highContrast,
-                  dyslexiaFont: settings.dyslexiaFont,
-                  dynamicScheme: darkScheme,
-                  appearance: appearance)
-              : AppTheme.darkTheme(settings.fontScale,
-                  highContrast: settings.highContrast,
-                  dyslexiaFont: settings.dyslexiaFont,
-                  dynamicScheme: darkScheme,
-                  appearance: appearance),
-          animated),
+      theme: themes.light,
+      darkTheme: themes.dark,
       themeMode: settings.themeMode,
       // Плавная смена темы (светлая↔тёмная) вместо резкого переключения.
       themeAnimationDuration: const Duration(milliseconds: 350),
@@ -772,6 +760,61 @@ class MailApp extends ConsumerWidget {
     // Трей и сворачивание в него — у главного окна.
     return window ? app : TrayWindowListener(child: app);
     });
+  }
+}
+
+/// Из чего собираются темы приложения ([_AppThemes]).
+typedef _ThemeKey = ({
+  Color? lightSeed,
+  Color? darkSeed,
+  bool reading,
+  bool amoled,
+  bool highContrast,
+  bool dyslexiaFont,
+  double fontScale,
+  String? fontFamily,
+  Appearance appearance,
+  bool animated,
+});
+
+/// Светлая и тёмная темы приложения: собираются заново, только когда
+/// меняется что-то из [_ThemeKey]. Одинаковые настройки — те же объекты
+/// тем: MaterialApp не запускает анимацию смены темы, экраны не
+/// перестраиваются.
+class _AppThemes {
+  _AppThemes._(this.light, this.dark);
+
+  final ThemeData light;
+  final ThemeData dark;
+
+  static _ThemeKey? _key;
+  static _AppThemes? _last;
+
+  static _AppThemes of(_ThemeKey k) {
+    final cached = _last;
+    if (cached != null && _key == k) return cached;
+    final lightScheme = k.lightSeed == null ? null : ColorScheme.fromSeed(seedColor: k.lightSeed!);
+    final darkScheme =
+        k.darkSeed == null ? null : ColorScheme.fromSeed(seedColor: k.darkSeed!, brightness: Brightness.dark);
+    final a = k.appearance;
+    // Цвета обоев, пока обои их дают, заменяют цветовую тему и акцент — и
+    // чёрный тёмный вариант «Полночи» тоже.
+    final blackDark = lightScheme == null && darkScheme == null && PresetSpec.of(a.preset).blackDark && !k.highContrast;
+    final light = AppTheme.withTransitions(
+        k.reading && !k.highContrast
+            ? AppTheme.readingTheme(k.fontScale, dyslexiaFont: k.dyslexiaFont, appearance: a)
+            : AppTheme.lightTheme(k.fontScale,
+                highContrast: k.highContrast, dyslexiaFont: k.dyslexiaFont, dynamicScheme: lightScheme, appearance: a),
+        k.animated);
+    final dark = AppTheme.withTransitions(
+        k.amoled || blackDark
+            ? AppTheme.amoledTheme(k.fontScale,
+                highContrast: k.highContrast, dyslexiaFont: k.dyslexiaFont, dynamicScheme: darkScheme, appearance: a)
+            : AppTheme.darkTheme(k.fontScale,
+                highContrast: k.highContrast, dyslexiaFont: k.dyslexiaFont, dynamicScheme: darkScheme, appearance: a),
+        k.animated);
+    _key = k;
+    return _last = _AppThemes._(light, dark);
   }
 }
 

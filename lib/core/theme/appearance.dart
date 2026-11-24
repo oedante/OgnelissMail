@@ -229,6 +229,20 @@ class AppearanceLook extends ThemeExtension<AppearanceLook> {
     openAnimation: openAnimation ?? this.openAnimation,
   );
 
+  // Сравнение по значению (2.7.1, микрофризы 24.11.2026): без него тема,
+  // собранная заново из тех же настроек, считалась другой, и MaterialApp
+  // 350 мс «перетекал» из темы в такую же — каждый кадр перестраивая весь
+  // интерфейс (смена ящика, любая настройка).
+  @override
+  bool operator ==(Object other) =>
+      other is AppearanceLook &&
+      other.density == density &&
+      other.listFill == listFill &&
+      other.openAnimation == openAnimation;
+
+  @override
+  int get hashCode => Object.hash(density, listFill, openAnimation);
+
   @override
   AppearanceLook lerp(covariant AppearanceLook? other, double t) {
     if (other == null) return this;

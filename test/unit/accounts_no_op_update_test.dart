@@ -1,6 +1,7 @@
-// После синхронизации список ящиков не пересобирается, если число
-// непрочитанных и фото не изменились (план 08.11.2026 п. 3: всё, что
-// зависит от ящиков, перестраивалось на каждую синхронизацию).
+// После синхронизации список ящиков не пересобирается: число непрочитанных
+// пишется только в базу, фото — только если изменилось (план 08.11.2026
+// п. 3; 2.7.1 — микрофризы 24.11.2026: всё, что зависит от ящиков,
+// перестраивалось на каждую синхронизацию).
 
 import 'package:drift/drift.dart' show driftRuntimeOptions;
 import 'package:drift/native.dart';
@@ -25,17 +26,18 @@ void main() {
     var changes = 0;
     n.addListener((_) => changes++, fireImmediately: false);
 
+    // 2.7.1: число непрочитанных — только в базу, список ящиков не
+    // пересобирается вовсе (за ним следят десятки экранов — микрофризы).
     await n.updateUnreadCount('a1', 5);
-    expect(changes, 1);
     await n.updateUnreadCount('a1', 5);
-    await n.updateUnreadCount('a1', 5);
-    expect(changes, 1, reason: 'число то же — без пересборки');
     await n.updateUnreadCount('a1', 6);
-    expect(changes, 2);
+    expect(changes, 0, reason: 'непрочитанные — не повод пересобирать список ящиков');
+    final row = await (db.select(db.accounts)..where((a) => a.id.equals('a1'))).getSingle();
+    expect(row.unreadCount, 6);
 
     await n.setAccountPhoto('a1', 'https://example.com/p.png');
     await n.setAccountPhoto('a1', 'https://example.com/p.png');
-    expect(changes, 3);
+    expect(changes, 1);
     n.dispose();
   });
 }

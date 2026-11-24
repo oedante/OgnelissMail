@@ -107,7 +107,10 @@ class AccountsSettingsScreen extends ConsumerWidget {
                             ),
                         ],
                       ),
-                      subtitle: Text('${accountTypeLabel(a.type, l10n)} · ${a.unreadCount} ${l10n.tr('unreadShort')}'),
+                      // Непрочитанные — живым числом из базы (то же, что у
+                      // ящика в меню), а не полем списка ящиков.
+                      subtitle: Text(
+                          '${accountTypeLabel(a.type, l10n)} · ${ref.watch(unifiedUnreadByKeyProvider(a.id)).value ?? a.unreadCount} ${l10n.tr('unreadShort')}'),
                       // Все настройки ящика — на его экране (тип, подпись,
                       // адреса, синхронизация, календарь, автоответ, правила,
                       // удаление).

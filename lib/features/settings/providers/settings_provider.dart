@@ -5,6 +5,7 @@
 // - Вкл/выкл модулей (ИИ, шаблоны, DLP)
 // - Конфигурация для каждой платформы
 
+import '../../../core/logging/perf_mark.dart';
 import '../../../core/platform/orientation_policy.dart';
 import 'dart:async' show unawaited;
 import 'dart:ui' as ui;
@@ -991,6 +992,8 @@ class SettingsNotifier extends StateNotifier<AppSettings> {
   }
 
   Future<void> setActiveAccountId(String? id) async {
+    // Смена ящика — меткой для журнала медленных кадров (2.7.1).
+    PerfMark.begin('смена ящика', limit: const Duration(seconds: 2));
     if (id != null) {
       await _p.setString(_K.activeAccount, id);
     } else {

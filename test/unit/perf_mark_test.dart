@@ -2,10 +2,12 @@
 // участки в главном потоке и фоновые, что попадает в журнал медленных
 // кадров и в каком порядке; отрезок времени кадра для поиска участков.
 
+import 'dart:async' show unawaited;
 import 'dart:developer' show Timeline;
 import 'dart:io' show sleep;
 import 'dart:ui' show FrameTiming;
 
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/logging/jank_monitor.dart';
 import 'package:ogneliss/core/logging/perf_mark.dart';
@@ -88,5 +90,31 @@ void main() {
       expect(w.to, 90000000000);
       expect(w.from, 90000000000 - 800000 - 1500000);
     });
+  });
+
+  // 2.7.1 (микрофризы 24.11.2026): в строке о медленном кадре — открытый
+  // экран и сколько он открыт; адреса и номера писем в имя не попадают.
+  testWidgets('открытый экран — в строке журнала', (tester) async {
+    final nav = GlobalKey<NavigatorState>();
+    await tester.pumpWidget(MaterialApp(
+      navigatorKey: nav,
+      navigatorObservers: [JankMonitor.observer()],
+      onGenerateRoute: (s) => MaterialPageRoute<void>(settings: s, builder: (_) => const SizedBox()),
+      initialRoute: 'mail',
+    ));
+    expect(JankMonitor.screenNote(), startsWith('экран mail, открыт '));
+    unawaited(nav.currentState!.pushNamed('compose'));
+    await tester.pumpAndSettle();
+    expect(JankMonitor.screenNote(), matches(RegExp(r'^экран compose, открыт \d+,\d с назад$')));
+    // Через 15 с — целыми секундами.
+    expect(JankMonitor.screenNote(DateTime.now().add(const Duration(seconds: 15))),
+        matches(RegExp(r'^экран compose, открыт 1\d с назад$')));
+    unawaited(nav.currentState!.pushNamed('/mail/:id/thread'));
+    await tester.pumpAndSettle();
+    expect(JankMonitor.screenNote(), startsWith('экран mail/thread, '));
+    nav.currentState!.pop();
+    nav.currentState!.pop();
+    await tester.pumpAndSettle();
+    expect(JankMonitor.screenNote(), startsWith('экран mail, '));
   });
 }

@@ -135,9 +135,61 @@ function placeFiles(dir) {
 const CHUNK = 4096;
 
 /**
+ * Растущий столбец чисел в типизированном массиве (24.11.2026: служба
+ * падала на сервере — куча упиралась в 128 МБ). Обычный массив JS на сотни
+ * тысяч мест лежит в куче, и в конце его ещё раз копировали в типизированный;
+ * буфер типизированного массива — вне кучи JS, копии в конце нет.
+ */
+class Column {
+  constructor(Type, size = 1 << 16) {
+    this.Type = Type;
+    this.a = new Type(size);
+    this.length = 0;
+  }
+
+  push(v) {
+    if (this.length === this.a.length) {
+      const b = new this.Type(this.a.length * 2);
+      b.set(this.a);
+      this.a = b;
+    }
+    this.a[this.length++] = v;
+  }
+
+  /** Готовый столбец — без копии (запас в конце буфера остаётся). */
+  done() {
+    return this.a.subarray(0, this.length);
+  }
+}
+
+/** Уже взятые номера мест GeoNames (их до ~13 млн) — бит на номер, вне кучи. */
+class IdSet {
+  constructor() {
+    this.bits = new Uint8Array(1 << 21);
+  }
+
+  /** true — номер новый (и теперь отмечен). */
+  add(id) {
+    if (!Number.isInteger(id) || id < 0) return false;
+    const byte = id >>> 3;
+    if (byte >= this.bits.length) {
+      let size = this.bits.length;
+      while (size <= byte) size *= 2;
+      const b = new Uint8Array(size);
+      b.set(this.bits);
+      this.bits = b;
+    }
+    const mask = 1 << (id & 7);
+    if (this.bits[byte] & mask) return false;
+    this.bits[byte] |= mask;
+    return true;
+  }
+}
+
+/**
  * Места GeoNames из [dir] (+ admin1CodesASCII.txt, countryInfo.txt).
  *
- * Мест — сотни тысяч, контейнеру отведено 256 МБ, поэтому не объект на
+ * Мест — сотни тысяч, контейнеру отведено 320 МБ (куча — 160), поэтому не объект на
  * место, а столбцы: имена для сравнения — строки на CHUNK мест («\nимя»
  * подряд; поиск — indexOf по ним), исходные имена для показа — такие же
  * строки, координаты, население и область — типизированные массивы.
@@ -160,14 +212,14 @@ function loadCities(dir) {
   // Часовые пояса (2.7.2: часы городов в «Моём дне») — номер в списке.
   const zoneIndex = new Map();
   const zones = [];
-  const seenIds = new Set();
-  const lat = [];
-  const lon = [];
-  const pop = [];
-  const reg = [];
-  const zone = [];
-  const keyStart = [];
-  const nameStart = [];
+  const seenIds = new IdSet();
+  const lat = new Column(Float64Array);
+  const lon = new Column(Float64Array);
+  const pop = new Column(Int32Array);
+  const reg = new Column(Int32Array);
+  const zone = new Column(Uint16Array);
+  const keyStart = new Column(Int32Array);
+  const nameStart = new Column(Int32Array);
   const keyChunks = [];
   const nameChunks = [];
   let keyParts = [];
@@ -189,9 +241,7 @@ function loadCities(dir) {
       const p = l.split('\t');
       if (p.length < 15) return;
       if (!(p[6] === 'P' && !SKIP_CODES.has(p[7])) && p[7] !== 'AIRP') return;
-      const id = Number(p[0]);
-      if (seenIds.has(id)) return;
-      seenIds.add(id);
+      if (!seenIds.add(Number(p[0]))) return;
       const la = Number(p[4]);
       const lo = Number(p[5]);
       if (!Number.isFinite(la) || !Number.isFinite(lo)) return;
@@ -242,14 +292,14 @@ function loadCities(dir) {
     length: lat.length,
     keyChunks,
     nameChunks,
-    keyStart: Int32Array.from(keyStart),
-    nameStart: Int32Array.from(nameStart),
-    lat: Float64Array.from(lat),
-    lon: Float64Array.from(lon),
-    population: Int32Array.from(pop),
-    region: Int32Array.from(reg),
+    keyStart: keyStart.done(),
+    nameStart: nameStart.done(),
+    lat: lat.done(),
+    lon: lon.done(),
+    population: pop.done(),
+    region: reg.done(),
     regions,
-    zone: Int32Array.from(zone),
+    zone: zone.done(),
     zones,
   };
 }

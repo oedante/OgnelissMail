@@ -90,7 +90,14 @@ git push origin v2.7.2
 curl -s "https://www.ogneliss.ru/weather/search?q=Сабетта&format=jsonv2&limit=1"
 ```
 
-В ответе — `"timezone":"Asia/Yekaterinburg"`. Города, выбранные раньше,
+В ответе — `"timezone":"Asia/Yekaterinburg"`.
+
+Если `check` пишет «служба не отвечает», а в `docker logs weather-proxy` —
+«JavaScript heap out of memory»: это служба из архива до 24.11.2026 11:30 —
+со списком часовых поясов ей не хватало 128 МБ памяти. Возьмите
+`server/weather-proxy` из свежего архива и снова выполните
+`install-weather-proxy.sh install` (служба грузит места в меньшем объёме
+памяти, установщик ставит кучу 160 МБ). Города, выбранные раньше,
 получат пояс сами при следующем открытии «Моего дня».
 
 

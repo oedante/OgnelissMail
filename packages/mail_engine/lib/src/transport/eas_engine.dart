@@ -21,6 +21,7 @@ import 'autodiscover.dart';
 import 'base64_off.dart';
 import 'wbxml_codec.dart';
 import 'preheader.dart';
+import 'inline_images.dart';
 
 /// Коды команд EAS (MS-ASHTTP) для Base64 command line.
 const Map<String, int> easCommandCodes = {
@@ -3374,13 +3375,41 @@ class EasEngine implements MailEngine {
     h('MIME-Version: 1.0');
 
     final isHtml = m.bodyHtml != null;
-    final bodyBytes = utf8.encode(m.bodyHtml ?? m.bodyPlain ?? '');
+    // Картинки data: в тексте (вставленный скриншот, картинки цитаты) —
+    // частями multipart/related с Content-ID (inline_images.dart): Outlook
+    // для Windows картинки data: в письмах не показывает.
+    final hasIcs = m.calendar != null && m.calendar!.isNotEmpty;
+    final inl = isHtml && !hasIcs
+        ? MimeInlineImages.extract(m.bodyHtml!, domain: domain, stamp: stamp)
+        : (html: m.bodyHtml ?? '', parts: const <InlineImagePart>[]);
+    final bodyBytes = utf8.encode(isHtml ? inl.html : (m.bodyPlain ?? ''));
     final bodyType = isHtml ? 'text/html; charset=UTF-8' : 'text/plain; charset=UTF-8';
 
     // Текст письма; с iCalendar — multipart/alternative «текст + календарь»
     // (iMIP, RFC 6047): так ответ на приглашение узнают Exchange и Outlook.
     void writeBody() {
       final ics = m.calendar;
+      if (inl.parts.isNotEmpty) {
+        final rel = '----ogneliss_rel_$stamp';
+        h('Content-Type: multipart/related; type="text/html"; boundary="$rel"');
+        h('');
+        h('--$rel');
+        h('Content-Type: $bodyType');
+        h('Content-Transfer-Encoding: base64');
+        h('');
+        buf.write(b64Lines(bodyBytes));
+        for (final p in inl.parts) {
+          h('--$rel');
+          h('Content-Type: ${p.mimeType}; name="${p.name}"');
+          h('Content-Transfer-Encoding: base64');
+          h('Content-ID: <${p.cid}>');
+          h('Content-Disposition: inline; filename="${p.name}"');
+          h('');
+          buf.write(b64Lines(p.bytes));
+        }
+        h('--$rel--');
+        return;
+      }
       if (ics == null || ics.isEmpty) {
         h('Content-Type: $bodyType');
         h('Content-Transfer-Encoding: base64');

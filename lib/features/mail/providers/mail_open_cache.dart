@@ -421,6 +421,31 @@ class MailOpenCache {
   static const maxEach = 3 * 1024 * 1024;
   static const _maxTotal = 12 * 1024 * 1024;
 
+  // src="cid:…" (кавычки любые или без них).
+  static final _cidSrcAttr = RegExp(r'''(\bsrc\s*=\s*)(["']?)cid:([^"'\s>]+)\2''', caseSensitive: false);
+
+  /// Картинки исходного письма [email] (cid:) в [html] — в текст как data:
+  /// (2.7.1, замечание владельца 24.11.2026: в ответе картинка из цитаты
+  /// пропала, у получателя — пустое место). Ответ, который собирает
+  /// приложение, ссылался на cid: исходного письма, а самих картинок в нём
+  /// не было. При отправке data: становятся встроенными частями письма с
+  /// Content-ID (mail_engine, inline_images.dart). Картинки — из памяти
+  /// телефона, недостающие — с сервера; не получилось — ссылка остаётся.
+  Future<String> embedInlineImages(String accountId, EmailModel email, String html) async {
+    if (!_cidSrcAttr.hasMatch(html)) return html;
+    final imgs = await inlineImages(accountId, email, rawHtml: html);
+    if (imgs.map.isEmpty) return html;
+    var n = 0;
+    final out = html.replaceAllMapped(_cidSrcAttr, (m) {
+      final data = imgs.map[_normCid(m.group(3)!.replaceAll('&amp;', '&'))];
+      if (data == null) return m.group(0)!;
+      n++;
+      return '${m.group(1)}"$data"';
+    });
+    if (n > 0) AppLogger.info('Картинки цитаты: $n — в письмо');
+    return out;
+  }
+
   static String _normCid(String raw) {
     var c = raw.trim().toLowerCase();
     if (c.startsWith('<') && c.endsWith('>')) c = c.substring(1, c.length - 1);

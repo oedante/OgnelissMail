@@ -1660,8 +1660,12 @@ class SyncService {
         AppLogger.warning('ActiveSync ${folder.displayName}: сервер сбросил синхронизацию — папка загружается заново');
       }
       if (batch.added.isNotEmpty) {
-        addedTotal += await _batchSaveEmails(db, account.id, folder, batch.added);
-        received.addAll(batch.added);
+        // В порции и письма, перечитанные после правки на сервере (черновик
+        // изменили в Outlook, 2.7.2): они обновляют свои строки, а «новой
+        // почтой» (уведомления, отчёты о доставке) считаются только новые.
+        final fresh = <EmailModel>[];
+        addedTotal += await _batchSaveEmails(db, account.id, folder, batch.added, collectNewInto: fresh);
+        received.addAll(fresh);
       }
       await _applyServerChanges(db, account.id, batch);
     });
@@ -1730,6 +1734,26 @@ class SyncService {
         AppLogger.warning('Продолжение синхронизации ${folder.displayName}: $e');
       }
     });
+  }
+
+  /// Текст черновиков [ids], изменённых на сервере, — сбросить: при
+  /// открытии он загрузится заново. Черновик, открытый сейчас в редакторе,
+  /// и неотправленные правки не трогаются.
+  Future<void> _forgetDraftBodies(AppDatabase db, String accountId, Set<String> ids) async {
+    final skip = DraftSyncService.editing;
+    final targets = [for (final id in ids) if (!skip.contains(id)) id];
+    if (targets.isEmpty) return;
+    final n = await (db.update(db.emails)
+          ..where((e) =>
+              e.accountId.equals(accountId) &
+              e.id.isIn(targets) &
+              e.isLocallyModified.equals(false)))
+        .write(const EmailsCompanion(
+          bodyHtml: Value(null),
+          bodyPlain: Value(null),
+          loadedLevel: Value(0),
+        ));
+    if (n > 0) AppLogger.info('Черновики, изменённые на сервере: $n — текст загрузится заново');
   }
 
   Future<void> _applyServerChanges(
@@ -1916,6 +1940,8 @@ class SyncService {
       final stateKey = _ewsDeltaKey(account.id, folder.id);
       final deletedIds = <String>[];
       final readChanges = <String, bool>{};
+      // Изменённые на сервере (Update дельты) — для черновиков (2.7.2).
+      final updatedIds = <String>{};
       String? state = _prefs.getString(stateKey);
       final initialLoad = state == null;
       var reachedLast = false;
@@ -1984,6 +2010,7 @@ class SyncService {
           break;
         }
         collected..addAll(d.created)..addAll(d.updated);
+        updatedIds.addAll(d.updated.map((e) => e.id));
         deletedIds.addAll(d.deletedIds);
         readChanges.addAll(d.readChanges);
         state = d.syncState;
@@ -2091,6 +2118,14 @@ class SyncService {
       // уведомление могло прийти о старом письме.
       final fresh = <EmailModel>[];
       final added = await _batchSaveEmails(db, account.id, folder, processed, collectNewInto: fresh);
+      // Черновик изменили на сервере (Outlook, веб-почта; 2.7.2, замечание
+      // владельца 24.11.2026): дельта EWS присылает его без текста, и на
+      // телефоне оставался прежний текст — его же открывал редактор и
+      // заменял им серверную правку. Текст сбрасывается: письмо и редактор
+      // загрузят новый (DraftSyncService.completeServerDraft).
+      if (folder.type == FolderType.drafts && updatedIds.isNotEmpty) {
+        await _forgetDraftBodies(db, account.id, updatedIds);
+      }
 
       // Уведомление о новых письмах (кроме удалённых/архива/спама/служебных).
       // Первая загрузка папки — не «новая почта».

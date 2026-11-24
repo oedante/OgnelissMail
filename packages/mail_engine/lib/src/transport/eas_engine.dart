@@ -2007,6 +2007,9 @@ class EasEngine implements MailEngine {
     final added = <MailMessage>[];
     final deleted = <MessageRef>[];
     final flagChanges = <MailFlagChange>[];
+    // Письма, содержимое которых изменили на сервере (черновик правили в
+    // Outlook или веб-почте) — перечитываются целиком ниже.
+    final contentChanged = <String>[];
     if (commands != null) {
       for (final add in commands.findChildren('Add')) {
         final m = _parseEmail(add, folderId);
@@ -2019,6 +2022,12 @@ class EasEngine implements MailEngine {
         final sid = ch.childText('ServerId');
         final app = ch.findChild('ApplicationData');
         if (sid == null || app == null) continue;
+        // Тема, адресаты, текст, файлы (2.7.2, замечание владельца
+        // 24.11.2026: черновик, исправленный на сервере, на телефоне не
+        // обновлялся — Change с содержимым пропускался).
+        if (app.children.any((c) => !_flagOnlyProps.contains(c.name)) && !contentChanged.contains(sid)) {
+          contentChanged.add(sid);
+        }
         final readTxt = app.childText('Read');
         final flagEl = app.findChild('Flag');
         // В кодеке токен 0x3B страницы Email назван 'FlagStatus' (в спецификации — Status).
@@ -2042,14 +2051,67 @@ class EasEngine implements MailEngine {
       }
     }
     final more = col?.findChild('MoreAvailable') != null;
+    // Изменённые на сервере — целиком (ItemOperations): в Change только
+    // изменённые свойства, без отправителя и даты, — поверх строки их не
+    // положить. Не перечиталось (сеть) — письмо остаётся прежним.
+    final changed = <MailMessage>[];
+    for (final sid in contentChanged.take(_maxRefetchPerSync)) {
+      if (deleted.any((d) => d.id == sid)) continue;
+      try {
+        final m = await _fetchForSync(folderId, sid);
+        if (m != null) changed.add(m);
+      } catch (e) {
+        log.warn(_t, 'Sync: письмо изменено на сервере, но не перечитано: $e');
+      }
+    }
     log.info(_t, 'Sync: новых ${added.length}, изменено ${flagChanges.length}, '
-        'удалено ${deleted.length}, MoreAvailable=$more, SyncKey=$newKey');
+        'перечитано ${changed.length}, удалено ${deleted.length}, MoreAvailable=$more, SyncKey=$newKey');
     return SyncResult(
       added: added,
+      changed: changed,
       deleted: deleted,
       flagChanges: flagChanges,
       newState: SyncState(newKey),
       moreAvailable: more,
+    );
+  }
+
+  /// Свойства Change, которые меняют только отметки письма (прочитано,
+  /// флажок, категории, «отвечено»), а не его содержимое.
+  static const _flagOnlyProps = {
+    'Read', 'Flag', 'Categories', 'LastVerbExecuted', 'LastVerbExecutionTime',
+  };
+
+  /// Сколько изменённых писем перечитывать за один ответ Sync (остальные —
+  /// как раньше, без перечитывания).
+  static const _maxRefetchPerSync = 25;
+
+  /// Письмо целиком для синхронизации (ItemOperations Fetch): все свойства,
+  /// как в Sync/Add, и полный текст (HTML).
+  Future<MailMessage?> _fetchForSync(String folderId, String serverId) async {
+    final cfg = _cfg!;
+    final root = WbxmlElement(name: 'ItemOperations', namespace: 'ItemOperations');
+    final fetch = root.addChild('Fetch', namespace: 'ItemOperations');
+    fetch.addChild('Store', namespace: 'ItemOperations', text: 'Mailbox');
+    fetch.addChild('CollectionId', namespace: 'AirSync', text: folderId);
+    fetch.addChild('ServerId', namespace: 'AirSync', text: serverId);
+    final opts = fetch.addChild('Options', namespace: 'ItemOperations');
+    final bp = opts.addChild('BodyPreference', namespace: 'AirSyncBase');
+    // HTML: прежний текст строки (черновик с телефона — HTML) заменяется тем
+    // же видом, а не остаётся рядом с новым простым текстом.
+    bp.addChild('Type', namespace: 'AirSyncBase', text: '2');
+    final resp = await _easCommand(cfg, 'ItemOperations', WbxmlDocument(root: root),
+        policyKeyHeader: _policyKey ?? '0');
+    final f = resp?.root.findChild('Response')?.findChild('Fetch');
+    final props = f?.findChild('Properties');
+    if (props == null || (f?.childText('Status') ?? '1') != '1') return null;
+    // Свойства Fetch — те же, что ApplicationData в Sync/Add.
+    return _parseEmail(
+      WbxmlElement(name: 'Add', namespace: 'AirSync', children: [
+        WbxmlElement(name: 'ServerId', namespace: 'AirSync', text: serverId),
+        WbxmlElement(name: 'ApplicationData', namespace: 'AirSync', children: props.children),
+      ]),
+      folderId,
     );
   }
 

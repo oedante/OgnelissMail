@@ -42,12 +42,22 @@ class AttachmentSafety {
     'settingcontent-ms', 'search-ms', 'searchconnector-ms', 'chm', 'hlp',
     'apk', 'xapk', 'appx', 'appxbundle', 'msix', 'msixbundle',
     'sh', 'command', 'app', 'pkg', 'run', 'desktop', 'deb', 'rpm',
+    // 2.7.1 (обзор безопасности п. 4): по списку блокировки Outlook (Level 1)
+    // — Java Web Start, оболочки и скрипты Windows, базы Access с кодом,
+    // установщики и пакеты подготовки Windows.
+    'jnlp', 'ws', 'msh', 'msh1', 'msh2', 'mshxml', 'msh1xml', 'msh2xml', 'ps1xml', 'ps2', 'ps2xml',
+    'psc1', 'psc2', 'psdm1', 'vb', 'vbp', 'sct', 'shb', 'shs', 'xnk', 'ade', 'adp', 'mde', 'accde',
+    'mda', 'mdz', 'ppkg', 'diagcab', 'appinstaller', 'msu', 'wsb', 'cnt', 'hpj', 'ins', 'isp', 'its',
+    'mcf', 'pcd', 'prf', 'prg', 'bas', 'csh', 'ksh', 'fxp', 'grp', 'htc', 'vsmacros', 'website',
   };
 
   static const _warn = {
     'docm', 'dotm', 'xlsm', 'xltm', 'xlam', 'pptm', 'potm', 'ppam', 'sldm',
     'iso', 'img', 'vhd', 'vhdx', 'dmg', 'one', 'svg', 'html', 'htm', 'xhtml',
     'mht', 'mhtml', 'rtf', 'iqy', 'slk',
+    // Сертификаты (ставятся в доверенные), темы Windows (тянут ресурсы из
+    // сети), архивы CAB, скрипты Python/Perl/Ruby (2.7.1).
+    'cer', 'crt', 'der', 'p7b', 'theme', 'themepack', 'cab', 'py', 'pyw', 'pyz', 'pyc', 'pl', 'rb',
   };
 
   static const _docLike = {
@@ -55,11 +65,19 @@ class AttachmentSafety {
     'png', 'gif', 'zip', 'rar', '7z', 'csv',
   };
 
+  /// Управляющие символы направления текста (встраивание, замена,
+  /// изоляция): в имени файла — только для маскировки («exe.fdp» видится
+  /// как «pdf.exe»).
+  static final _bidi = RegExp('[\u202A-\u202E\u2066-\u2069]');
+
+  /// Невидимые символы (нулевой ширины, метки направления, BOM): для
+  /// оценки расширения не считаются («отчёт.ex\u200Be»).
+  static final _invisible = RegExp('[\u200B-\u200F\u2060-\u2064\uFEFF]');
+
   static AttachmentRisk riskOf(String fileName) {
     final name = fileName.trim().toLowerCase();
-    // Смена направления текста — только для маскировки.
-    if (name.contains('\u202E') || name.contains('\u202D')) return AttachmentRisk.blocked;
-    final cleaned = name.replaceAll(RegExp(r'[\s.]+$'), '');
+    if (_bidi.hasMatch(name)) return AttachmentRisk.blocked;
+    final cleaned = name.replaceAll(_invisible, '').replaceAll(RegExp(r'[\s.\x00-\x1F]+$'), '');
     final parts = cleaned.split('.');
     if (parts.length < 2) return AttachmentRisk.safe;
     final ext = parts.last;

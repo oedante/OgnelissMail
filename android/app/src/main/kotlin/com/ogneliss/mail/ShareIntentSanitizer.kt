@@ -81,6 +81,10 @@ object ShareIntentSanitizer {
             "/data/data/${ctx.packageName}",
             "/data/user/0/${ctx.packageName}",
             ctx.filesDir?.parent,
+            // Хранилище до разблокировки (device protected) — тоже личное
+            // (2.7.1, обзор безопасности п. 9).
+            "/data/user_de/0/${ctx.packageName}",
+            runCatching { ctx.createDeviceProtectedStorageContext().dataDir?.path }.getOrNull(),
         ).map { File(it).canonicalPath }
         val p = f.canonicalPath
         return roots.any { p == it || p.startsWith(it + File.separator) }

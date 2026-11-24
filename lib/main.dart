@@ -313,6 +313,11 @@ Future<void> main() async {
     // не готово, лучше сразу показать понятную причину, чем падать на
     // первом запросе к базе где-то внутри экранов.
     if (!kIsWeb) {
+      // Сборка без шифрования базы — понятный экран сразу (2.7.1, обзор
+      // безопасности п. 1), а не база открытым текстом.
+      if (DbEncryption.mustRefuse()) {
+        throw const DbEncryptionUnavailableException();
+      }
       try {
         await DbEncryption.getOrCreateKey();
       } catch (e) {

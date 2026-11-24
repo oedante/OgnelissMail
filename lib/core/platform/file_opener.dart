@@ -94,11 +94,20 @@ class FileOpener {
 
   /// Недопустимые в именах файлов символы и управляющие — на «_».
   static String safeName(String name) {
-    var n = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F]'), '_').trim();
+    var n = name.replaceAll(RegExp(r'[\\/:*?"<>|\x00-\x1F\x7F]'), '_');
+    // Символы направления и невидимые — убрать: сохранённое имя читается
+    // как есть («счёт.exe», а не «счёт» с перевёрнутым «exe.pdf»), 2.7.1.
+    n = n.replaceAll(RegExp('[\u202A-\u202E\u2066-\u2069\u200B-\u200F\u2060-\u2064\uFEFF]'), '').trim();
     while (n.startsWith('.')) {
       n = n.substring(1);
     }
+    // Точки и пробелы в конце Windows отбрасывает сама — «счёт.exe.» стал бы
+    // «счёт.exe»; убираем заранее, чтобы имя совпадало с проверенным.
+    n = n.replaceAll(RegExp(r'[.\s]+$'), '');
     if (n.isEmpty) return '';
+    // Зарезервированные имена Windows (CON, NUL, COM1…) — файл не создать.
+    final base = n.split('.').first.toUpperCase();
+    if (RegExp(r'^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$').hasMatch(base)) n = '_$n';
     if (n.length > 120) {
       final ext = p.extension(n);
       n = '${n.substring(0, 120 - ext.length)}$ext';

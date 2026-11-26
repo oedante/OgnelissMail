@@ -840,7 +840,10 @@ class _GalTile extends ConsumerWidget {
             ]),
           ),
           if (phone?.isNotEmpty == true)
-            btn(AppIcons.phone, l10n.tr('call'), () async {
+            // Удержание кнопки — SMS и мессенджеры номера (2.7.2).
+            GestureDetector(
+              onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
+              child: btn(AppIcons.phone, l10n.tr('call'), () async {
               final cleaned = phone!.replaceAll(RegExp(r'[^\d+]'), '');
               if (cleaned.isEmpty) return;
               try {
@@ -849,7 +852,8 @@ class _GalTile extends ConsumerWidget {
               } catch (_) {
                 showInlineError(l10n.tr('cannotOpenFile').replaceAll('{e}', phone));
               }
-            })
+              }),
+            )
           else
             const SizedBox(width: 40),
           btn(AppIcons.mail, l10n.tr('writeEmail'),

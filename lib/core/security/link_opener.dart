@@ -4,7 +4,8 @@
 // Раньше нажатие на ссылку в письме ничего не делало (onLinkTap был пустым).
 // Теперь:
 // - mailto: открывает новое письмо этому адресату;
-// - tel: — звонилку;
+// - tel: — лист номера: позвонить, SMS, мессенджеры из контактов телефона,
+//   скопировать (2.7.2, просьба пользователя: номер в подписи письма);
 // - http(s): — диалог с НАСТОЯЩИМ адресом (жирным — домен), с
 //   предупреждениями, если текст ссылки показывает другой домен (типичный
 //   фишинг), если адрес без шифрования, по IP или в punycode (xn--);
@@ -18,6 +19,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../features/contacts/phone_actions.dart' show PhoneActions;
 import '../../l10n/app_localizations.dart';
 import '../../services/integration/mailto_service.dart' show MailtoRequest;
 
@@ -186,8 +188,11 @@ class LinkOpener {
       return;
     }
     if (lower.startsWith('tel:')) {
-      final uri = Uri.tryParse(raw);
-      if (uri != null) await launchUrl(uri);
+      // Номер из письма (подпись, «Позвоните мне») — тот же лист, что у
+      // номера в карточке контакта: «Позвонить» первым, SMS, мессенджеры.
+      final number = Uri.decodeComponent(raw.substring(4).split('?').first).trim();
+      if (number.isEmpty || !context.mounted) return;
+      await PhoneActions.show(context, number);
       return;
     }
 

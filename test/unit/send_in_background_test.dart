@@ -13,9 +13,11 @@ import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/data/models/email_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
+import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/services/mail/imap/imap_service.dart';
 import 'package:ogneliss/services/mail/offline_send_service.dart';
 import 'package:ogneliss/services/sync/sync_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -52,9 +54,16 @@ void main() {
     late AppDatabase db;
     late ProviderContainer container;
 
+    late SharedPreferences prefs;
+
     setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      prefs = await SharedPreferences.getInstance();
       db = AppDatabase.forTesting(NativeDatabase.memory());
-      container = ProviderContainer(overrides: [databaseProvider.overrideWithValue(db)]);
+      container = ProviderContainer(overrides: [
+        databaseProvider.overrideWithValue(db),
+        sharedPrefsProvider.overrideWithValue(prefs),
+      ]);
       await db.into(db.accounts).insert(AccountsCompanion.insert(
           id: 'a1', type: AccountType.imap.index, email: 'me@example.com', displayName: 'Me',
           username: 'me', createdAt: DateTime(2026)));
@@ -81,6 +90,50 @@ void main() {
       final payload = jsonDecode(rows.single.payloadJson) as Map<String, dynamic>;
       expect(payload['quoteImages'], {'accountId': 'a1', 'emailId': 'orig1'});
       expect(payload['bodyHtml'], contains('cid:image001.png@01DB'));
+    });
+
+    // «Не забыть про „Черновики“» (владелец 25.11.2026): черновик с сервера,
+    // чьи файлы ещё не скачаны, удаляется на сервере после отправки, а
+    // вернувшееся из «Исходящих» письмо заменяет его при выгрузке.
+    test('черновик с сервера: удалить после отправки; «Отменить» — заменит его при выгрузке', () async {
+      final service = container.read(offlineSendProvider);
+      final outboxId = await service.scheduleUndoSend(
+        accountId: 'a1',
+        fromEmail: 'me@example.com',
+        to: const [EmailAddress(email: 'boss@example.com')],
+        subject: 'Смета',
+        bodyHtml: '<p>Смета во вложении</p>',
+        window: const Duration(hours: 1),
+        dropDraft: (accountId: 'a1', id: 'INBOX.Drafts:42', folderId: 'INBOX.Drafts'),
+      );
+      final row = (await db.select(db.syncQueue).get()).single;
+      expect((jsonDecode(row.payloadJson) as Map)['dropDraft'],
+          {'accountId': 'a1', 'id': 'INBOX.Drafts:42', 'folderId': 'INBOX.Drafts'});
+
+      expect(await service.cancelUndoSend(outboxId), isTrue);
+      final draft = await (db.select(db.emails)..where((e) => e.id.equals(outboxId))).getSingle();
+      expect(draft.folderId, 'drafts');
+      final replaces = jsonDecode(prefs.getString('draft_replaces')!) as Map;
+      expect(replaces[outboxId], {'id': 'INBOX.Drafts:42', 'folderId': 'INBOX.Drafts'});
+    });
+
+    test('«Отправить сейчас» — сутки повторов заново', () {
+      final created = DateTime(2026, 11, 20, 9);
+      SyncQueueData op(Map<String, Object?> p) => SyncQueueData(
+          id: 1,
+          accountId: 'a1',
+          operationType: 'send_email',
+          targetId: 'outbox_1',
+          payloadJson: jsonEncode(p),
+          priority: 0,
+          createdAt: created,
+          retryCount: 3);
+      expect(OfflineSendService.retryWindowStart(op({})), created);
+      expect(OfflineSendService.retryWindowStart(op({'scheduledAt': '2026-11-21T08:00:00.000'})), DateTime(2026, 11, 21, 8));
+      expect(
+          OfflineSendService.retryWindowStart(
+              op({'scheduledAt': '2026-11-21T08:00:00.000', 'retryFrom': '2026-11-25T18:30:00.000'})),
+          DateTime(2026, 11, 25, 18, 30));
     });
   });
 }

@@ -10,7 +10,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' show File;
 import 'package:drift/drift.dart';
-import 'package:flutter/foundation.dart' show ValueNotifier;
+import 'package:flutter/foundation.dart' show ValueNotifier, visibleForTesting;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/logging/app_logger.dart';
@@ -33,6 +33,8 @@ import 'draft_files.dart';
 import 'sent_placeholder.dart';
 import 'engine/mail_engine_service.dart' show MailEngineService, mailEngineServiceProvider;
 import 'draft_autosave_service.dart' show DraftData, draftAutosaveProvider;
+import 'draft_sync_service.dart' show draftSyncServiceProvider;
+import 'email_actions_service.dart' show emailActionsProvider;
 import 'package:mail_engine/mail_engine.dart' as me show EasEngine, GatewayBlocked, GatewaySizeRejected, SmtpNotSentException;
 import 'package:uuid/uuid.dart';
 
@@ -320,6 +322,7 @@ class OfflineSendService {
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
     ({String accountId, String emailId})? quoteImages,
+    ({String accountId, String id, String folderId})? dropDraft,
   }) async {
     final db = _ref.read(databaseProvider);
     // Защита от разрастания БД при длительной работе без связи: вложения
@@ -353,6 +356,10 @@ class OfflineSendService {
             // Картинки цитаты, которых не было на телефоне (25.11.2026):
             // докачиваются перед отправкой ([_embedQuoteImages]).
             if (quoteImages != null) 'quoteImages': {'accountId': quoteImages.accountId, 'emailId': quoteImages.emailId},
+            // Серверный черновик, из которого берутся не скачанные файлы, —
+            // удалить после отправки ([_dropSentDraft]).
+            if (dropDraft != null)
+              'dropDraft': {'accountId': dropDraft.accountId, 'id': dropDraft.id, 'folderId': dropDraft.folderId},
             'scheduledAt': scheduledAt.toIso8601String(),
             if (requestDeliveryReport) 'dsn': true,
             if (requestReadReceipt) 'mdn': true,
@@ -514,6 +521,7 @@ class OfflineSendService {
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
     ({String accountId, String emailId})? quoteImages,
+    ({String accountId, String id, String folderId})? dropDraft,
   }) async {
     final db = _ref.read(databaseProvider);
     final outboxId = 'undosend_${DateTime.now().millisecondsSinceEpoch}';
@@ -564,6 +572,10 @@ class OfflineSendService {
             // Картинки цитаты, которых не было на телефоне (25.11.2026):
             // докачиваются перед отправкой ([_embedQuoteImages]).
             if (quoteImages != null) 'quoteImages': {'accountId': quoteImages.accountId, 'emailId': quoteImages.emailId},
+            // Серверный черновик, из которого берутся не скачанные файлы, —
+            // удалить после отправки ([_dropSentDraft]).
+            if (dropDraft != null)
+              'dropDraft': {'accountId': dropDraft.accountId, 'id': dropDraft.id, 'folderId': dropDraft.folderId},
             'scheduledAt': scheduledAt.toIso8601String(),
             if (requestDeliveryReport) 'dsn': true,
             if (requestReadReceipt) 'mdn': true,
@@ -625,6 +637,7 @@ class OfflineSendService {
         hasAttachments: filesJson == null ? const Value.absent() : Value(files.isNotEmpty),
       ),
     );
+    await _replaceHeldDraft(outboxId, queued.firstOrNull);
     return true;
   }
 
@@ -911,6 +924,7 @@ class OfflineSendService {
         await (db.delete(db.emails)..where((e) => e.id.equals(op.targetId))).go();
         sent++;
         AppLogger.info('Письмо из очереди отправлено: $subject');
+        await _dropSentDraft(payload['dropDraft']);
         unawaited(_showSentInConversation(account,
             to: to, cc: cc, subject: subject, html: bodyHtml, inReplyTo: inReplyTo, hasAttachments: attachments.isNotEmpty));
         _afterSent(account);
@@ -990,7 +1004,7 @@ class OfflineSendService {
         // по нескольку часов не пускал, а через 10 попыток за 20 минут
         // письмо считалось не отправленным и уходило только вручную).
         final giveUp = isTransient
-            ? DateTime.now().difference(_retryWindowStart(op)) >= transientRetryWindow
+            ? DateTime.now().difference(retryWindowStart(op)) >= transientRetryWindow
             : op.retryCount + 1 >= 3;
         if (!giveUp) wakeNoLaterThan(DateTime.now().add(retryDelay(op.retryCount + 1)));
         if (giveUp) {
@@ -1024,14 +1038,51 @@ class OfflineSendService {
     return Duration(seconds: secs > 600 ? 600 : secs);
   }
 
-  /// Начало окна повторов: время постановки в очередь или, у отложенного
-  /// письма, назначенное время отправки.
-  static DateTime _retryWindowStart(SyncQueueData op) {
+  /// Начало окна повторов: время постановки в очередь, у отложенного
+  /// письма — назначенное время, после «Отправить сейчас» — это нажатие.
+  @visibleForTesting
+  static DateTime retryWindowStart(SyncQueueData op) {
+    var start = op.createdAt;
     try {
-      final at = DateTime.tryParse((jsonDecode(op.payloadJson) as Map)['scheduledAt'] as String? ?? '');
-      if (at != null && at.isAfter(op.createdAt)) return at;
+      final p = jsonDecode(op.payloadJson) as Map;
+      for (final k in const ['scheduledAt', 'retryFrom']) {
+        final at = DateTime.tryParse(p[k] as String? ?? '');
+        if (at != null && at.isAfter(start)) start = at;
+      }
     } catch (_) {}
-    return op.createdAt;
+    return start;
+  }
+
+  /// Письмо ушло — серверный черновик, из которого брались не скачанные
+  /// файлы, больше не нужен (на телефоне его строку убрало окно письма).
+  /// Без связи удаление встаёт в очередь действий.
+  Future<void> _dropSentDraft(Object? ref) async {
+    if (ref is! Map) return;
+    final accountId = ref['accountId'], id = ref['id'], folderId = ref['folderId'];
+    if (accountId is! String || id is! String || folderId is! String) return;
+    final account = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
+    if (account == null) return;
+    try {
+      await _ref.read(emailActionsProvider).delete(account, id, folderId, hard: true);
+    } catch (e) {
+      AppLogger.warning('Отправка: черновик на сервере не удалён — $e');
+    }
+  }
+
+  /// Письмо из «Исходящих» вернулось в «Черновики» ([draftId]): серверный
+  /// черновик, из которого оно брало файлы, заменится им при выгрузке —
+  /// без второй копии в «Черновиках».
+  Future<void> _replaceHeldDraft(String draftId, SyncQueueData? op) async {
+    if (op == null) return;
+    try {
+      final ref = (jsonDecode(op.payloadJson) as Map)['dropDraft'];
+      if (ref is! Map || ref['accountId'] != op.accountId) return;
+      final id = ref['id'], folderId = ref['folderId'];
+      if (id is! String || folderId is! String) return;
+      await _ref.read(draftSyncServiceProvider).rememberReplace(draftId, (id: id, folderId: folderId));
+    } catch (e) {
+      AppLogger.debug('Черновик из «Исходящих»: связь с серверной копией не записана — $e');
+    }
   }
 
   /// Картинки исходного письма в цитате (cid:) — в письмо перед отправкой
@@ -1213,6 +1264,7 @@ class OfflineSendService {
         files: _draftFilesOf(op.payloadJson),
       );
       if (!await _ref.read(draftAutosaveProvider).saveStandalone(draft)) return null;
+      await _replaceHeldDraft(id, op);
       return id;
     } catch (e) {
       AppLogger.warning('Неотправленное письмо в черновики не перенесено: $e');

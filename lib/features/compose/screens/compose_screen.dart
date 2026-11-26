@@ -4788,6 +4788,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       final quoteImages = await _quoteImagesRef(bodyHtml);
       await ref.read(offlineSendProvider).scheduleSend(
             quoteImages: quoteImages,
+            dropDraft: _draftHeldForFiles(),
             accountId: account.id,
             importance: _importance,
             sensitivity: _sensitivity,
@@ -4805,6 +4806,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             requestDeliveryReport: _requestDeliveryReport,
             requestReadReceipt: _readReceipt,
           );
+      // Письмо в очереди — черновик больше не нужен (25.11.2026: раньше окно
+      // при закрытии сохраняло его, и письмо оставалось в «Черновиках»).
+      await _finishDraft();
       unawaited(HapticFeedback.mediumImpact());
       AppLogger.info('Письмо отложено до $scheduledAt');
       // Письмо видно в ленте строкой «Отправка запланирована» (её можно
@@ -5125,6 +5129,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // их из памяти телефона, если загрузка успеет, иначе докачают сами.
     final outboxId = await offlineSend.scheduleUndoSend(
       quoteImages: quoteImages,
+      dropDraft: _draftHeldForFiles(),
       accountId: account.id,
             importance: _importance,
             sensitivity: _sensitivity,
@@ -5231,11 +5236,34 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } catch (_) {
       // Черновика могло и не быть (успели отправить до первого сохранения).
     }
+    // Черновик с сервера, из которого «Исходящие» возьмут не скачанные
+    // файлы: на сервере он удаляется после отправки, а из «Черновиков» на
+    // телефоне — сразу (письмо уже в «Исходящих»).
+    final held = discard ? null : _draftHeldForFiles();
+    if (held != null) {
+      try {
+        final db = ref.read(databaseProvider);
+        await (db.delete(db.emails)
+              ..where((e) => e.id.equals(held.id))
+              ..where((e) => e.accountId.equals(held.accountId)))
+            .go();
+      } catch (_) {}
+    }
     if (acc == null) {
       unawaited(_draftSync.forget(_draftId));
       return;
     }
     unawaited(_draftSync.dropServerCopy(acc, _draftId, original: sd, keep: keep, hard: !discard));
+  }
+
+  /// Серверная копия черновика, из которой отправка возьмёт ещё не
+  /// скачанные файлы (черновик открыт из папки «Черновики» на сервере):
+  /// удалять её можно только после отправки — это делают «Исходящие».
+  ({String accountId, String id, String folderId})? _draftHeldForFiles() {
+    final sd = _serverDraft;
+    final accId = _pendingAccountId;
+    if (sd == null || accId == null || _pendingEmailId != sd.id || _pendingOriginal.isEmpty) return null;
+    return (accountId: accId, id: sd.id, folderId: sd.folderId);
   }
 
   /// Встроенная картинка (уже в тексте цитаты), а не вложение. Outlook

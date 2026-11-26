@@ -4407,4 +4407,13 @@
     <string name="weatherShowInWidgets">Tampilkan di widget</string>
     <string name="weatherWidgetLimit">Widget menampilkan paling banyak dua kota</string>
     <string name="weatherMakeFirst">Jadikan pertama</string>
+    <string name="syncErrTlsDropped">jaringan atau server memutus koneksi aman</string>
+    <string name="boardTitle">Ringkasan kotak surat</string>
+    <string name="boardBar">Ringkasan</string>
+    <string name="boardFolders">Folder di ringkasan</string>
+    <string name="boardFoldersHint">Folder ini tampil di kartu kotak surat beserta jumlah belum dibaca</string>
+    <string name="boardNoUnread">Tidak ada email baru</string>
+    <string name="boardMoreUnread">dan {n} lagi</string>
+    <string name="startScreen">Layar awal</string>
+    <string name="startScreenHint">Aplikasi dibuka di layar ini. Kembali dari bagian lain menuju ke sini; dari sini menutup aplikasi</string>
 </resources>

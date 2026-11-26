@@ -160,6 +160,7 @@ class SectionNav extends ConsumerWidget {
             child: Column(children: [
               if (ref.watch(settingsProvider.select((s) => s.myDay)))
                 extra('myday', AppIcons.myDay, l10n.tr('myDay'), () => go('/my-day'), selected: at('/my-day')),
+              extra('board', AppIcons.dashboard, l10n.tr('boardTitle'), () => go('/accounts'), selected: at('/accounts')),
               extra('assignments', AppIcons.assignment_ind, l10n.tr('assignments'), () => go('/assignments'),
                   selected: at('/assignments')),
               if (flags.showNotes)

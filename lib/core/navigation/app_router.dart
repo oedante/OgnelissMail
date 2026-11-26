@@ -96,6 +96,7 @@ import '../../widgets/common/wide_frame.dart';
 import '../../widgets/common/mail_open_motion.dart' show MailOpenPage;
 import '../../features/settings/screens/appearance_screen.dart';
 import '../../features/settings/screens/experimental_settings_screen.dart';
+import '../../features/mail/screens/accounts_board_screen.dart' show AccountsBoardScreen;
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -189,6 +190,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               )),
           GoRoute(path: '/notes', name: 'notes', builder: (_, __) => const NotesScreen()),
           GoRoute(path: '/my-day', name: 'my-day', builder: (_, __) => const MyDayScreen()),
+          // «Сводка ящиков» (2.7.4): карточки ящиков; нажатие — ящик в ленте.
+          GoRoute(
+            path: '/accounts', name: 'accounts',
+            builder: (_, __) => const WideFrame(child: AccountsBoardScreen()),
+          ),
           // «Поручения» (2.2.0, решение владельца 09.11.2026) и «Вложения» —
           // внутри главного экрана: их можно поставить на нижнюю панель
           // (2.2.0), и панель под ними остаётся. Файлы одного отправителя

@@ -16,6 +16,8 @@ void main() {
       'Договор приложил, посмотрите.',
       'Направляю вам счёт на оплату.',
       'Скан прикрепила.',
+      'Смета в приложении.',
+      'Цены — в приложенном файле.',
       'Please find the report attached.',
       'See the attachment for details.',
       'Im Anhang finden Sie das Angebot.',
@@ -33,6 +35,9 @@ void main() {
     expect(warn('Приложение обновилось, спасибо.'), isFalse);
     expect(warn('Во вложении смета.', has: true), isFalse);
     expect(warn('Thanks, see you tomorrow.'), isFalse);
+    // «в приложения» — о программах, не о вложении (25.11.2026).
+    expect(warn('Копирование и встраивание в приложения или на сайты запрещено.'), isFalse);
+    expect(warn('Добавим это в приложение после обновления.'), isFalse);
   });
 
   test('упоминание только в цитате — не предупреждать', () {

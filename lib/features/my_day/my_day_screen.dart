@@ -54,6 +54,7 @@ import '../../widgets/ui/section_band.dart';
 import '../../widgets/ui/app_menu_button.dart';
 import '../calendar/calendar_data.dart';
 import '../mail/providers/mail_providers.dart';
+import '../mail/screens/accounts_board_screen.dart' show AccountsStrip;
 import '../mail/widgets/control_sheet.dart' show controlDeadlineLabel;
 import '../settings/providers/settings_provider.dart';
 import '../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
@@ -324,6 +325,8 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
     final now = DateTime.now();
     final title = DateFormat('EEEE, d MMMM', l10n.localeCode).format(now);
     return Scaffold(
+      // Ящики кружками у нижней панели (2.7.4): новые письма — числом.
+      bottomNavigationBar: const AccountsStrip(),
       appBar: TextScaleCapBar(child: AppBar(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

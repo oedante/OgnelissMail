@@ -28,7 +28,10 @@ class AttachmentHintService {
   static final _markers = <RegExp>[
     // Русский
     RegExp('$_wordStartво\\s+влож', caseSensitive: false),
-    RegExp('$_wordStartв\\s+прилож', caseSensitive: false),
+    // «в приложении», «в приложенном файле» — но не «в приложения»,
+    // «в приложение» (о программах; письмо владельца 25.11.2026: «встраивание
+    // в приложения» давало напоминание о вложении).
+    RegExp('$_wordStartв\\s+(приложении|приложенн(ом|ых))(\$|[\\s.,;:!?)»\\-—])', caseSensitive: false),
     RegExp('$_wordStartприклад(ыва|аю|ываем)', caseSensitive: false),
     RegExp('$_wordStartприлага(ю|ем|ется|ются)', caseSensitive: false),
     RegExp('$_wordStartприлож(ил|ила|или|ен|ена|ено|ены)(\$|[\\s.,;:!?)»])', caseSensitive: false),

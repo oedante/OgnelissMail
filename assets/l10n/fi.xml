@@ -4428,4 +4428,13 @@
     <string name="weatherShowInWidgets">Näytä widgeteissä</string>
     <string name="weatherWidgetLimit">Widgeteissä enintään kaksi kaupunkia</string>
     <string name="weatherMakeFirst">Siirrä ensimmäiseksi</string>
+    <string name="syncErrTlsDropped">verkko tai palvelin katkaisee suojatun yhteyden</string>
+    <string name="boardTitle">Postilaatikoiden yhteenveto</string>
+    <string name="boardBar">Yhteenveto</string>
+    <string name="boardFolders">Kansiot yhteenvedossa</string>
+    <string name="boardFoldersHint">Nämä kansiot näkyvät postilaatikon kortissa lukemattomien määrän kanssa</string>
+    <string name="boardNoUnread">Ei uusia viestejä</string>
+    <string name="boardMoreUnread">ja {n} muuta</string>
+    <string name="startScreen">Aloitusnäkymä</string>
+    <string name="startScreenHint">Sovellus avautuu tähän näkymään. Takaisin muista osioista palaa tänne, täältä sovellus sulkeutuu</string>
 </resources>

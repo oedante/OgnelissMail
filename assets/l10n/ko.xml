@@ -4407,4 +4407,13 @@
     <string name="weatherShowInWidgets">위젯에 표시</string>
     <string name="weatherWidgetLimit">위젯에는 최대 두 도시</string>
     <string name="weatherMakeFirst">첫 번째로</string>
+    <string name="syncErrTlsDropped">네트워크나 서버가 보안 연결을 끊고 있어요</string>
+    <string name="boardTitle">메일함 요약</string>
+    <string name="boardBar">요약</string>
+    <string name="boardFolders">요약에 표시할 폴더</string>
+    <string name="boardFoldersHint">이 폴더들이 읽지 않은 메일 수와 함께 메일함 카드에 표시됩니다</string>
+    <string name="boardNoUnread">새 메일 없음</string>
+    <string name="boardMoreUnread">외 {n}개</string>
+    <string name="startScreen">시작 화면</string>
+    <string name="startScreenHint">앱이 이 화면으로 열립니다. 다른 화면에서 뒤로 가기를 누르면 여기로 오고, 여기서 누르면 앱이 닫힙니다</string>
 </resources>

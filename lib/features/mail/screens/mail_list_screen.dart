@@ -14,6 +14,7 @@ import '../../../core/utils/text_safe.dart';
 import '../providers/drawer_prefs.dart' show drawerPinnedProvider, menuOnRightProvider, quickFiltersProvider, mailSwipePagerProvider;
 import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../providers/startup_folder.dart';
+import '../providers/start_screen.dart' show startRouteProvider;
 import '../providers/folder_follow.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../widgets/common/sync_progress_indicator.dart' show SyncStatusDot, SyncStatus, syncStatusProvider;
@@ -709,7 +710,11 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     final atHome = (homeInbox && inboxId != null)
         ? (!isUnified && currentFolder == inboxId)
         : isUnified;
-    final inFolder = !atHome && !allAccounts;
+    // Начальный экран — не почта (2.7.4: «Мой день», «Сводка ящиков»):
+    // «Назад» из любой папки — к нему, а не в папку по умолчанию (просьба
+    // владельца: «при нажатии кнопки назад возвращаться на него»).
+    final mailHome = ref.watch(startRouteProvider) == '/mail';
+    final inFolder = mailHome && !atHome && !allAccounts;
     final filtered = ref.watch(mailFilterProvider) != MailFilter.none;
     final canExit = !_awayFromTop && !inSelection && !_isSearching && !inFolder && !filtered;
     // Оболочка (нижняя панель) тоже держит «Назад»: она узнаёт, что ленте

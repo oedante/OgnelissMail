@@ -243,28 +243,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// Шапка Outlook и исходное письмо для отправки. null — цитаты нет, она убрана или
   /// перенесена в редактор.
   String? _quoteHtml;
-  /// Шапка цитаты («От / Отправлено / Кому / Тема» под линией) — отдельно:
-  /// ответ и пересылка ActiveSync силами сервера получают её в конце текста,
-  /// исходное письмо сервер допишет сам (27.10.2026).
-  String? _quoteHeader;
   MailHtmlDocument? _quoteDoc;
   bool _quoteExpanded = false;
-  /// Пользователь правил или убрал цитату — серверный ответ/пересылка
-  /// (которые всегда добавляют оригинал) не используются.
-  bool _quoteChanged = false;
-
-  /// Получатели ответа, как их предложили при открытии («кому|копия»).
-  /// Exchange (EWS) при серверном ответе выбирает получателей сам —
-  /// серверный ответ возможен, только пока их не меняли.
-  String? _replyRecipientsAtStart;
-  /// У исходного письма есть Reply-To или оно — своё (из «Отправленных»):
-  /// тут Exchange выбрал бы получателей иначе, чем экран.
-  bool _replySpecialCase = false;
-
-  String _recipientsKey() {
-    String k(List<EmailAddress> l) => (l.map((a) => a.email.trim().toLowerCase()).toList()..sort()).join(',');
-    return '${k(_toRecipients)}|${k(_ccRecipients)}|${k(_bccRecipients)}';
-  }
 
   /// Тело для отправки: новый текст и цитата.
   String _withQuote(String editorHtml) {
@@ -281,23 +261,41 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// замечание владельца 24.11.2026: первый ответ ушёл с пустым местом
   /// вместо скриншота). Ответ и пересылку, собранные приложением, раньше
   /// отправляли ссылку на картинку исходного письма без самой картинки.
-  /// Не получилось (нет связи, письма нет) — как раньше.
+  ///
+  /// Только то, что уже на телефоне (25.11.2026: окно письма закрывается
+  /// сразу, без ожидания сети); недостающие картинки докачивают «Исходящие»
+  /// перед отправкой — по [_quoteImagesSource].
   Future<String> _embedQuoteImages(String html) async {
-    final srcId = widget.replyToId ?? widget.forwardFromId;
-    if (srcId == null || !html.toLowerCase().contains('cid:')) return html;
+    final src = await _quoteImagesSource(html);
+    if (src == null) return html;
     try {
-      final row = await ref
-          .read(databaseProvider)
-          .getEmailById(srcId, accountId: widget.accountId ?? _fromAccount?.id);
-      if (row == null) return html;
       return await ref
           .read(mailOpenCacheProvider)
-          .embedInlineImages(row.accountId, emailModelFromRow(row), html)
-          .timeout(const Duration(seconds: 45));
+          .embedInlineImages(src.accountId, src.email, html, network: false)
+          .timeout(const Duration(seconds: 5));
     } catch (e) {
-      AppLogger.warning('Картинки цитаты не вложены: $e');
+      AppLogger.warning('Картинки цитаты из памяти телефона: $e');
       return html;
     }
+  }
+
+  /// Исходное письмо с картинками для цитаты, если в [html] есть cid:.
+  Future<({String accountId, String emailId, EmailModel email})?> _quoteImagesSource(String html) async {
+    final srcId = widget.replyToId ?? widget.forwardFromId;
+    if (srcId == null || !html.toLowerCase().contains('cid:')) return null;
+    final row = await ref
+        .read(databaseProvider)
+        .getEmailById(srcId, accountId: widget.accountId ?? _fromAccount?.id);
+    if (row == null) return null;
+    return (accountId: row.accountId, emailId: row.id, email: emailModelFromRow(row));
+  }
+
+  /// Ссылка на исходное письмо для «Исходящих»: картинки цитаты, которых
+  /// ещё нет на телефоне, отправка докачает сама (null — докачивать нечего).
+  Future<({String accountId, String emailId})?> _quoteImagesRef(String html) async {
+    if (!html.toLowerCase().contains('cid:')) return null;
+    final src = await _quoteImagesSource(html);
+    return src == null ? null : (accountId: src.accountId, emailId: src.emailId);
   }
 
   /// «Изменить цитату»: перенести её в редактор.
@@ -308,7 +306,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     setState(() {
       _quoteHtml = null;
       _quoteDoc = null;
-      _quoteChanged = true;
     });
     _markDraftChanged();
   }
@@ -317,7 +314,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     setState(() {
       _quoteHtml = null;
       _quoteDoc = null;
-      _quoteChanged = true;
     });
     _markDraftChanged();
   }
@@ -682,7 +678,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   final List<_PendingFile> _pendingOriginal = [];
   String? _pendingAccountId;
   String? _pendingEmailId;
-  int get _notDownloadedCount => _pendingOriginal.length;
 
   String _importance = 'Normal'; // Low / Normal / High — важность письма
   /// Строка «sensitivity» для отправки: теперь только отметки S/MIME
@@ -1257,8 +1252,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
           if (hit != null) _fromAlias = aliases[hit];
         }
         if (_ccRecipients.isNotEmpty) _showCc = true;
-        _replyRecipientsAtStart = _recipientsKey();
-        _replySpecialCase = replyTo.isNotEmpty || mine(from.email);
       }
 
       // Вы уже писали в этой переписке — приветствие короткое («Максим
@@ -1324,7 +1317,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               : (row.bodyPlain != null ? '<pre>${_esc(row.bodyPlain!)}</pre>' : '');
       if (!mounted) return;
       final quote = ReplyBuilder.quote(header, quotedBody);
-      _quoteHeader = header;
 
       if (_useHtmlEditor) {
         // Цитата — под редактором, только для чтения (см. _quoteHtml).
@@ -4793,8 +4785,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       final account = _fromAccount!;
       // Отложенная отправка уходит обычным путём — с цитатой.
       final bodyHtml = await _embedQuoteImages(_withQuote(await _getBodyHtmlAsync()));
-      await _awaitRunningDownloads();
+      final quoteImages = await _quoteImagesRef(bodyHtml);
       await ref.read(offlineSendProvider).scheduleSend(
+            quoteImages: quoteImages,
+            dropDraft: _draftHeldForFiles(),
             accountId: account.id,
             importance: _importance,
             sensitivity: _sensitivity,
@@ -4812,6 +4806,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             requestDeliveryReport: _requestDeliveryReport,
             requestReadReceipt: _readReceipt,
           );
+      // Письмо в очереди — черновик больше не нужен (25.11.2026: раньше окно
+      // при закрытии сохраняло его, и письмо оставалось в «Черновиках»).
+      await _finishDraft();
       unawaited(HapticFeedback.mediumImpact());
       AppLogger.info('Письмо отложено до $scheduledAt');
       // Письмо видно в ленте строкой «Отправка запланирована» (её можно
@@ -4991,31 +4988,29 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // появится в «Отправленных»; ответ на письмо «должен ответить» — исполнено.
     unawaited(_applyControlOnSend());
 
-    // Отмена отправки (Undo Send): короткое окно, в течение которого можно
-    // передумать. Окно живёт ВНУТРИ compose (поля блокируются) — при отмене
-    // ничего не отправлено и письмо не потеряно. Ноль секунд = сразу.
+    // Письмо — сразу в «Исходящие», окно закрывается, отправка идёт в фоне
+    // (просьба владельца 25.11.2026: «при плохом интернете отправляемое
+    // письмо может долго висеть»). Раньше без отсчёта «Отменить» письмо
+    // отправлялось прямо из окна — оно ждало сервер или ошибку; а с
+    // отсчётом окно перед закрытием ждало загрузку файлов пересылки и
+    // картинок цитаты. Теперь всё сетевое — в «Исходящих»: файлы, картинки,
+    // отправка, повторы при плохой связи. Отсчёт 0 — отправка сразу.
     final undoSeconds = ref.read(featureFlagsProvider).undoSendSeconds;
-    if (undoSeconds > 0) {
-      // Письмо собирается (тело, файлы, уменьшение фото) — кнопка крутится.
-      if (mounted) setState(() => _isSending = true);
-      try {
-        await _sendWithUndo(l10n, Duration(seconds: undoSeconds));
-      } on _MissingFile {
-        // Строка о файле уже вверху экрана, письмо не ушло.
-      } finally {
-        if (mounted) setState(() => _isSending = false);
+    // Письмо собирается (тело, файлы, уменьшение фото) — кнопка крутится.
+    if (mounted) setState(() => _isSending = true);
+    try {
+      await _sendWithUndo(l10n, Duration(seconds: undoSeconds < 0 ? 0 : undoSeconds));
+    } on _MissingFile {
+      // Строка о файле уже вверху экрана, письмо не ушло.
+    } catch (e) {
+      if (mounted) {
+        showInlineError(e.toString().contains('offline_queue_full')
+            ? l10n.tr('offlineQueueFull')
+            : '${l10n.tr('sendError')}: $e');
       }
-    } else {
-      await _performSend(l10n);
+    } finally {
+      if (mounted) setState(() => _isSending = false);
     }
-  }
-
-  /// Перед отправкой: дождаться уже идущих фоновых загрузок вложений
-  /// пересылаемого письма — их файлы уйдут обычными вложениями, а не будут
-  /// качаться второй раз очередью отправки (1.6.18).
-  Future<void> _awaitRunningDownloads() async {
-    final running = [for (final p in _pendingOriginal) if (p.task != null) p.task!];
-    if (running.isNotEmpty) await Future.wait(running);
   }
 
   /// Размер фото для отправки (1.7.2+109): «Размер фото при отправке» в
@@ -5127,10 +5122,14 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Прежде здесь уходил текст без оформления (`<br>` вместо HTML редактора):
     // таблицы, списки и выделение терялись при «отправке с отменой».
     final bodyHtml = await _embedQuoteImages(_withQuote(await _getBodyHtmlAsync()));
+    final quoteImages = await _quoteImagesRef(bodyHtml);
     final offlineSend = ref.read(offlineSendProvider);
 
-    await _awaitRunningDownloads();
+    // Файлы пересылки, которые ещё качаются, — ссылками: «Исходящие» возьмут
+    // их из памяти телефона, если загрузка успеет, иначе докачают сами.
     final outboxId = await offlineSend.scheduleUndoSend(
+      quoteImages: quoteImages,
+      dropDraft: _draftHeldForFiles(),
       accountId: account.id,
             importance: _importance,
             sensitivity: _sensitivity,
@@ -5157,7 +5156,9 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
 
     // «Отправка через N с · Отменить» — строкой над нижней панелью ленты
     // (PendingSendStrip); отдельная плашка не нужна (1.8.0).
-    AppLogger.info('${l10n.tr('sendingInOutbox').replaceAll('{secs}', '${window.inSeconds}')} ($outboxId)');
+    AppLogger.info(window > Duration.zero
+        ? '${l10n.tr('sendingInOutbox').replaceAll('{secs}', '${window.inSeconds}')} ($outboxId)'
+        : 'Письмо в «Исходящих», отправка в фоне ($outboxId)');
   }
 
   /// Порог «большого списка» для предупреждения о reply-all.
@@ -5235,6 +5236,19 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     } catch (_) {
       // Черновика могло и не быть (успели отправить до первого сохранения).
     }
+    // Черновик с сервера, из которого «Исходящие» возьмут не скачанные
+    // файлы: на сервере он удаляется после отправки, а из «Черновиков» на
+    // телефоне — сразу (письмо уже в «Исходящих»).
+    final held = discard ? null : _draftHeldForFiles();
+    if (held != null) {
+      try {
+        final db = ref.read(databaseProvider);
+        await (db.delete(db.emails)
+              ..where((e) => e.id.equals(held.id))
+              ..where((e) => e.accountId.equals(held.accountId)))
+            .go();
+      } catch (_) {}
+    }
     if (acc == null) {
       unawaited(_draftSync.forget(_draftId));
       return;
@@ -5242,134 +5256,15 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     unawaited(_draftSync.dropServerCopy(acc, _draftId, original: sd, keep: keep, hard: !discard));
   }
 
-  /// Попытка переслать силами сервера. true — письмо ушло, обычная отправка
-  /// не нужна.
-  ///
-  /// С 1.5.12 — и для писем без вложений: как в Outlook, исходное письмо
-  /// со шапкой и встроенными картинками добавляет сервер, вёрстка оригинала
-  /// не пересобирается на телефоне.
-  ///
-  /// Не применяем, если:
-  ///  · это не пересылка;
-  ///  · протокол не умеет (IMAP/SMTP — там пересылки на сервере не существует);
-  ///  · в тексте вставлены картинки — сервер берёт только текст;
-  ///  · пользователь изменил набор вложений (убрал или добавил) — сервер
-  ///    приложит ОРИГИНАЛЬНЫЕ, и результат разошёлся бы с тем, что на экране.
-  Future<bool> _tryServerForward(
-      AccountModel account, String subject, String bodyHtml) async {
-    final srcId = widget.forwardFromId;
-    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
-    if (srcId == null || ComposeWindow.inWindow) return false;
-    // Подписанное или зашифрованное письмо сервер дополнить не может (подпись
-    // сломалась бы, шифр — тем более): отправляется целиком с устройства.
-    if (_smimeActive) return false;
-    // Сервер всегда добавляет оригинал целиком: если цитату правили или
-    // убрали, отправляем то, что на экране.
-    if (_quoteChanged) return false;
-    if (_hasInlineImages(bodyHtml)) return false;
-
-    final engine = ref.read(mailEngineServiceProvider);
-    if (!engine.supportsServerForward(account)) return false;
-
-    try {
-      final db = ref.read(databaseProvider);
-      final row = await db.getEmailById(srcId, accountId: widget.accountId ?? account.id);
-      if (row == null) return false;
-
-      final origCount = _originalAttachmentCount(row.attachmentsJson);
-      // Простой редактор: цитата уже в тексте — сервер добавил бы оригинал
-      // второй раз. Ради вложений это терпимо (как и до 1.5.12), без них —
-      // обычная отправка.
-      if (_quoteHtml == null && origCount == 0) return false;
-
-      // Ключевая проверка. Часть вложений могла не скачаться локально — тогда
-      // серверная пересылка ОБЯЗАТЕЛЬНА: только сервер приложит эти файлы.
-      // Раньше их отсутствие делало число вложений «изменённым», серверная
-      // пересылка отключалась, и письмо уходило без них.
-      // Набор — по именам (1.7.2+111): раньше сравнивалось только число, и
-      // замена одного файла другим уходила с исходным файлом вместо нового.
-      final now = [for (final f in _attachments) f.name, for (final p in _pendingOriginal) p.name]..sort();
-      if (!listEquals(now, _originalAttachmentNames(row.attachmentsJson))) {
-        AppLogger.info('Серверная пересылка пропущена: набор вложений изменён '
-            '(локально ${_attachments.length}, не скачано $_notDownloadedCount, было $origCount)');
-        return false;
-      }
-      if (_notDownloadedCount > 0) {
-        AppLogger.info('Пересылка через сервер: $_notDownloadedCount вложений '
-            'нет локально, их приложит Exchange');
-      }
-
-      final ok = await engine.forwardOnServer(
-        account,
-        itemId: srcId,
-        folderId: row.folderId,
-        to: _toRecipients,
-        cc: _ccRecipients,
-        subject: subject,
-        bodyHtml: bodyHtml,
-        clientId: 'f$_draftId',
-        sensitivity: _sensitivity,
-        easQuoteHeader: _quoteChanged ? null : _quoteHeader,
-      );
-      if (ok) {
-        AppLogger.info('Пересылка выполнена сервером: вложения не скачивались');
-      }
-      return ok;
-    } catch (e) {
-      AppLogger.warning('Серверная пересылка не удалась, отправляем обычным путём: $e');
-      return false; // откат на обычную отправку
-    }
+  /// Серверная копия черновика, из которой отправка возьмёт ещё не
+  /// скачанные файлы (черновик открыт из папки «Черновики» на сервере):
+  /// удалять её можно только после отправки — это делают «Исходящие».
+  ({String accountId, String id, String folderId})? _draftHeldForFiles() {
+    final sd = _serverDraft;
+    final accId = _pendingAccountId;
+    if (sd == null || accId == null || _pendingEmailId != sd.id || _pendingOriginal.isEmpty) return null;
+    return (accountId: accId, id: sd.id, folderId: sd.folderId);
   }
-
-  /// Ответ силами сервера: ActiveSync SmartReply, Exchange (EWS) ReplyToItem
-  /// (1.5.12) — исходное письмо, шапку и встроенные картинки добавляет сервер,
-  /// как у ответа из Outlook. Только когда результат совпадает с тем, что на
-  /// экране: цитата не менялась, нет своих вложений, скрытой копии и картинок
-  /// в тексте (серверный ответ их не передаёт), у Exchange — и получатели
-  /// те же, что были предложены.
-  /// Иначе — обычная отправка с цитатой.
-  Future<bool> _tryServerReply(AccountModel account, String subject, String bodyHtml) async {
-    final srcId = widget.replyToId;
-    // Окно редактора (2.5.4): письмо уходит обычной отправкой главного окна.
-    if (srcId == null || _quoteChanged || _quoteHtml == null || ComposeWindow.inWindow) return false;
-    final ews = account.usesEws || account.isExchange;
-    if (!ews && !account.usesEas) return false;
-    // Не скачанные ещё файлы исходного письма («Ответить с вложениями») сервер
-    // в ответ не положит — такой ответ собирает приложение.
-    if (_attachments.isNotEmpty || _pendingOriginal.isNotEmpty || _bccRecipients.isNotEmpty) return false;
-    // Exchange выбирает получателей сам: только если на экране — те же.
-    if (ews && (_replySpecialCase || _replyRecipientsAtStart != _recipientsKey())) return false;
-    if (_hasInlineImages(bodyHtml)) return false;
-    if (_smimeActive) return false; // сервер не может дополнить подписанное письмо
-    try {
-      final db = ref.read(databaseProvider);
-      final row = await db.getEmailById(srcId, accountId: widget.accountId ?? account.id);
-      if (row == null) return false;
-      final ok = await ref.read(mailEngineServiceProvider).replyOnServer(
-            account,
-            itemId: srcId,
-            folderId: row.folderId,
-            to: _toRecipients,
-            cc: _ccRecipients,
-            subject: subject,
-            bodyHtml: bodyHtml,
-            clientId: 'r$_draftId',
-            sensitivity: _sensitivity,
-            replyAll: widget.replyAll,
-            easQuoteHeader: _quoteHeader,
-          );
-      if (ok) AppLogger.info('Ответ собран сервером (${ews ? 'ReplyToItem' : 'SmartReply'})');
-      return ok;
-    } catch (e) {
-      AppLogger.warning('Серверный ответ не удался, отправляем обычным путём: $e');
-      return false;
-    }
-  }
-
-  /// Картинки, вставленные в текст (data:/cid:). Серверные ответ и
-  /// пересылка берут только текст: такие картинки до адресата не дошли бы.
-  static bool _hasInlineImages(String html) =>
-      RegExp(r'''<img[^>]+src\s*=\s*["']?\s*(?:data:|cid:)''', caseSensitive: false).hasMatch(html);
 
   /// Встроенная картинка (уже в тексте цитаты), а не вложение. Outlook
   /// помечает «встроенными» и обычные файлы (PDF, документы с Content-ID) —
@@ -5382,130 +5277,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     if (mime.isNotEmpty) return false;
     final name = (m['name'] ?? '').toString().toLowerCase();
     return RegExp(r'\.(png|jpe?g|gif|bmp|webp|tiff?)$').hasMatch(name);
-  }
-
-  /// Имена вложений исходного письма (без встроенных картинок), по порядку.
-  static List<String> _originalAttachmentNames(String? raw) {
-    if (raw == null || raw.isEmpty) return const [];
-    try {
-      return [
-        for (final m in (jsonDecode(raw) as List).whereType<Map>())
-          if (!_isInlineImage(m)) EmailAttachment.fromMap(Map<String, dynamic>.from(m)).name,
-      ]..sort();
-    } catch (_) {
-      return const [];
-    }
-  }
-
-  int _originalAttachmentCount(String? raw) {
-    if (raw == null || raw.isEmpty) return 0;
-    try {
-      final list = jsonDecode(raw) as List;
-      return list.where((m) => !_isInlineImage(m as Map)).length;
-    } catch (_) {
-      return 0;
-    }
-  }
-
-  Future<void> _performSend(AppLocalizations l10n) async {
-    if (!mounted) return;
-    setState(() => _isSending = true);
-    try {
-      final account = _fromAccount!;
-      final subject = _subjectController.text.trim();
-      // Только новый текст: серверные ответ и пересылка добавляют оригинал сами.
-      final bodyHtml = await _getBodyHtmlAsync();
-
-      // ── ОТВЕТ СИЛАМИ СЕРВЕРА (ActiveSync SmartReply) ──
-      // Exchange сам добавляет исходное письмо: вёрстка Outlook, встроенные
-      // картинки и шапка — как в Outlook, без пересборки на телефоне.
-      if (await _tryServerReply(account, subject, bodyHtml)) {
-        await _finishDraft();
-        await _markOriginalAnswered();
-        unawaited(HapticFeedback.mediumImpact());
-        if (mounted) {
-          AppLogger.info(l10n.tr('emailSent'));
-          Navigator.of(context).pop();
-        }
-        return;
-      }
-
-      // ── ПЕРЕСЫЛКА СИЛАМИ СЕРВЕРА ──
-      // Exchange умеет переслать письмо сам (EWS ForwardItem / EAS SmartForward):
-      // оригинальные вложения он берёт из исходного сообщения, и они НЕ
-      // скачиваются на устройство и не отправляются обратно. Для письма с
-      // тяжёлыми файлами это разница между «мгновенно» и «выкачать и залить
-      // десятки мегабайт по мобильной сети».
-      // Условия: это пересылка, вложения пользователь не менял.
-      if (await _tryServerForward(account, subject, bodyHtml)) {
-        await _finishDraft();
-        await _markOriginalAnswered();
-        unawaited(HapticFeedback.mediumImpact());
-        if (mounted) {
-          AppLogger.info(l10n.tr('forwardedServer'));
-          Navigator.of(context).pop();
-        }
-        return;
-      }
-
-      // Серверная пересылка не состоялась (нет связи, сервер отказал, набор
-      // вложений менялся), а часть вложений не скачана. Обычная отправка ушла
-      // бы без этих файлов — молча. Теперь их докачивает отправка: сразу, а
-      // без связи — очередь, письмо уйдёт вместе с ними (1.6.18).
-      await _awaitRunningDownloads();
-      final remote = _pendingRefs();
-
-      // sendOrQueue: при ошибке/офлайне письмо ставится в очередь (Outbox),
-      // не теряется, дошлётся автоматически при восстановлении связи.
-      final sent = await ref.read(offlineSendProvider).sendOrQueue(
-            accountId: account.id,
-            importance: _importance,
-            sensitivity: _sensitivity,
-            attachments: await _collectAttachments(l10n),
-            to: _toRecipients,
-            cc: _ccRecipients,
-            bcc: _bccRecipients,
-            subject: subject,
-            bodyHtml: await _embedQuoteImages(_withQuote(bodyHtml)),
-            inReplyTo: _inReplyTo,
-            remoteAttachments: remote,
-            from: _fromOverride,
-            // Не принято по размеру — письмо остаётся здесь (ниже).
-            keepTooLarge: true,
-            requestDeliveryReport: _requestDeliveryReport,
-            requestReadReceipt: _readReceipt,
-          );
-
-      // И при отправке, и при постановке в очередь черновик не нужен: письмо
-      // уже в Исходящих и уйдёт само.
-      await _finishDraft();
-      await _markOriginalAnswered();
-      unawaited(HapticFeedback.mediumImpact());
-
-      if (mounted) {
-        // Отправлено — видно по ленте; в очереди — сказать, что письмо ещё
-        // не ушло и уйдёт само.
-        if (sent) {
-          AppLogger.info(l10n.tr('emailSent'));
-        } else {
-          quietNotice(remote.isNotEmpty ? l10n.tr('attPendingQueued') : l10n.tr('queuedOutbox'));
-        }
-        Navigator.of(context).pop();
-      }
-    } on MessageTooLargeException catch (e) {
-      // Сервер или шлюз организации не принял письмо по размеру (1.7.2+114):
-      // письмо остаётся открытым — уменьшить фото («Сжать») или убрать файлы
-      // и отправить снова. Раньше редактор закрывался, а письмо пропадало.
-      if (mounted) showInlineError(OfflineSendService.tooLargeText(l10n, e));
-    } catch (e) {
-      if (mounted && e is! _MissingFile) {
-        showInlineError(e.toString().contains('offline_queue_full')
-              ? l10n.tr('offlineQueueFull')
-              : '${l10n.tr('sendError')}: $e');
-      }
-    } finally {
-      if (mounted) setState(() => _isSending = false);
-    }
   }
 
   /// Закрыть письмо (крестик, системное «Назад», жест): пустое (только

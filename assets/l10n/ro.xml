@@ -4449,4 +4449,13 @@
     <string name="weatherShowInWidgets">Afișează în widgeturi</string>
     <string name="weatherWidgetLimit">Widgeturile arată cel mult două orașe</string>
     <string name="weatherMakeFirst">Pune primul</string>
+    <string name="syncErrTlsDropped">rețeaua sau serverul întrerupe conexiunea securizată</string>
+    <string name="boardTitle">Rezumatul căsuțelor</string>
+    <string name="boardBar">Rezumat</string>
+    <string name="boardFolders">Dosare în rezumat</string>
+    <string name="boardFoldersHint">Aceste dosare apar pe cardul căsuței cu numărul de necitite</string>
+    <string name="boardNoUnread">Niciun mesaj nou</string>
+    <string name="boardMoreUnread">și încă {n}</string>
+    <string name="startScreen">Ecran de pornire</string>
+    <string name="startScreenHint">Aplicația se deschide pe acest ecran. Înapoi din alte secțiuni duce aici, de aici închide aplicația</string>
 </resources>

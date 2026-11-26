@@ -462,6 +462,19 @@ class SyncService {
   final Map<String, String> _partialErrors = {};
   final Map<String, List<String>> _ewsFolderErrors = {};
 
+  /// Не удалось подключиться к серверу (сеть, TLS-рукопожатие, отказ в
+  /// соединении) — а не ошибка в конкретной папке.
+  @visibleForTesting
+  static bool isConnectFailure(Object e) {
+    if (e is SocketException || e is HandshakeException) return true;
+    final l = '$e'.toLowerCase();
+    return l.contains('handshake') ||
+        l.contains('connection refused') ||
+        l.contains('connection reset') ||
+        l.contains('failed host lookup') ||
+        l.contains('network is unreachable');
+  }
+
   /// Короткий понятный текст ошибки: без стека, типа исключения и простыней.
   String _shortError(Object e) {
     final l10n = _l10n();
@@ -475,7 +488,11 @@ class SyncService {
     }
     if (l.contains('connection refused')) return l10n.tr('syncErrRefused');
     if (l.contains('timed out') || l.contains('timeout')) return l10n.tr('syncErrTimeout');
-    if (l.contains('handshake') || l.contains('certificate')) return l10n.tr('syncErrCert');
+    // Обрыв при установке защищённого соединения — не сертификат (журнал
+    // пользователя 25.11.2026: на мобильном интернете сервер обрывал
+    // соединение, а ящик показывал «ошибка сертификата сервера»).
+    if (l.contains('certificate') || l.contains('cert_') || l.contains('сертифик')) return l10n.tr('syncErrCert');
+    if (l.contains('handshake')) return l10n.tr('syncErrTlsDropped');
     if (l.contains('network is unreachable') || l.contains('socketexception')) return l10n.tr('syncErrNoLink');
     t = t.split('\n').first;
     return t.length > 140 ? '${cutSafe(t, 140)}…' : t;
@@ -3005,18 +3022,30 @@ class SyncService {
     AppLogger.info('IMAP sync: ${account.email} — папок ${folders.length}, синхронизируем ${synced.length}');
 
     int totalEmails = 0;
+    var okFolders = 0;
     final failedFolders = <String>[];
     for (final folder in synced) {
       try {
         totalEmails += await _stage(account, 'папка ${folder.displayName}',
             () => _syncImapFolder(imap, db, account, folder, settings));
+        okFolders++;
       } catch (e) {
         failedFolders.add('${folder.displayName}: ${_shortError(e)}');
         AppLogger.error('IMAP sync папка "${folder.displayName}": $e');
         if (_isAuthError(e)) rethrow;
+        // Не подключиться к серверу — остальные папки этого прохода не
+        // пробуем (журнал пользователя 25.11.2026: на мобильном интернете —
+        // по подключению на каждую из 14 папок подряд, 263 обрыва за 3,5
+        // часа; сервер или сеть, ограничивающие частоту подключений, от
+        // этого пускали ещё реже). Следующий проход попробует снова.
+        if (isConnectFailure(e)) {
+          final left = synced.length - synced.indexOf(folder) - 1;
+          if (left > 0) AppLogger.info('IMAP ${AppLogger.mask(account.email)}: нет подключения к серверу — ещё $left папок в следующий раз');
+          break;
+        }
       }
     }
-    if (failedFolders.isNotEmpty && failedFolders.length >= synced.length) {
+    if (failedFolders.isNotEmpty && okFolders == 0) {
       throw Exception(failedFolders.first);
     } else if (failedFolders.isNotEmpty) {
       _partialErrors[account.id] = failedFolders.join('; ');

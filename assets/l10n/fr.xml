@@ -4428,4 +4428,13 @@
     <string name="weatherShowInWidgets">Afficher dans les widgets</string>
     <string name="weatherWidgetLimit">Les widgets affichent deux villes au plus</string>
     <string name="weatherMakeFirst">Mettre en premier</string>
+    <string name="syncErrTlsDropped">le réseau ou le serveur coupe la connexion sécurisée</string>
+    <string name="boardTitle">Aperçu des boîtes</string>
+    <string name="boardBar">Aperçu</string>
+    <string name="boardFolders">Dossiers dans l’aperçu</string>
+    <string name="boardFoldersHint">Ces dossiers s’affichent sur la carte de la boîte avec le nombre de non-lus</string>
+    <string name="boardNoUnread">Aucun nouveau message</string>
+    <string name="boardMoreUnread">et {n} de plus</string>
+    <string name="startScreen">Écran d’accueil</string>
+    <string name="startScreenHint">L’app s’ouvre sur cet écran. Retour depuis les autres sections y ramène ; depuis cet écran, il ferme l’app</string>
 </resources>

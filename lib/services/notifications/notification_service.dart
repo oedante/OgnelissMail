@@ -782,7 +782,7 @@ class NotificationService {
   static String mailGroupKey(String accountId) => 'email_$accountId';
 
   /// Снять уведомление о письме (прочитано или удалено в приложении).
-  /// Осталось меньше двух писем в группе — сводное уведомление тоже.
+  /// Писем в группе не осталось — сводное уведомление тоже.
   Future<void> cancelEmail(String accountId, String emailId) async {
     await cancelScheduled(notificationIdForEmail(accountId, emailId));
     await refreshMailGroup(accountId: accountId, tidyOnly: true);
@@ -820,10 +820,16 @@ class NotificationService {
       final sumId = notificationIdForSummary(accountId);
       final key = mailGroupKey(accountId);
       final kids = [for (final n in active) if (n.groupKey == key && n.id != sumId) n];
-      if (kids.length < 2 && extra == 0) {
-        if (active.any((n) => n.id == sumId)) await _plugin.cancel(sumId);
+      final hasSummary = active.any((n) => n.id == sumId);
+      if (kids.isEmpty && extra == 0) {
+        if (hasSummary) await _plugin.cancel(sumId);
         return;
       }
+      // Одно письмо: сводное не нужно, но снимать его нельзя — Android вместе
+      // со сводным снимает все уведомления группы (замечание пользователя
+      // 25.11.2026: «Прочитано» в шторке на предпоследнем письме убирало и
+      // последнее). Сводное уйдёт само вместе с последним письмом.
+      if (kids.length < 2 && extra == 0 && (!hasSummary || tidyOnly)) return;
       if (tidyOnly) return;
       await showSummaryNotification(
         accountId: accountId,

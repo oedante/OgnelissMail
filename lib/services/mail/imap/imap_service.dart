@@ -495,9 +495,25 @@ class ImapService {
           .connectToServer(host, port, isSecure: useSSL)
           .timeout(const Duration(seconds: 20));
     } catch (e) {
-      AppLogger.warning('IMAP: не удалось подключиться к $host:$port — $e '
-          '(проверьте сервер/порт/сеть)');
-      rethrow;
+      // Обрыв при установке защищённого соединения — ещё одна попытка через
+      // 2 с (журнал пользователя 25.11.2026: на мобильном интернете сервер
+      // обрывал часть подключений, следующее нередко проходило).
+      if (!isDroppedHandshake(e)) {
+        AppLogger.warning('IMAP: не удалось подключиться к $host:$port — $e '
+            '(проверьте сервер/порт/сеть)');
+        rethrow;
+      }
+      AppLogger.info('IMAP: $host:$port оборвал защищённое соединение — повтор через 2 с');
+      await Future<void>.delayed(const Duration(seconds: 2));
+      try {
+        await client
+            .connectToServer(host, port, isSecure: useSSL)
+            .timeout(const Duration(seconds: 20));
+      } catch (e2) {
+        AppLogger.warning('IMAP: не удалось подключиться к $host:$port — $e2 '
+            '(проверьте сервер/порт/сеть)');
+        rethrow;
+      }
     }
 
     if (enc == EncryptionType.starttls) {
@@ -2402,6 +2418,16 @@ class ImapService {
       if (m == null) return null;
       return Uint8List.fromList(utf8.encode(m.renderMessage()));
     });
+  }
+
+  /// Соединение оборвано во время TLS-рукопожатия (сеть или сервер), а не
+  /// отклонён сертификат.
+  @visibleForTesting
+  static bool isDroppedHandshake(Object e) {
+    final l = '$e'.toLowerCase();
+    if (l.contains('certificate') || l.contains('cert_')) return false;
+    return (e is HandshakeException || l.contains('handshakeexception')) &&
+        (l.contains('terminated') || l.contains('connection reset') || l.contains('closed'));
   }
 
   /// Исходящее письмо (MIME) — общее для SMTP и для отправки готовым

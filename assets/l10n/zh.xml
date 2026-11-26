@@ -4407,4 +4407,13 @@
     <string name="weatherShowInWidgets">在小组件中显示</string>
     <string name="weatherWidgetLimit">小组件最多显示两个城市</string>
     <string name="weatherMakeFirst">设为第一个</string>
+    <string name="syncErrTlsDropped">网络或服务器中断了安全连接</string>
+    <string name="boardTitle">邮箱概览</string>
+    <string name="boardBar">概览</string>
+    <string name="boardFolders">概览中的文件夹</string>
+    <string name="boardFoldersHint">这些文件夹会连同未读数显示在邮箱卡片上</string>
+    <string name="boardNoUnread">没有新邮件</string>
+    <string name="boardMoreUnread">还有 {n} 封</string>
+    <string name="startScreen">启动画面</string>
+    <string name="startScreenHint">应用从此画面打开。在其他页面按返回会回到这里，在这里按返回则关闭应用</string>
 </resources>

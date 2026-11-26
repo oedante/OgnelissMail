@@ -21,7 +21,8 @@ import '../../../data/providers/shared_prefs_provider.dart';
 /// пользователя 10.11.2026: раздел, убранный с нижней панели, — в
 /// «Избранном»); по умолчанию скрыты, пока их не включат или не уберут с
 /// панели.
-enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme, assignments, calendar, contacts }
+/// board — «Сводка ящиков» (2.7.4): по умолчанию видна.
+enum DrawerQuickItem { allAccounts, allMail, unread, flagged, vip, attachments, fileHub, notes, tasks, control, later, triage, myDay, settings, theme, assignments, calendar, contacts, board }
 
 const _kHiddenQuick = 'drawer_quick_hidden';
 const _kCollapsed = 'drawer_collapsed_folders';
@@ -168,7 +169,7 @@ final menuOnRightProvider = NotifierProvider<MenuOnRightNotifier, bool>(MenuOnRi
 /// «Почту» можно поставить на любое место, «Меню» — только с края, слева
 /// или справа, с той же стороны выезжает меню (настройка «Общие → Меню
 /// ящиков и папок», menuOnRightProvider).
-enum BarItem { mail, calendar, contacts, tasks, myDay, notes, assignments, files, menu }
+enum BarItem { mail, calendar, contacts, tasks, myDay, board, notes, assignments, files, menu }
 
 /// Пункт «Избранного» того же раздела (у почты и меню — нет).
 DrawerQuickItem? quickItemOf(BarItem i) => switch (i) {
@@ -176,6 +177,7 @@ DrawerQuickItem? quickItemOf(BarItem i) => switch (i) {
       BarItem.contacts => DrawerQuickItem.contacts,
       BarItem.tasks => DrawerQuickItem.tasks,
       BarItem.myDay => DrawerQuickItem.myDay,
+      BarItem.board => DrawerQuickItem.board,
       BarItem.notes => DrawerQuickItem.notes,
       BarItem.assignments => DrawerQuickItem.assignments,
       BarItem.files => DrawerQuickItem.fileHub,
@@ -217,7 +219,7 @@ class PhoneBarNotifier extends Notifier<List<BarItem>> {
   static List<BarItem> visible(List<BarItem> bar, bool Function(BarItem) available) {
     const spare = [
       BarItem.mail, BarItem.calendar, BarItem.contacts, BarItem.tasks, BarItem.myDay, BarItem.notes,
-      BarItem.assignments, BarItem.files,
+      BarItem.assignments, BarItem.files, BarItem.board,
     ];
     final out = [...bar];
     for (var i = 0; i < out.length; i++) {

@@ -4428,4 +4428,13 @@
     <string name="weatherShowInWidgets">In Widgets zeigen</string>
     <string name="weatherWidgetLimit">Widgets zeigen höchstens zwei Städte</string>
     <string name="weatherMakeFirst">An erste Stelle</string>
+    <string name="syncErrTlsDropped">Netz oder Server bricht die sichere Verbindung ab</string>
+    <string name="boardTitle">Postfach-Übersicht</string>
+    <string name="boardBar">Übersicht</string>
+    <string name="boardFolders">Ordner in der Übersicht</string>
+    <string name="boardFoldersHint">Diese Ordner erscheinen mit der Zahl ungelesener E-Mails auf der Postfachkarte</string>
+    <string name="boardNoUnread">Keine neuen E-Mails</string>
+    <string name="boardMoreUnread">und {n} weitere</string>
+    <string name="startScreen">Startbildschirm</string>
+    <string name="startScreenHint">Die App öffnet mit diesem Bildschirm. „Zurück“ aus anderen Bereichen führt hierher, von hier aus wird die App geschlossen</string>
 </resources>

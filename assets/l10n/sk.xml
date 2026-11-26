@@ -4449,4 +4449,13 @@
     <string name="weatherShowInWidgets">Zobraziť vo widgetoch</string>
     <string name="weatherWidgetLimit">Widgety ukazujú najviac dve mestá</string>
     <string name="weatherMakeFirst">Dať ako prvé</string>
+    <string name="syncErrTlsDropped">sieť alebo server prerušuje zabezpečené spojenie</string>
+    <string name="boardTitle">Prehľad schránok</string>
+    <string name="boardBar">Prehľad</string>
+    <string name="boardFolders">Priečinky v prehľade</string>
+    <string name="boardFoldersHint">Tieto priečinky sa zobrazia na karte schránky s počtom neprečítaných</string>
+    <string name="boardNoUnread">Žiadna nová pošta</string>
+    <string name="boardMoreUnread">a ďalších {n}</string>
+    <string name="startScreen">Úvodná obrazovka</string>
+    <string name="startScreenHint">Aplikácia sa otvára na tejto obrazovke. Späť z iných častí vedie sem, odtiaľto aplikáciu zatvorí</string>
 </resources>

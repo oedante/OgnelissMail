@@ -292,6 +292,8 @@ class _OutboxListState extends ConsumerState<OutboxList> {
           p = <String, dynamic>{};
         }
         p.remove('scheduledAt');
+        // Повторы при плохой связи — снова сутки, с этого нажатия.
+        p['retryFrom'] = DateTime.now().toIso8601String();
         final n = await (db.update(db.syncQueue)
               ..where((q) => q.id.equals(op.id) & q.operationType.isIn(const ['send_email', 'send_pending', 'send_failed'])))
             .write(SyncQueueCompanion(

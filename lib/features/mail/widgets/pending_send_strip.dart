@@ -6,6 +6,11 @@
 //
 // С 1.7.2+106 — поверх ленты внизу, вместе с «Письмо удалено · Вернуть»
 // (undo_strip.dart): строка над лентой при исчезновении сдвигала всю ленту.
+//
+// Только пока идёт отсчёт (2.7.4, 25.11.2026): дальше письмо — в
+// «Исходящих» (отправляется, ждёт связи или не ушло — там же «Отменить» и
+// «Изменить»). Раньше строка «Отправляется… · Отменить» висела над лентой,
+// пока письмо повторялось при плохой связи, а «Отменить» уже не работало.
 
 import 'dart:async';
 
@@ -81,13 +86,16 @@ class _PendingSendStripState extends ConsumerState<PendingSendStrip> {
   @override
   Widget build(BuildContext context) {
     final list = ref.watch(pendingSendsProvider).value ?? const <Email>[];
-    final visible = [for (final e in list) if (!_cancelled.contains(e.id)) e];
+    final now = DateTime.now();
+    final visible = [
+      for (final e in list)
+        if (!_cancelled.contains(e.id) && e.sentAt != null && e.sentAt!.isAfter(now)) e
+    ];
     _ensureTicker(visible.isNotEmpty);
     if (visible.isEmpty) return const FloatingStripSwitcher(child: null);
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final muted = AppColors.mutedText(context);
-    final now = DateTime.now();
     return FloatingStripSwitcher(
         child: Column(key: const ValueKey('sends'), mainAxisSize: MainAxisSize.min, children: [
       for (final e in visible)

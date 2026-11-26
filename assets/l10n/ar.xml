@@ -4512,4 +4512,13 @@
     <string name="weatherShowInWidgets">إظهار في الأدوات</string>
     <string name="weatherWidgetLimit">تعرض الأدوات مدينتين على الأكثر</string>
     <string name="weatherMakeFirst">اجعلها الأولى</string>
+    <string name="syncErrTlsDropped">الشبكة أو الخادم يقطع الاتصال الآمن</string>
+    <string name="boardTitle">ملخص صناديق البريد</string>
+    <string name="boardBar">ملخص</string>
+    <string name="boardFolders">المجلدات في الملخص</string>
+    <string name="boardFoldersHint">تظهر هذه المجلدات على بطاقة صندوق البريد مع عدد غير المقروء</string>
+    <string name="boardNoUnread">لا يوجد بريد جديد</string>
+    <string name="boardMoreUnread">و{n} أخرى</string>
+    <string name="startScreen">شاشة البدء</string>
+    <string name="startScreenHint">يُفتح التطبيق على هذه الشاشة. يعود زر الرجوع من الأقسام الأخرى إليها، ومنها يُغلق التطبيق</string>
 </resources>

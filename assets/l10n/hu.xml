@@ -4428,4 +4428,13 @@
     <string name="weatherShowInWidgets">Megjelenítés widgetekben</string>
     <string name="weatherWidgetLimit">A widgetek legfeljebb két várost mutatnak</string>
     <string name="weatherMakeFirst">Legyen az első</string>
+    <string name="syncErrTlsDropped">a hálózat vagy a szerver megszakítja a biztonságos kapcsolatot</string>
+    <string name="boardTitle">Postafiókok áttekintése</string>
+    <string name="boardBar">Áttekintés</string>
+    <string name="boardFolders">Mappák az áttekintésben</string>
+    <string name="boardFoldersHint">Ezek a mappák az olvasatlanok számával jelennek meg a postafiók kártyáján</string>
+    <string name="boardNoUnread">Nincs új levél</string>
+    <string name="boardMoreUnread">és még {n}</string>
+    <string name="startScreen">Kezdőképernyő</string>
+    <string name="startScreenHint">Az alkalmazás ezzel a képernyővel nyílik meg. Más részekből a Vissza ide vezet, innen bezárja az alkalmazást</string>
 </resources>

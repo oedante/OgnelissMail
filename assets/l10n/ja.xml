@@ -4407,4 +4407,13 @@
     <string name="weatherShowInWidgets">ウィジェットに表示</string>
     <string name="weatherWidgetLimit">ウィジェットに表示できるのは2都市まで</string>
     <string name="weatherMakeFirst">最初にする</string>
+    <string name="syncErrTlsDropped">ネットワークまたはサーバーが安全な接続を切断しています</string>
+    <string name="boardTitle">メールボックス一覧</string>
+    <string name="boardBar">一覧</string>
+    <string name="boardFolders">一覧に表示するフォルダ</string>
+    <string name="boardFoldersHint">これらのフォルダが未読数とともにメールボックスのカードに表示されます</string>
+    <string name="boardNoUnread">新着メールはありません</string>
+    <string name="boardMoreUnread">ほか {n} 件</string>
+    <string name="startScreen">起動時の画面</string>
+    <string name="startScreenHint">アプリはこの画面で開きます。ほかの画面で「戻る」を押すとここに戻り、ここで押すとアプリを閉じます</string>
 </resources>

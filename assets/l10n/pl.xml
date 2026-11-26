@@ -4470,4 +4470,13 @@
     <string name="weatherShowInWidgets">Pokaż w widżetach</string>
     <string name="weatherWidgetLimit">Widżety pokazują najwyżej dwa miasta</string>
     <string name="weatherMakeFirst">Ustaw jako pierwsze</string>
+    <string name="syncErrTlsDropped">sieć lub serwer zrywa bezpieczne połączenie</string>
+    <string name="boardTitle">Przegląd skrzynek</string>
+    <string name="boardBar">Przegląd</string>
+    <string name="boardFolders">Foldery w przeglądzie</string>
+    <string name="boardFoldersHint">Te foldery są na karcie skrzynki z liczbą nieprzeczytanych</string>
+    <string name="boardNoUnread">Brak nowych wiadomości</string>
+    <string name="boardMoreUnread">i jeszcze {n}</string>
+    <string name="startScreen">Ekran startowy</string>
+    <string name="startScreenHint">Aplikacja otwiera się na tym ekranie. Wstecz z innych sekcji wraca tutaj, a stąd zamyka aplikację</string>
 </resources>

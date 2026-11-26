@@ -294,6 +294,10 @@ abstract final class ComposeWindowHost {
               from: SendCodec.addr(a['from']),
               requestDeliveryReport: a['dsn'] == true,
               requestReadReceipt: a['mdn'] == true,
+              quoteImages: switch (a['quoteImages']) {
+                {'accountId': final String acc, 'emailId': final String em} => (accountId: acc, emailId: em),
+                _ => null,
+              },
             );
         return {'outboxId': id};
     }
@@ -501,6 +505,7 @@ class WindowSendService extends OfflineSendService {
     bool requestDeliveryReport = false,
     bool requestReadReceipt = false,
     bool showInConversation = true,
+    ({String accountId, String emailId})? quoteImages,
   }) async {
     final r = await MessageWindow.request('composeSendUndo', {
       'accountId': accountId,
@@ -520,6 +525,7 @@ class WindowSendService extends OfflineSendService {
       'from': from == null ? null : SendCodec.addrMap(from),
       'dsn': requestDeliveryReport,
       'mdn': requestReadReceipt,
+      if (quoteImages != null) 'quoteImages': {'accountId': quoteImages.accountId, 'emailId': quoteImages.emailId},
     });
     if (r is! Map || r['outboxId'] is! String) throw StateError('главное окно не поставило письмо в очередь');
     return r['outboxId'] as String;

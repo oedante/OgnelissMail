@@ -4407,4 +4407,5 @@
     <string name="weatherShowInWidgets">Hiển thị trong tiện ích</string>
     <string name="weatherWidgetLimit">Tiện ích hiển thị tối đa hai thành phố</string>
     <string name="weatherMakeFirst">Đặt lên đầu</string>
+    <string name="syncErrTlsDropped">mạng hoặc máy chủ ngắt kết nối bảo mật</string>
 </resources>

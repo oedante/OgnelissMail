@@ -4449,4 +4449,5 @@
     <string name="weatherShowInWidgets">הצגה בווידג\'טים</string>
     <string name="weatherWidgetLimit">בווידג\'טים — עד שתי ערים</string>
     <string name="weatherMakeFirst">העבר לראשונה</string>
+    <string name="syncErrTlsDropped">הרשת או השרת מנתקים את החיבור המאובטח</string>
 </resources>

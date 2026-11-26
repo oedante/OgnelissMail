@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Visa i widgetar</string>
     <string name="weatherWidgetLimit">Widgetar visar högst två städer</string>
     <string name="weatherMakeFirst">Gör till första</string>
+    <string name="syncErrTlsDropped">nätverket eller servern bryter den säkra anslutningen</string>
 </resources>

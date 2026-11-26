@@ -4407,4 +4407,5 @@
     <string name="weatherShowInWidgets">แสดงในวิดเจ็ต</string>
     <string name="weatherWidgetLimit">วิดเจ็ตแสดงได้ไม่เกินสองเมือง</string>
     <string name="weatherMakeFirst">ย้ายไปเป็นอันดับแรก</string>
+    <string name="syncErrTlsDropped">เครือข่ายหรือเซิร์ฟเวอร์ตัดการเชื่อมต่อที่ปลอดภัย</string>
 </resources>

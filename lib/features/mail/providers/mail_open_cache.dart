@@ -431,9 +431,13 @@ class MailOpenCache {
   /// не было. При отправке data: становятся встроенными частями письма с
   /// Content-ID (mail_engine, inline_images.dart). Картинки — из памяти
   /// телефона, недостающие — с сервера; не получилось — ссылка остаётся.
-  Future<String> embedInlineImages(String accountId, EmailModel email, String html) async {
+  /// [network] false — только то, что уже на телефоне, без сети (окно
+  /// письма закрывается сразу; остальное докачают «Исходящие», 2.7.2).
+  Future<String> embedInlineImages(String accountId, EmailModel email, String html, {bool network = true}) async {
     if (!_cidSrcAttr.hasMatch(html)) return html;
-    final imgs = await inlineImages(accountId, email, rawHtml: html);
+    final imgs = network
+        ? await inlineImages(accountId, email, rawHtml: html)
+        : await _loadImages(accountId, email, html, network: false);
     if (imgs.map.isEmpty) return html;
     var n = 0;
     final out = html.replaceAllMapped(_cidSrcAttr, (m) {
@@ -522,7 +526,7 @@ class MailOpenCache {
     return true;
   }
 
-  Future<InlineImages> _loadImages(String accountId, EmailModel email, String html) async {
+  Future<InlineImages> _loadImages(String accountId, EmailModel email, String html, {bool network = true}) async {
     final lower = html.toLowerCase();
     if (!lower.contains('cid:')) return InlineImages.empty;
     final wanted = email.attachments
@@ -556,7 +560,7 @@ class MailOpenCache {
       }
     }
     // С сервера — только недостающие, ActiveSync — одним запросом.
-    if (missing.isNotEmpty) {
+    if (missing.isNotEmpty && network) {
       final account = _ref.read(accountsProvider).where((a) => a.id == accountId).firstOrNull;
       if (account == null) {
         // Ящика нет — показать нечего; в список вложений не добавляем.

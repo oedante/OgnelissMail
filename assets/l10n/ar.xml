@@ -4512,4 +4512,5 @@
     <string name="weatherShowInWidgets">إظهار في الأدوات</string>
     <string name="weatherWidgetLimit">تعرض الأدوات مدينتين على الأكثر</string>
     <string name="weatherMakeFirst">اجعلها الأولى</string>
+    <string name="syncErrTlsDropped">الشبكة أو الخادم يقطع الاتصال الآمن</string>
 </resources>

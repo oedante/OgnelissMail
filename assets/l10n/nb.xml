@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Vis i moduler</string>
     <string name="weatherWidgetLimit">Moduler viser høyst to byer</string>
     <string name="weatherMakeFirst">Gjør til første</string>
+    <string name="syncErrTlsDropped">nettverket eller serveren bryter den sikre tilkoblingen</string>
 </resources>

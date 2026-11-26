@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Tonen in widgets</string>
     <string name="weatherWidgetLimit">Widgets tonen hoogstens twee steden</string>
     <string name="weatherMakeFirst">Als eerste</string>
+    <string name="syncErrTlsDropped">het netwerk of de server verbreekt de beveiligde verbinding</string>
 </resources>

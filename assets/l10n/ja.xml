@@ -4407,4 +4407,5 @@
     <string name="weatherShowInWidgets">ウィジェットに表示</string>
     <string name="weatherWidgetLimit">ウィジェットに表示できるのは2都市まで</string>
     <string name="weatherMakeFirst">最初にする</string>
+    <string name="syncErrTlsDropped">ネットワークまたはサーバーが安全な接続を切断しています</string>
 </resources>

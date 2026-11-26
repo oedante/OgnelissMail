@@ -4449,4 +4449,5 @@
     <string name="weatherShowInWidgets">Afișează în widgeturi</string>
     <string name="weatherWidgetLimit">Widgeturile arată cel mult două orașe</string>
     <string name="weatherMakeFirst">Pune primul</string>
+    <string name="syncErrTlsDropped">rețeaua sau serverul întrerupe conexiunea securizată</string>
 </resources>

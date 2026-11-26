@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Megjelenítés widgetekben</string>
     <string name="weatherWidgetLimit">A widgetek legfeljebb két várost mutatnak</string>
     <string name="weatherMakeFirst">Legyen az első</string>
+    <string name="syncErrTlsDropped">a hálózat vagy a szerver megszakítja a biztonságos kapcsolatot</string>
 </resources>

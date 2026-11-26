@@ -4407,4 +4407,5 @@
     <string name="weatherShowInWidgets">在小组件中显示</string>
     <string name="weatherWidgetLimit">小组件最多显示两个城市</string>
     <string name="weatherMakeFirst">设为第一个</string>
+    <string name="syncErrTlsDropped">网络或服务器中断了安全连接</string>
 </resources>

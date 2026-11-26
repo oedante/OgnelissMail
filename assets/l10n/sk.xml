@@ -4449,4 +4449,5 @@
     <string name="weatherShowInWidgets">Zobraziť vo widgetoch</string>
     <string name="weatherWidgetLimit">Widgety ukazujú najviac dve mestá</string>
     <string name="weatherMakeFirst">Dať ako prvé</string>
+    <string name="syncErrTlsDropped">sieť alebo server prerušuje zabezpečené spojenie</string>
 </resources>

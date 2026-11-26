@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Widget\'larda göster</string>
     <string name="weatherWidgetLimit">Widget\'lar en fazla iki şehir gösterir</string>
     <string name="weatherMakeFirst">İlk yap</string>
+    <string name="syncErrTlsDropped">ağ veya sunucu güvenli bağlantıyı kesiyor</string>
 </resources>

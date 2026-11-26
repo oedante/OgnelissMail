@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Näytä widgeteissä</string>
     <string name="weatherWidgetLimit">Widgeteissä enintään kaksi kaupunkia</string>
     <string name="weatherMakeFirst">Siirrä ensimmäiseksi</string>
+    <string name="syncErrTlsDropped">verkko tai palvelin katkaisee suojatun yhteyden</string>
 </resources>

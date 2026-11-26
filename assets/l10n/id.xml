@@ -4407,4 +4407,5 @@
     <string name="weatherShowInWidgets">Tampilkan di widget</string>
     <string name="weatherWidgetLimit">Widget menampilkan paling banyak dua kota</string>
     <string name="weatherMakeFirst">Jadikan pertama</string>
+    <string name="syncErrTlsDropped">jaringan atau server memutus koneksi aman</string>
 </resources>

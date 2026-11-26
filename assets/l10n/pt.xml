@@ -4428,4 +4428,5 @@
     <string name="weatherShowInWidgets">Mostrar nos widgets</string>
     <string name="weatherWidgetLimit">Os widgets mostram no máximo duas cidades</string>
     <string name="weatherMakeFirst">Colocar em primeiro</string>
+    <string name="syncErrTlsDropped">a rede ou o servidor interrompe a conexão segura</string>
 </resources>

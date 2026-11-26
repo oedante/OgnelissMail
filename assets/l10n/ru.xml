@@ -4470,4 +4470,5 @@
     <string name="weatherShowInWidgets">Показывать в виджетах</string>
     <string name="weatherWidgetLimit">В виджетах — не больше двух городов</string>
     <string name="weatherMakeFirst">Сделать первым</string>
+    <string name="syncErrTlsDropped">сеть или сервер обрывают защищённое подключение</string>
 </resources>

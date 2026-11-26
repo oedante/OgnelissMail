@@ -4408,4 +4408,12 @@
     <string name="weatherWidgetLimit">วิดเจ็ตแสดงได้ไม่เกินสองเมือง</string>
     <string name="weatherMakeFirst">ย้ายไปเป็นอันดับแรก</string>
     <string name="syncErrTlsDropped">เครือข่ายหรือเซิร์ฟเวอร์ตัดการเชื่อมต่อที่ปลอดภัย</string>
+    <string name="boardTitle">ภาพรวมกล่องจดหมาย</string>
+    <string name="boardBar">ภาพรวม</string>
+    <string name="boardFolders">โฟลเดอร์ในภาพรวม</string>
+    <string name="boardFoldersHint">โฟลเดอร์เหล่านี้จะแสดงบนการ์ดกล่องจดหมายพร้อมจำนวนที่ยังไม่อ่าน</string>
+    <string name="boardNoUnread">ไม่มีอีเมลใหม่</string>
+    <string name="boardMoreUnread">และอีก {n}</string>
+    <string name="startScreen">หน้าจอเริ่มต้น</string>
+    <string name="startScreenHint">แอปจะเปิดที่หน้าจอนี้ ปุ่มย้อนกลับจากส่วนอื่นจะกลับมาที่นี่ และจากหน้านี้จะปิดแอป</string>
 </resources>

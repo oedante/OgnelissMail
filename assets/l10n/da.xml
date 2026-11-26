@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Widgets viser højst to byer</string>
     <string name="weatherMakeFirst">Gør til første</string>
     <string name="syncErrTlsDropped">netværket eller serveren afbryder den sikre forbindelse</string>
+    <string name="boardTitle">Oversigt over postkasser</string>
+    <string name="boardBar">Oversigt</string>
+    <string name="boardFolders">Mapper i oversigten</string>
+    <string name="boardFoldersHint">Disse mapper vises på postkassens kort med antal ulæste</string>
+    <string name="boardNoUnread">Ingen nye mails</string>
+    <string name="boardMoreUnread">og {n} mere</string>
+    <string name="startScreen">Startskærm</string>
+    <string name="startScreenHint">Appen åbner på denne skærm. Tilbage fra andre sektioner fører hertil; herfra lukkes appen</string>
 </resources>

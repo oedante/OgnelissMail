@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Widget\'lar en fazla iki şehir gösterir</string>
     <string name="weatherMakeFirst">İlk yap</string>
     <string name="syncErrTlsDropped">ağ veya sunucu güvenli bağlantıyı kesiyor</string>
+    <string name="boardTitle">Posta kutularına genel bakış</string>
+    <string name="boardBar">Özet</string>
+    <string name="boardFolders">Özetteki klasörler</string>
+    <string name="boardFoldersHint">Bu klasörler, okunmamış sayısıyla posta kutusu kartında görünür</string>
+    <string name="boardNoUnread">Yeni e-posta yok</string>
+    <string name="boardMoreUnread">ve {n} tane daha</string>
+    <string name="startScreen">Başlangıç ekranı</string>
+    <string name="startScreenHint">Uygulama bu ekranla açılır. Diğer bölümlerde Geri buraya döner, buradan uygulamayı kapatır</string>
 </resources>

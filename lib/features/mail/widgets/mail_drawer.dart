@@ -323,6 +323,7 @@ class MailDrawer extends ConsumerWidget {
   /// Плитки разделов приложения (не почтовых папок и отборов).
   static final _navTiles = {
     DrawerQuickItem.myDay.name,
+    DrawerQuickItem.board.name,
     DrawerQuickItem.assignments.name,
     DrawerQuickItem.fileHub.name,
     DrawerQuickItem.notes.name,
@@ -522,6 +523,18 @@ class MailDrawer extends ConsumerWidget {
         onTap: () {
           _close(context);
           context.go('/my-day');
+        },
+      ));
+    }
+    // «Сводка ящиков» (2.7.4).
+    if (!hidden.contains(DrawerQuickItem.board)) {
+      tiles.add(fav(DrawerQuickItem.board.name,
+        icon: AppIcons.dashboard,
+        label: l10n.tr('boardTitle'),
+        isSelected: false,
+        onTap: () {
+          _close(context);
+          context.go('/accounts');
         },
       ));
     }
@@ -1841,6 +1854,7 @@ class _FavoritesEditor extends ConsumerWidget {
       if (MailDrawer._tasksInMenu(context, ref))
         (DrawerQuickItem.tasks, AppIcons.check_box, l10n.tasksLabel),
       if (ref.watch(settingsProvider).myDay) (DrawerQuickItem.myDay, AppIcons.myDay, l10n.tr('myDay')),
+      (DrawerQuickItem.board, AppIcons.dashboard, l10n.tr('boardTitle')),
       (DrawerQuickItem.assignments, AppIcons.assignment_ind, l10n.tr('assignments')),
       (DrawerQuickItem.settings, AppIcons.settings, l10n.tr('settings')),
       (DrawerQuickItem.theme, AppIcons.dark_mode, l10n.tr('drawerThemeSwitch')),
@@ -1868,6 +1882,7 @@ class _FavoritesEditor extends ConsumerWidget {
       DrawerQuickItem.allAccounts, DrawerQuickItem.allMail, DrawerQuickItem.unread, DrawerQuickItem.flagged,
       DrawerQuickItem.control, DrawerQuickItem.later, DrawerQuickItem.vip, DrawerQuickItem.attachments,
       DrawerQuickItem.triage, DrawerQuickItem.calendar, DrawerQuickItem.contacts, DrawerQuickItem.myDay,
+      DrawerQuickItem.board,
       DrawerQuickItem.assignments, DrawerQuickItem.fileHub, DrawerQuickItem.notes, DrawerQuickItem.tasks,
     ];
     final quickByItem = {for (final q in quick) q.$1: q};

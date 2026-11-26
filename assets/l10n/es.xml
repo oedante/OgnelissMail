@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Los widgets muestran como máximo dos ciudades</string>
     <string name="weatherMakeFirst">Poner primero</string>
     <string name="syncErrTlsDropped">la red o el servidor corta la conexión segura</string>
+    <string name="boardTitle">Resumen de buzones</string>
+    <string name="boardBar">Resumen</string>
+    <string name="boardFolders">Carpetas en el resumen</string>
+    <string name="boardFoldersHint">Estas carpetas aparecen en la tarjeta del buzón con sus no leídos</string>
+    <string name="boardNoUnread">No hay correo nuevo</string>
+    <string name="boardMoreUnread">y {n} más</string>
+    <string name="startScreen">Pantalla de inicio</string>
+    <string name="startScreenHint">La app se abre en esta pantalla. Atrás desde otras secciones vuelve aquí; desde aquí cierra la app</string>
 </resources>

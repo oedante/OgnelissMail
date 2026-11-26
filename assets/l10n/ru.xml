@@ -4471,4 +4471,12 @@
     <string name="weatherWidgetLimit">В виджетах — не больше двух городов</string>
     <string name="weatherMakeFirst">Сделать первым</string>
     <string name="syncErrTlsDropped">сеть или сервер обрывают защищённое подключение</string>
+    <string name="boardTitle">Сводка ящиков</string>
+    <string name="boardBar">Сводка</string>
+    <string name="boardFolders">Папки на сводке</string>
+    <string name="boardFoldersHint">Эти папки будут на карточке ящика с числом непрочитанных</string>
+    <string name="boardNoUnread">Новых писем нет</string>
+    <string name="boardMoreUnread">и ещё {n}</string>
+    <string name="startScreen">Начальный экран</string>
+    <string name="startScreenHint">С него открывается приложение. «Назад» с других разделов ведёт на него, с него — выход</string>
 </resources>

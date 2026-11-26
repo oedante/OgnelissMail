@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">विजेट में अधिकतम दो शहर</string>
     <string name="weatherMakeFirst">पहला बनाएँ</string>
     <string name="syncErrTlsDropped">नेटवर्क या सर्वर सुरक्षित कनेक्शन तोड़ देता है</string>
+    <string name="boardTitle">मेलबॉक्स सारांश</string>
+    <string name="boardBar">सारांश</string>
+    <string name="boardFolders">सारांश में फ़ोल्डर</string>
+    <string name="boardFoldersHint">ये फ़ोल्डर मेलबॉक्स कार्ड पर अपठित संख्या के साथ दिखते हैं</string>
+    <string name="boardNoUnread">कोई नया मेल नहीं</string>
+    <string name="boardMoreUnread">और {n}</string>
+    <string name="startScreen">प्रारंभ स्क्रीन</string>
+    <string name="startScreenHint">ऐप इसी स्क्रीन से खुलता है। दूसरे सेक्शन से «वापस» यहीं लाता है, यहाँ से ऐप बंद करता है</string>
 </resources>

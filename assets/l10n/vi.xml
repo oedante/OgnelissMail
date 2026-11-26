@@ -4408,4 +4408,12 @@
     <string name="weatherWidgetLimit">Tiện ích hiển thị tối đa hai thành phố</string>
     <string name="weatherMakeFirst">Đặt lên đầu</string>
     <string name="syncErrTlsDropped">mạng hoặc máy chủ ngắt kết nối bảo mật</string>
+    <string name="boardTitle">Tổng quan hộp thư</string>
+    <string name="boardBar">Tổng quan</string>
+    <string name="boardFolders">Thư mục trong tổng quan</string>
+    <string name="boardFoldersHint">Các thư mục này hiển thị trên thẻ hộp thư kèm số thư chưa đọc</string>
+    <string name="boardNoUnread">Không có thư mới</string>
+    <string name="boardMoreUnread">và {n} thư khác</string>
+    <string name="startScreen">Màn hình khởi động</string>
+    <string name="startScreenHint">Ứng dụng mở ở màn hình này. Quay lại từ các mục khác sẽ về đây; từ đây sẽ đóng ứng dụng</string>
 </resources>

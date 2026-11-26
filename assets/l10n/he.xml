@@ -4450,4 +4450,12 @@
     <string name="weatherWidgetLimit">בווידג\'טים — עד שתי ערים</string>
     <string name="weatherMakeFirst">העבר לראשונה</string>
     <string name="syncErrTlsDropped">הרשת או השרת מנתקים את החיבור המאובטח</string>
+    <string name="boardTitle">סקירת תיבות דואר</string>
+    <string name="boardBar">סקירה</string>
+    <string name="boardFolders">תיקיות בסקירה</string>
+    <string name="boardFoldersHint">התיקיות האלה מוצגות בכרטיס התיבה עם מספר ההודעות שלא נקראו</string>
+    <string name="boardNoUnread">אין דואר חדש</string>
+    <string name="boardMoreUnread">ועוד {n}</string>
+    <string name="startScreen">מסך פתיחה</string>
+    <string name="startScreenHint">האפליקציה נפתחת במסך הזה. «חזרה» ממקומות אחרים מובילה אליו, וממנו — סוגרת את האפליקציה</string>
 </resources>

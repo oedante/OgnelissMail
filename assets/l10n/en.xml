@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Widgets show at most two cities</string>
     <string name="weatherMakeFirst">Make first</string>
     <string name="syncErrTlsDropped">the network or server drops the secure connection</string>
+    <string name="boardTitle">Mailboxes overview</string>
+    <string name="boardBar">Overview</string>
+    <string name="boardFolders">Folders in overview</string>
+    <string name="boardFoldersHint">These folders appear on the mailbox card with their unread count</string>
+    <string name="boardNoUnread">No new mail</string>
+    <string name="boardMoreUnread">and {n} more</string>
+    <string name="startScreen">Start screen</string>
+    <string name="startScreenHint">The app opens on this screen. Back from other sections returns here; Back from here closes the app</string>
 </resources>

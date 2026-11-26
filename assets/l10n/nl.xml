@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Widgets tonen hoogstens twee steden</string>
     <string name="weatherMakeFirst">Als eerste</string>
     <string name="syncErrTlsDropped">het netwerk of de server verbreekt de beveiligde verbinding</string>
+    <string name="boardTitle">Overzicht postvakken</string>
+    <string name="boardBar">Overzicht</string>
+    <string name="boardFolders">Mappen in overzicht</string>
+    <string name="boardFoldersHint">Deze mappen staan op de kaart van het postvak met het aantal ongelezen</string>
+    <string name="boardNoUnread">Geen nieuwe e-mail</string>
+    <string name="boardMoreUnread">en nog {n}</string>
+    <string name="startScreen">Beginscherm</string>
+    <string name="startScreenHint">De app opent op dit scherm. Terug vanuit andere onderdelen brengt je hier; vanaf hier sluit de app</string>
 </resources>

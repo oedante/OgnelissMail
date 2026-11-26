@@ -20,6 +20,7 @@ import '../../../widgets/navigation/app_bottom_bar.dart' show AppBottomBar;
 import '../../../widgets/ui/app_radio_tile.dart';
 import '../../../widgets/ui/settings_group.dart';
 import '../../mail/providers/drawer_prefs.dart' show menuOnRightProvider;
+import '../../mail/providers/start_screen.dart';
 import '../providers/settings_provider.dart';
 import '../providers/widget_prefs.dart';
 import 'phone_bar_section.dart';
@@ -140,7 +141,27 @@ class PhoneLayoutSections extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context);
+    final myDayOn = ref.watch(settingsProvider.select((s) => s.myDay));
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      // ── Начальный экран (2.7.4): почта, «Мой день» или «Сводка ящиков»;
+      // на него ведёт «Назад» с других разделов ──
+      SettingsSectionTitle(l10n.tr('startScreen'), help: l10n.tr('startScreenHint')),
+      SettingsGroup(children: [
+        for (final o in [
+          (StartScreen.mail, l10n.mail),
+          if (myDayOn) (StartScreen.myDay, l10n.tr('myDay')),
+          (StartScreen.board, l10n.tr('boardTitle')),
+        ])
+          AppRadioTile<StartScreen>(
+            key: ValueKey('start_${o.$1.name}'),
+            title: Text(o.$2),
+            value: o.$1,
+            groupValue: !myDayOn && ref.watch(startScreenProvider) == StartScreen.myDay
+                ? StartScreen.mail
+                : ref.watch(startScreenProvider),
+            onChanged: (v) => ref.read(startScreenProvider.notifier).set(v ?? StartScreen.mail),
+          ),
+      ]),
       // ── Меню ящиков и папок (телефон, 1.6.40) ──
       // Слева (по умолчанию) или справа: портрет «Меню» внизу и свайп от
       // края — с выбранной стороны.

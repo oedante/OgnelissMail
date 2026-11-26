@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">Widgetar visar högst två städer</string>
     <string name="weatherMakeFirst">Gör till första</string>
     <string name="syncErrTlsDropped">nätverket eller servern bryter den säkra anslutningen</string>
+    <string name="boardTitle">Översikt över inkorgar</string>
+    <string name="boardBar">Översikt</string>
+    <string name="boardFolders">Mappar i översikten</string>
+    <string name="boardFoldersHint">De här mapparna visas på inkorgens kort med antal olästa</string>
+    <string name="boardNoUnread">Ingen ny e-post</string>
+    <string name="boardMoreUnread">och {n} till</string>
+    <string name="startScreen">Startskärm</string>
+    <string name="startScreenHint">Appen öppnas på den här skärmen. Bakåt från andra delar leder hit, härifrån stängs appen</string>
 </resources>

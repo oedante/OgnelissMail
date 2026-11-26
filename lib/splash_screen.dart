@@ -14,6 +14,7 @@ import 'core/logging/app_logger.dart';
 import 'services/background/background_service.dart';
 import 'services/security/pin_lock_service.dart';
 import 'features/settings/providers/settings_provider.dart';
+import 'features/mail/providers/start_screen.dart';
 import 'l10n/app_localizations.dart';
 import 'data/providers/database_provider.dart';
 import 'widgets/common/app_logo.dart';
@@ -75,7 +76,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen>
         if (pinState.isPinSet) {
           ref.read(pinLockProvider.notifier).lock();
         }
-        context.go('/mail');
+        // Начальный экран (2.7.4): почта, «Мой день» или «Сводка ящиков».
+        context.go(ref.read(startRouteProvider));
       } else if (!settings.licenseAccepted) {
         // Перед первой авторизацией — ознакомление с лицензионным соглашением.
         context.go('/license');

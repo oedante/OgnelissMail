@@ -4429,4 +4429,12 @@
     <string name="weatherWidgetLimit">I widget mostrano al massimo due città</string>
     <string name="weatherMakeFirst">Metti per prima</string>
     <string name="syncErrTlsDropped">la rete o il server interrompe la connessione sicura</string>
+    <string name="boardTitle">Riepilogo caselle</string>
+    <string name="boardBar">Riepilogo</string>
+    <string name="boardFolders">Cartelle nel riepilogo</string>
+    <string name="boardFoldersHint">Queste cartelle compaiono nella scheda della casella con il numero di non letti</string>
+    <string name="boardNoUnread">Nessuna nuova email</string>
+    <string name="boardMoreUnread">e altri {n}</string>
+    <string name="startScreen">Schermata iniziale</string>
+    <string name="startScreenHint">L’app si apre su questa schermata. Indietro dalle altre sezioni riporta qui; da qui chiude l’app</string>
 </resources>

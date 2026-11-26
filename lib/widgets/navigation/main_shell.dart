@@ -44,6 +44,7 @@ import '../../core/theme/app_theme.dart';
 import '../../services/accounts/account_labels.dart' show accountLabelsProvider;
 import '../../features/mail/providers/mail_providers.dart';
 import '../../features/mail/providers/drawer_prefs.dart' show BarItem, PhoneBarNotifier, phoneBarProvider;
+import '../../features/mail/providers/start_screen.dart' show startRouteProvider;
 import 'phone_bar.dart';
 import 'section_nav.dart';
 import '../../features/settings/providers/settings_provider.dart';
@@ -383,22 +384,25 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
     // закрываются вложенным навигатором раньше, чем срабатывает эта проверка.
     final path = GoRouterState.of(context).uri.path;
     final mailWantsBack = ref.watch(mailBackHandlerProvider);
+    // Начальный экран (2.7.4): почта, «Мой день» или «Сводка ящиков» —
+    // «Назад» с других разделов и из ленты ведёт к нему, с него — выход.
+    final home = ref.watch(startRouteProvider);
     return PopScope(
-      canPop: path == '/mail' && !mailWantsBack,
+      canPop: path == home && (path != '/mail' || !mailWantsBack),
       onPopInvokedWithResult: (didPop, _) {
         if (didPop) return;
-        if (path == '/mail') {
+        if (path == '/mail' && (mailWantsBack || home == '/mail')) {
           // Лента: выход из выбора, поиска, папки или фильтра.
           ref.read(mailBackRequestProvider.notifier).state++;
           return;
         }
-        if (_activeRoutes().contains(path)) {
-          setState(() => _currentIndex = 0);
-          context.go('/mail');
+        if (_activeRoutes().contains(path) || path == '/mail') {
+          setState(() => _currentIndex = home == '/mail' ? 0 : 3);
+          context.go(home);
         } else if (GoRouter.of(context).canPop()) {
           GoRouter.of(context).pop();
         } else {
-          context.go('/mail');
+          context.go(home);
         }
       },
       child: body,
@@ -439,7 +443,7 @@ class _MainShellState extends ConsumerState<MainShell> with WidgetsBindingObserv
   // Нижняя панель», phoneBarProvider); «Создать» — всегда в центре.
 
   static const _phoneRoots = {
-    '/mail', '/calendar', '/contacts', '/tasks', '/notes', '/my-day', '/assignments', '/files',
+    '/mail', '/calendar', '/contacts', '/tasks', '/notes', '/my-day', '/assignments', '/files', '/accounts',
   };
 
   /// Индекс боковой полосы для раздела (её выбор и смена экрана).

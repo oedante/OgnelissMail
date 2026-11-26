@@ -666,7 +666,7 @@ final weatherForProvider = FutureProvider.autoDispose.family<WeatherForecast?, S
 Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey) =>
     fetchForecast(ref.read(sharedPrefsProvider), ref.read(weatherHttpProvider), place, cacheKey);
 
-/// Прогнозы городов виджетов — свежие и без открытия «Моего дня» (2.7.2,
+/// Прогнозы городов виджетов — свежие и без открытия «Моего дня» (2.7.4,
 /// замечание владельца 25.11.2026: «в виджете пропадает погода, приходится
 /// заходить в приложение и в „Мой день“» — прогноз обновлялся только там, а
 /// виджет прячет прогноз старше [widgetMaxAge]). Обновление виджетов после

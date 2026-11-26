@@ -840,7 +840,7 @@ class _GalTile extends ConsumerWidget {
             ]),
           ),
           if (phone?.isNotEmpty == true)
-            // Удержание кнопки — SMS и мессенджеры номера (2.7.2).
+            // Удержание кнопки — SMS и мессенджеры номера (2.7.4).
             GestureDetector(
               onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
               child: btn(AppIcons.phone, l10n.tr('call'), () async {

@@ -432,7 +432,7 @@ class MailOpenCache {
   /// Content-ID (mail_engine, inline_images.dart). Картинки — из памяти
   /// телефона, недостающие — с сервера; не получилось — ссылка остаётся.
   /// [network] false — только то, что уже на телефоне, без сети (окно
-  /// письма закрывается сразу; остальное докачают «Исходящие», 2.7.2).
+  /// письма закрывается сразу; остальное докачают «Исходящие», 2.7.4).
   Future<String> embedInlineImages(String accountId, EmailModel email, String html, {bool network = true}) async {
     if (!_cidSrcAttr.hasMatch(html)) return html;
     final imgs = network

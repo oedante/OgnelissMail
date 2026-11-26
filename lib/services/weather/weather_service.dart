@@ -663,10 +663,40 @@ final weatherForProvider = FutureProvider.autoDispose.family<WeatherForecast?, S
   return _forecast(ref, place, WeatherSettingsNotifier.cacheKeyFor(settings, place));
 });
 
-Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey) async {
-  final prefs = ref.read(sharedPrefsProvider);
+Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey) =>
+    fetchForecast(ref.read(sharedPrefsProvider), ref.read(weatherHttpProvider), place, cacheKey);
+
+/// Прогнозы городов виджетов — свежие и без открытия «Моего дня» (2.7.2,
+/// замечание владельца 25.11.2026: «в виджете пропадает погода, приходится
+/// заходить в приложение и в „Мой день“» — прогноз обновлялся только там, а
+/// виджет прячет прогноз старше [widgetMaxAge]). Обновление виджетов после
+/// синхронизации зовёт это перед сборкой; запрос — только если прогнозу
+/// больше часа.
+Future<void> refreshWidgetWeather(SharedPreferences prefs, http.Client client, {DateTime? now}) async {
+  if (!WeatherApi.termsAccepted || ManagedPolicy.current.blockWeather) return;
+  if (prefs.getBool('weather_on') != true) return;
+  final r = WeatherSettingsNotifier.readPlaces(prefs);
+  final s = WeatherSettings(enabled: true, places: r.places, widgetKeys: r.widgets);
+  final clock = now ?? DateTime.now();
+  for (final p in s.widgetPlaces) {
+    final key = WeatherSettingsNotifier.cacheKeyFor(s, p);
+    final fetched = WeatherCache.read(prefs, key: key)?.fetched;
+    if (fetched != null && clock.difference(fetched) < const Duration(hours: 1)) continue;
+    await fetchForecast(prefs, client, p, key, now: clock);
+  }
+}
+
+/// Сколько виджет показывает сохранённый прогноз (дальше — без погоды):
+/// прогноз почасовой на двое суток вперёд, «сейчас» берётся из него по
+/// часам.
+const widgetMaxAge = Duration(hours: 12);
+
+/// Прогноз города: из кэша до Expires, потом — запрос (If-Modified-Since);
+/// сеть недоступна — последний сохранённый.
+Future<WeatherForecast?> fetchForecast(SharedPreferences prefs, http.Client client, WeatherPlace place, String cacheKey,
+    {DateTime? now}) async {
   final lat = WeatherApi.round2(place.lat), lon = WeatherApi.round2(place.lon);
-  final now = DateTime.now();
+  now ??= DateTime.now();
   final cached = WeatherCache.read(prefs, key: cacheKey);
   final sameSpot = cached != null && cached.lat == lat && cached.lon == lon;
   WeatherForecast? fromCache() => sameSpot ? WeatherApi.parseMet(cached.body)?.withFetchedAt(cached.fetched) : null;
@@ -674,7 +704,6 @@ Future<WeatherForecast?> _forecast(Ref ref, WeatherPlace place, String cacheKey)
   // Сервис просил сбавить частоту (429) — час без запросов.
   final pause = DateTime.tryParse(prefs.getString(_backoffKey) ?? '');
   if (pause != null && pause.isAfter(now)) return fromCache();
-  final client = ref.read(weatherHttpProvider);
   try {
     final ends = await WeatherEndpoints.load(prefs, client, now: now);
     if (ends.forecast.isEmpty) {

@@ -283,6 +283,28 @@ void main() {
       expect(n.state.second, isNull);
     });
 
+    // 25.11.2026: «в виджете пропадает погода, приходится заходить в
+    // „Мой день“» — прогноз для виджета обновляется и без «Моего дня».
+    test('виджет: прогноз обновляется сам, не чаще раза в час; старый — не показывается', () async {
+      await WeatherSettingsNotifier(prefs).setPlace(const WeatherPlace(name: 'Казань', lat: 55.8, lon: 49.11));
+      final client = make().read(weatherHttpProvider);
+      final now = DateTime.now();
+      expect(HomeWidgetService.weatherLine(prefs, now), isNull);
+      await refreshWidgetWeather(prefs, client, now: now);
+      expect(met(), hasLength(1));
+      expect(HomeWidgetService.weatherLine(prefs, now), contains('Казань'));
+      await refreshWidgetWeather(prefs, client, now: now.add(const Duration(minutes: 40)));
+      expect(met(), hasLength(1), reason: 'прогнозу меньше часа');
+      await refreshWidgetWeather(prefs, client, now: now.add(const Duration(minutes: 70)));
+      expect(met(), hasLength(2));
+      // Сети нет полсуток — виджет без погоды, а не с давней.
+      expect(HomeWidgetService.weatherLine(prefs, now.add(const Duration(hours: 14))), isNull);
+      // Погода выключена — запросов нет.
+      await WeatherSettingsNotifier(prefs).turnOff();
+      await refreshWidgetWeather(prefs, client, now: now.add(const Duration(hours: 3)));
+      expect(met(), hasLength(2));
+    });
+
     test('выключить — кэш стирается, город запоминается', () async {
       final n = WeatherSettingsNotifier(prefs);
       await n.setPlace(const WeatherPlace(name: 'Казань', lat: 55.8, lon: 49.11));

@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart' show kIsWeb, defaultTargetPlatform, Tar
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart' show AppLifecycleListener;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -38,7 +39,8 @@ import 'security/pin_lock_service.dart' show pinLockProvider;
 import '../l10n/app_localizations.dart';
 import 'mail/control_service.dart' show ControlState;
 import 'security/managed_config.dart' show ManagedPolicy;
-import 'weather/weather_service.dart' show WeatherApi, WeatherCache, WeatherKind, WeatherSettings, WeatherSettingsNotifier;
+import 'weather/weather_service.dart'
+    show WeatherApi, WeatherCache, WeatherKind, WeatherSettings, WeatherSettingsNotifier, refreshWidgetWeather, weatherHttpProvider, widgetMaxAge;
 import 'accounts/account_labels.dart' show AccountLabels;
 import 'calendar/meeting_link_service.dart';
 import 'calendar/pending_invites.dart' show loadPendingInvites;
@@ -70,6 +72,7 @@ class HomeWidgetService {
   /// Обновить данные виджета из Riverpod (синхронизация).
   static Future<void> updateFrom(Ref ref, {bool force = false}) async {
     if (!_supported) return;
+    await _refreshWeather(() => ref.read(weatherHttpProvider));
     try {
       await _updateFromState(ref.read(settingsProvider), ref.read(databaseProvider), ref.read(accountsProvider),
           ref.read(pinLockProvider).isPinSet, force);
@@ -81,11 +84,32 @@ class HomeWidgetService {
   /// То же из ProviderContainer (запуск, сворачивание приложения).
   static Future<void> updateFromContainer(ProviderContainer c, {bool force = false}) async {
     if (!_supported) return;
+    await _refreshWeather(() => c.read(weatherHttpProvider));
     try {
       await _updateFromState(c.read(settingsProvider), c.read(databaseProvider), c.read(accountsProvider),
           c.read(pinLockProvider).isPinSet, force);
     } catch (e) {
       AppLogger.debug('Виджет: $e');
+    }
+  }
+
+  static Future<void>? _weatherRun;
+
+  /// Прогноз для виджетов старше часа — обновить перед сборкой (не дольше
+  /// 15 с; сбой — виджет с сохранённым прогнозом).
+  static Future<void> _refreshWeather(http.Client Function() client) async {
+    final run = _weatherRun ??= () async {
+      try {
+        final prefs = await SharedPreferences.getInstance();
+        await refreshWidgetWeather(prefs, client()).timeout(const Duration(seconds: 15));
+      } catch (e) {
+        AppLogger.debug('Виджет: погода не обновлена — $e');
+      }
+    }();
+    try {
+      await run;
+    } finally {
+      if (identical(_weatherRun, run)) _weatherRun = null;
     }
   }
 
@@ -465,7 +489,7 @@ class HomeWidgetService {
     final cached = WeatherCache.read(prefs, key: cacheKey);
     if (cached == null) return null;
     final fetched = cached.fetched;
-    if (fetched != null && now.difference(fetched) > const Duration(hours: 6)) return null;
+    if (fetched != null && now.difference(fetched) > widgetMaxAge) return null;
     final f = WeatherApi.parseMet(cached.body, now: now);
     if (f == null) return null;
     final t = f.now.temp.round();

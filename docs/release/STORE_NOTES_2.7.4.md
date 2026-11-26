@@ -7,6 +7,27 @@
 
 ## Сделано в 2.7.4
 
+- **Сводка ящиков** (предложение пользователя с 4PDA 25.11.2026, решение
+  владельца 26.11.2026: «давай попробуем»; отдельный раздел, как «Мой
+  день»). Карточка на каждый ящик: портрет и название, когда почта
+  обновлялась, число непрочитанных во «Входящих», три последних
+  непрочитанных письма («и ещё N»), папки, выбранные для сводки (удержание
+  карточки или «⋮» → «Папки на сводке»), «Исходящие» — если там что-то
+  ждёт (красным, если письмо не ушло), и «Вся почта» ящика с её числом.
+  Наверху — «Все ящики». Нажатие на карточку — «Входящие» ящика в ленте,
+  на папку — эта папка, на письмо — сразу письмо. Сводку можно поставить
+  на нижнюю панель («Оформление → Нижняя панель»), она есть в «Избранном» меню и
+  в боковой панели на компьютере.
+- **Начальный экран на выбор** («Оформление → Начальный экран», решение
+  владельца 26.11.2026): «Почта», «Мой день» или «Сводка ящиков» — один из
+  трёх. С него приложение открывается; «Назад» с других разделов и из
+  ленты ведёт на него (папки ленты при этом не перебираются), с него —
+  выход. Раньше «Назад» всегда вёл в почту. «Мой день», выключенный в
+  «Профиле», — снова почта.
+- **«Мой день»: ящики кружками у нижней панели** (просьба владельца
+  26.11.2026): портрет ящика с числом новых писем во «Входящих», первым —
+  «Все ящики». Нажатие — «Входящие» ящика, удержание — «Сводка ящиков».
+
 - **Отправка — сразу в «Исходящие»** (просьба владельца 25.11.2026 и
   журналы пользователя на мобильном интернете: «при отправке окно письма
   не закрывается, пока письмо не уйдёт или не придёт ошибка»; строка
@@ -65,237 +86,239 @@
 
 ## Кратко (RU / EN)
 
-**RU.** Письмо сразу уходит в «Исходящие» и отправляется в фоне — и при
-плохой связи; после отправки в «Черновиках» не остаётся копий; надёжнее на
+**RU.** Сводка ящиков и начальный экран на выбор (почта, «Мой день» или
+сводка), ящики кружками в «Моём дне»; письмо сразу уходит в «Исходящие» и
+отправляется в фоне — и при плохой связи; после отправки в «Черновиках» не остаётся копий; надёжнее на
 мобильном интернете; погода в виджетах не пропадает; SMS и мессенджеры по
 номеру из письма; исправления уведомлений и напоминания о вложении.
 
-**EN.** Sent mail goes straight to the Outbox and is delivered in the
-background, even on a poor connection; no leftover copies in Drafts; more
+**EN.** A mailboxes overview and a start screen of your choice (mail, My
+day or the overview), mailbox circles in My day; sent mail goes straight to
+the Outbox and is delivered in the background, even on a poor connection; no leftover copies in Drafts; more
 reliable on mobile data; weather in widgets no longer disappears; SMS and
 messengers from a phone number in an email; fixes for notification actions
 and the attachment reminder.
 
 ## Google Play — короткий текст (27 языков)
 
-Самый длинный — 470 знаков (de-DE; предел — 500).
+Самый длинный — 499 знаков (hu-HU; предел — 500).
 
 ```
 <ru-RU>
-• Письмо сразу уходит в «Исходящие»: окно закрывается, отправка идёт в фоне, при плохой связи — повторы до суток
-• После отправки в «Черновиках» не остаётся копий
-• Надёжнее на мобильном интернете: меньше подключений, понятные ошибки
-• Погода в виджетах больше не пропадает
+• Сводка ящиков: все ящики на одном экране — новые письма и папки каждого; ящики кружками внизу «Моего дня»
+• Начальный экран на выбор: почта, «Мой день» или сводка ящиков
+• Письмо сразу уходит в «Исходящие» и отправляется в фоне — при плохой связи повторы до суток
+• Надёжнее на мобильном интернете; погода в виджетах больше не пропадает
 • Номер телефона в письме: позвонить, SMS, мессенджеры
-• Исправления уведомлений и напоминания о вложении
+• Исправления: черновики после отправки, уведомления, напоминание о вложении
 </ru-RU>
 <en-US>
-• Sent mail goes straight to the Outbox: the window closes and delivery continues in the background, retrying for up to a day on a poor connection
-• No leftover copies in Drafts after sending
-• More reliable on mobile data: fewer connections, clearer errors
-• Weather in widgets no longer disappears
+• Mailboxes overview: all mailboxes on one screen with new mail and folders; mailbox circles at the bottom of My day
+• Choose the start screen: mail, My day or the overview
+• Sent mail goes straight to the Outbox and is delivered in the background, retrying for up to a day on a poor connection
+• More reliable on mobile data; weather in widgets no longer disappears
 • Phone numbers in emails: call, SMS, messengers
-• Fixes for notification actions and the attachment reminder
+• Fixes: drafts after sending, notifications, attachment reminder
 </en-US>
 <de-DE>
-• Gesendete E-Mails landen sofort im Postausgang: Das Fenster schließt sich, der Versand läuft im Hintergrund – bei schlechter Verbindung mit Wiederholungen bis zu einem Tag
-• Nach dem Senden bleiben keine Kopien in den Entwürfen
-• Zuverlässiger im Mobilfunknetz: weniger Verbindungen, klarere Fehler
-• Das Wetter im Widget verschwindet nicht mehr
+• Postfach-Übersicht: alle Postfächer auf einem Bildschirm mit neuen E-Mails und Ordnern; Postfach-Kreise unten in „Mein Tag“
+• Startbildschirm wählbar: E-Mail, „Mein Tag“ oder Übersicht
+• E-Mails gehen sofort in den Postausgang und im Hintergrund raus – bei schlechter Verbindung bis zu einem Tag
+• Zuverlässiger im Mobilfunknetz; das Wetter im Widget bleibt
 • Telefonnummern in E-Mails: anrufen, SMS, Messenger
-• Korrekturen bei Benachrichtigungsaktionen und der Anhang-Erinnerung
+• Korrekturen: Entwürfe nach dem Senden, Benachrichtigungen, Anhang-Erinnerung
 </de-DE>
 <fr-FR>
-• Le message part aussitôt dans la boîte d’envoi : la fenêtre se ferme, l’envoi continue en arrière-plan, avec de nouvelles tentatives pendant 24 h si la connexion est mauvaise
-• Plus de copie dans les brouillons après l’envoi
-• Plus fiable en données mobiles : moins de connexions, erreurs plus claires
-• La météo ne disparaît plus des widgets
+• Aperçu des boîtes : toutes vos boîtes sur un écran, nouveaux messages et dossiers ; cercles en bas de « Ma journée »
+• Écran d’accueil au choix : e-mail, « Ma journée » ou aperçu
+• Le message part aussitôt dans la boîte d’envoi, envoyé en arrière-plan ; nouvelles tentatives pendant 24 h si besoin
+• Plus fiable en données mobiles ; la météo reste dans les widgets
 • Numéros dans les e-mails : appel, SMS, messageries
-• Corrections des actions de notification et du rappel de pièce jointe
+• Corrections : brouillons après envoi, notifications, rappel de pièce jointe
 </fr-FR>
 <ar>
-• تنتقل الرسالة فورًا إلى «صندوق الصادر»: تُغلق النافذة ويستمر الإرسال في الخلفية، مع إعادة المحاولة حتى يوم كامل عند ضعف الاتصال
-• لا تبقى نسخ في «المسودات» بعد الإرسال
-• موثوقية أعلى على بيانات الجوال: اتصالات أقل ورسائل خطأ أوضح
-• لم يعد الطقس يختفي من الأدوات
+• ملخص صناديق البريد: كل الصناديق في شاشة واحدة مع الرسائل الجديدة والمجلدات، ودوائر الصناديق أسفل «يومي»
+• اختر شاشة البدء: البريد أو «يومي» أو الملخص
+• تنتقل الرسالة فورًا إلى «صندوق الصادر» وتُرسل في الخلفية، مع إعادة المحاولة حتى يوم كامل عند ضعف الاتصال
+• موثوقية أعلى على بيانات الجوال، ولم يعد الطقس يختفي من الأدوات
 • أرقام الهاتف في الرسائل: اتصال وSMS وتطبيقات المراسلة
-• إصلاحات لإجراءات الإشعارات وتذكير المرفقات
+• إصلاحات: المسودات بعد الإرسال والإشعارات وتذكير المرفقات
 </ar>
 <hu-HU>
-• Az elküldött levél azonnal a Postázandó mappába kerül: az ablak bezárul, a küldés a háttérben folytatódik, gyenge kapcsolatnál akár egy napig újrapróbálva
-• Küldés után nem marad másolat a Piszkozatokban
-• Megbízhatóbb mobilneten: kevesebb kapcsolódás, érthetőbb hibák
-• Az időjárás már nem tűnik el a widgetekből
+• Postafiókok áttekintése: minden postafiók egy képernyőn, új levelekkel és mappákkal; postafiók-körök a „Saját napom” alján
+• Választható kezdőképernyő: levelek, „Saját napom” vagy áttekintés
+• A levél azonnal a Postázandó mappába kerül, és a háttérben megy el – gyenge kapcsolatnál egy napig újrapróbálva
+• Megbízhatóbb mobilneten; az időjárás nem tűnik el a widgetekből
 • Telefonszámok a levelekben: hívás, SMS, üzenetküldők
-• Javítások az értesítési műveletekben és a mellékletemlékeztetőben
+• Javítások: piszkozatok küldés után, értesítések, mellékletemlékeztető
 </hu-HU>
 <vi>
-• Thư gửi đi được chuyển ngay vào Hộp thư đi: cửa sổ đóng lại, việc gửi tiếp tục ở chế độ nền, thử lại đến một ngày khi kết nối kém
-• Không còn bản sao trong Thư nháp sau khi gửi
-• Ổn định hơn với dữ liệu di động: ít kết nối hơn, lỗi dễ hiểu hơn
-• Thời tiết trong tiện ích không còn biến mất
+• Tổng quan hộp thư: mọi hộp thư trên một màn hình, kèm thư mới và thư mục; các hộp thư dạng vòng tròn ở cuối «Ngày của tôi»
+• Chọn màn hình khởi động: thư, «Ngày của tôi» hoặc tổng quan
+• Thư gửi đi được chuyển ngay vào Hộp thư đi và gửi ở chế độ nền, thử lại đến một ngày khi kết nối kém
+• Ổn định hơn với dữ liệu di động; thời tiết trong tiện ích không còn biến mất
 • Số điện thoại trong thư: gọi, SMS, ứng dụng nhắn tin
-• Sửa lỗi thao tác thông báo và lời nhắc tệp đính kèm
+• Sửa lỗi: thư nháp sau khi gửi, thông báo, lời nhắc tệp đính kèm
 </vi>
 <da-DK>
-• Sendte mails går straks til Udbakken: vinduet lukkes, og afsendelsen fortsætter i baggrunden – ved dårlig forbindelse forsøges igen i op til et døgn
-• Ingen kopier tilbage i Kladder efter afsendelse
-• Mere pålidelig på mobildata: færre forbindelser, tydeligere fejl
-• Vejret forsvinder ikke længere fra widgets
+• Oversigt over postkasser: alle postkasser på én skærm med nye mails og mapper; postkasser som cirkler nederst i „Min dag“
+• Vælg startskærm: mail, „Min dag“ eller oversigten
+• Sendte mails går straks til Udbakken og sendes i baggrunden – ved dårlig forbindelse forsøges igen i op til et døgn
+• Mere pålidelig på mobildata; vejret forsvinder ikke fra widgets
 • Telefonnumre i mails: ring, sms, beskedapps
-• Rettelser til handlinger i notifikationer og påmindelsen om vedhæftede filer
+• Rettelser: kladder efter afsendelse, notifikationer, påmindelse om vedhæftede filer
 </da-DK>
 <iw-IL>
-• ההודעה עוברת מיד לדואר היוצא: החלון נסגר והשליחה ממשיכה ברקע, עם ניסיונות חוזרים עד יממה כשהחיבור חלש
-• לא נשארים עותקים בטיוטות אחרי השליחה
-• אמין יותר ברשת סלולרית: פחות התחברויות ושגיאות ברורות יותר
-• מזג האוויר כבר לא נעלם מהווידג'טים
+• סקירת תיבות דואר: כל התיבות במסך אחד עם הודעות חדשות ותיקיות; התיבות כעיגולים בתחתית «היום שלי»
+• בחירת מסך פתיחה: דואר, «היום שלי» או הסקירה
+• ההודעה עוברת מיד לדואר היוצא ונשלחת ברקע, עם ניסיונות חוזרים עד יממה כשהחיבור חלש
+• אמין יותר ברשת סלולרית; מזג האוויר כבר לא נעלם מהווידג'טים
 • מספרי טלפון בהודעות: שיחה, SMS ואפליקציות מסרים
-• תיקונים לפעולות בהתראות ולתזכורת על קובץ מצורף
+• תיקונים: טיוטות אחרי שליחה, התראות, תזכורת על קובץ מצורף
 </iw-IL>
 <id>
-• Email terkirim langsung masuk ke Kotak Keluar: jendela tertutup dan pengiriman berlanjut di latar belakang, dicoba ulang hingga sehari saat koneksi buruk
-• Tidak ada salinan tersisa di Draf setelah mengirim
-• Lebih andal di data seluler: lebih sedikit koneksi, galat lebih jelas
-• Cuaca di widget tidak lagi menghilang
+• Ringkasan kotak surat: semua kotak surat di satu layar dengan email baru dan folder; lingkaran kotak surat di bawah «Hari saya»
+• Pilih layar awal: email, «Hari saya», atau ringkasan
+• Email langsung masuk ke Kotak Keluar dan dikirim di latar belakang, dicoba ulang hingga sehari saat koneksi buruk
+• Lebih andal di data seluler; cuaca di widget tidak lagi menghilang
 • Nomor telepon di email: panggil, SMS, aplikasi pesan
-• Perbaikan aksi notifikasi dan pengingat lampiran
+• Perbaikan: draf setelah mengirim, notifikasi, pengingat lampiran
 </id>
 <es-ES>
-• El mensaje pasa al instante a la Bandeja de salida: la ventana se cierra y el envío sigue en segundo plano, con reintentos durante un día si la conexión es mala
-• Ya no quedan copias en Borradores después de enviar
-• Más fiable con datos móviles: menos conexiones y errores más claros
-• El tiempo ya no desaparece de los widgets
+• Resumen de buzones: todos en una pantalla, con correo nuevo y carpetas; buzones en círculos al pie de «Mi día»
+• Elige la pantalla de inicio: correo, «Mi día» o el resumen
+• El mensaje pasa al instante a la Bandeja de salida y se envía en segundo plano; con mala conexión, reintentos un día
+• Más fiable con datos móviles; el tiempo ya no desaparece de los widgets
 • Números de teléfono en los correos: llamar, SMS, mensajería
-• Correcciones en las acciones de notificación y el aviso de adjuntos
+• Correcciones: borradores, notificaciones, aviso de adjuntos
 </es-ES>
 <it-IT>
-• Il messaggio passa subito in Posta in uscita: la finestra si chiude e l’invio prosegue in background, con nuovi tentativi fino a un giorno se la connessione è scarsa
-• Dopo l’invio non restano copie nelle Bozze
-• Più affidabile con i dati mobili: meno connessioni ed errori più chiari
-• Il meteo non scompare più dai widget
+• Riepilogo caselle: tutte in una schermata, con nuove email e cartelle; cerchi in fondo a «Il mio giorno»
+• Scegli la schermata iniziale: posta, «Il mio giorno» o riepilogo
+• Il messaggio passa subito in Posta in uscita e parte in background; con connessione scarsa, nuovi tentativi per un giorno
+• Più affidabile con i dati mobili; il meteo resta nei widget
 • Numeri di telefono nelle email: chiamata, SMS, app di messaggistica
-• Correzioni alle azioni delle notifiche e al promemoria degli allegati
+• Correzioni: bozze dopo l’invio, notifiche, promemoria allegati
 </it-IT>
 <zh-CN>
-• 发送的邮件立即进入“发件箱”：窗口随即关闭，在后台继续发送，网络不佳时最多重试一天
-• 发送后“草稿”中不再残留副本
-• 移动网络下更稳定：连接更少，错误提示更清楚
-• 小组件中的天气不再消失
+• 邮箱概览：所有邮箱集中在一个画面，显示新邮件和文件夹；“我的一天”底部以圆形显示各邮箱
+• 可选启动画面：邮件、“我的一天”或概览
+• 发送的邮件立即进入“发件箱”并在后台发送，网络不佳时最多重试一天
+• 移动网络下更稳定；小组件中的天气不再消失
 • 邮件中的电话号码：拨打、短信、即时通讯应用
-• 修复通知操作和附件提醒的问题
+• 修复：发送后的草稿、通知、附件提醒
 </zh-CN>
 <ko-KR>
-• 보낸 메일이 즉시 보낼 편지함으로 이동합니다. 창이 바로 닫히고 백그라운드에서 전송되며, 연결이 불안정하면 최대 하루 동안 다시 시도합니다
-• 보낸 후 임시 보관함에 사본이 남지 않습니다
-• 모바일 데이터에서 더 안정적: 연결 횟수 감소, 더 명확한 오류
-• 위젯의 날씨가 더 이상 사라지지 않습니다
+• 메일함 요약: 모든 메일함을 새 메일, 폴더와 함께 한 화면에서 확인. ‘오늘 일정’ 하단에도 메일함을 원형으로 표시
+• 시작 화면 선택: 메일, ‘오늘 일정’ 또는 요약
+• 보낸 메일이 즉시 보낼 편지함으로 이동해 백그라운드에서 전송되며, 연결이 불안정하면 최대 하루 동안 다시 시도합니다
+• 모바일 데이터에서 더 안정적, 위젯의 날씨가 더 이상 사라지지 않음
 • 메일 속 전화번호: 통화, SMS, 메신저
-• 알림 동작 및 첨부 파일 알림 수정
+• 수정: 보낸 후 임시 보관함, 알림, 첨부 파일 알림
 </ko-KR>
 <nl-NL>
-• Verzonden mail gaat direct naar Postvak UIT: het venster sluit en het verzenden gaat op de achtergrond door, bij een slechte verbinding tot een dag lang opnieuw geprobeerd
-• Na verzenden blijven er geen kopieën in Concepten achter
-• Betrouwbaarder op mobiele data: minder verbindingen, duidelijkere fouten
-• Het weer verdwijnt niet meer uit widgets
+• Overzicht postvakken: alle postvakken op één scherm, met nieuwe e-mail en mappen; postvakken als cirkels onder in ‘Mijn dag’
+• Kies het beginscherm: e-mail, ‘Mijn dag’ of het overzicht
+• Mail gaat direct naar Postvak UIT en op de achtergrond de deur uit; bij slechte verbinding een dag lang opnieuw geprobeerd
+• Betrouwbaarder op mobiele data; het weer blijft in widgets
 • Telefoonnummers in e-mails: bellen, sms, chat-apps
-• Verbeteringen in meldingsacties en de bijlageherinnering
+• Verbeteringen: concepten na verzenden, meldingen, bijlageherinnering
 </nl-NL>
 <no-NO>
-• Sendt e-post går straks til Utboksen: vinduet lukkes og sendingen fortsetter i bakgrunnen – ved dårlig forbindelse prøves det igjen i opptil et døgn
-• Ingen kopier igjen i Utkast etter sending
-• Mer pålitelig på mobildata: færre tilkoblinger, tydeligere feil
-• Været forsvinner ikke lenger fra widgeter
+• Oversikt over postbokser: alle postbokser på én skjerm med ny e-post og mapper; postbokser som sirkler nederst i «Min dag»
+• Velg startskjerm: e-post, «Min dag» eller oversikten
+• Sendt e-post går straks til Utboksen og sendes i bakgrunnen – ved dårlig forbindelse prøves det igjen i opptil et døgn
+• Mer pålitelig på mobildata; været forsvinner ikke fra widgeter
 • Telefonnumre i e-post: ring, SMS, meldingsapper
-• Rettelser i varslingshandlinger og påminnelsen om vedlegg
+• Rettelser: utkast etter sending, varsler, påminnelse om vedlegg
 </no-NO>
 <pl-PL>
-• Wysłana wiadomość od razu trafia do Skrzynki nadawczej: okno się zamyka, a wysyłanie trwa w tle – przy słabym połączeniu z ponawianiem do doby
-• Po wysłaniu w Wersjach roboczych nie zostają kopie
-• Niezawodniej w sieci komórkowej: mniej połączeń, czytelniejsze błędy
-• Pogoda nie znika już z widżetów
+• Przegląd skrzynek: wszystkie na jednym ekranie, z nowymi wiadomościami i folderami; kółka u dołu ekranu „Mój dzień”
+• Wybór ekranu startowego: poczta, „Mój dzień” lub przegląd
+• Wysłana wiadomość od razu trafia do Skrzynki nadawczej i wychodzi w tle – przy słabym połączeniu z ponawianiem do doby
+• Niezawodniej w sieci komórkowej; pogoda nie znika z widżetów
 • Numery telefonów w wiadomościach: połączenie, SMS, komunikatory
-• Poprawki akcji w powiadomieniach i przypomnienia o załączniku
+• Poprawki: wersje robocze, powiadomienia, przypomnienie o załączniku
 </pl-PL>
 <pt-BR>
-• A mensagem vai na hora para a Caixa de saída: a janela fecha e o envio continua em segundo plano, com novas tentativas por até um dia se a conexão estiver ruim
-• Não ficam mais cópias em Rascunhos após o envio
-• Mais confiável nos dados móveis: menos conexões e erros mais claros
-• O clima não some mais dos widgets
+• Resumo das caixas: todas as caixas em uma tela, com e-mails novos e pastas; caixas em círculos na parte de baixo de “Meu dia”
+• Escolha a tela inicial: e-mail, “Meu dia” ou o resumo
+• A mensagem vai na hora para a Caixa de saída e é enviada em segundo plano; com conexão ruim, novas tentativas por um dia
+• Mais confiável nos dados móveis; o clima não some mais dos widgets
 • Números de telefone nos e-mails: ligar, SMS, mensageiros
-• Correções nas ações de notificação e no lembrete de anexo
+• Correções: rascunhos, notificações, lembrete de anexo
 </pt-BR>
 <ro>
-• Mesajul trimis ajunge imediat în Mesaje de trimis: fereastra se închide, iar trimiterea continuă în fundal, cu reîncercări până la o zi dacă legătura e slabă
-• După trimitere nu mai rămân copii în Ciorne
-• Mai fiabil pe date mobile: mai puține conexiuni, erori mai clare
-• Vremea nu mai dispare din widgeturi
+• Rezumatul căsuțelor: toate pe un ecran, cu mesaje noi și dosare; cercuri în partea de jos a „Ziua mea”
+• Alege ecranul de pornire: e-mail, „Ziua mea” sau rezumatul
+• Mesajul ajunge imediat în Mesaje de trimis și pleacă în fundal; cu legătură slabă, reîncercări o zi
+• Mai fiabil pe date mobile; vremea nu mai dispare din widgeturi
 • Numere de telefon în e-mailuri: apel, SMS, aplicații de mesagerie
-• Corecturi la acțiunile din notificări și la memento-ul pentru atașamente
+• Corecturi: ciorne după trimitere, notificări, memento pentru atașamente
 </ro>
 <sk>
-• Odoslaná správa ide hneď do priečinka Na odoslanie: okno sa zavrie a odosielanie pokračuje na pozadí, pri slabom pripojení s opakovaním až jeden deň
-• Po odoslaní nezostávajú kópie v Konceptoch
-• Spoľahlivejšie na mobilných dátach: menej pripojení, zrozumiteľnejšie chyby
-• Počasie už nemizne z miniaplikácií
+• Prehľad schránok: všetky schránky na jednej obrazovke s novou poštou a priečinkami; schránky v krúžkoch v spodnej časti „Môj deň“
+• Výber úvodnej obrazovky: pošta, „Môj deň“ alebo prehľad
+• Správa ide hneď do priečinka Na odoslanie a odchádza na pozadí, pri slabom pripojení s opakovaním až deň
+• Spoľahlivejšie na mobilných dátach; počasie už nemizne z miniaplikácií
 • Telefónne čísla v e-mailoch: hovor, SMS, komunikátory
-• Opravy akcií v upozorneniach a pripomienky príloh
+• Opravy: koncepty po odoslaní, upozornenia, pripomienka príloh
 </sk>
 <th>
-• อีเมลที่ส่งจะย้ายไปที่กล่องขาออกทันที หน้าต่างปิดลงและส่งต่อในเบื้องหลัง เมื่อสัญญาณไม่ดีจะลองใหม่นานสูงสุดหนึ่งวัน
-• ไม่มีสำเนาค้างในฉบับร่างหลังส่ง
-• เสถียรขึ้นบนเน็ตมือถือ: เชื่อมต่อน้อยลง ข้อผิดพลาดชัดเจนขึ้น
-• สภาพอากาศในวิดเจ็ตไม่หายไปอีกแล้ว
+• ภาพรวมกล่องจดหมาย: ทุกกล่องในหน้าจอเดียว พร้อมอีเมลใหม่และโฟลเดอร์ และกล่องจดหมายแบบวงกลมด้านล่าง «วันของฉัน»
+• เลือกหน้าจอเริ่มต้นได้: อีเมล, «วันของฉัน» หรือภาพรวม
+• อีเมลที่ส่งจะย้ายไปที่กล่องขาออกทันทีและส่งในเบื้องหลัง เมื่อสัญญาณไม่ดีจะลองใหม่นานสูงสุดหนึ่งวัน
+• เสถียรขึ้นบนเน็ตมือถือ และสภาพอากาศในวิดเจ็ตไม่หายไปอีกแล้ว
 • หมายเลขโทรศัพท์ในอีเมล: โทร, SMS, แอปแชท
-• แก้ไขการทำงานของการแจ้งเตือนและการเตือนไฟล์แนบ
+• แก้ไข: ฉบับร่างหลังส่ง การแจ้งเตือน และการเตือนไฟล์แนบ
 </th>
 <tr-TR>
-• Gönderilen e-posta hemen Giden Kutusu’na geçer: pencere kapanır, gönderim arka planda sürer; bağlantı zayıfsa bir güne kadar yeniden denenir
-• Gönderdikten sonra Taslaklar’da kopya kalmaz
-• Mobil veride daha güvenilir: daha az bağlantı, daha anlaşılır hatalar
-• Widget’lardaki hava durumu artık kaybolmuyor
+• Posta kutularına genel bakış: tüm kutular yeni e-posta ve klasörlerle tek ekranda; «Günüm» altında daireler
+• Başlangıç ekranını seçin: posta, «Günüm» veya genel bakış
+• E-posta hemen Giden Kutusu’na geçer ve arka planda gönderilir; bağlantı zayıfsa bir gün yeniden denenir
+• Mobil veride daha güvenilir; widget’lardaki hava durumu artık kaybolmuyor
 • E-postadaki telefon numaraları: arama, SMS, mesajlaşma uygulamaları
-• Bildirim işlemleri ve ek hatırlatıcısı için düzeltmeler
+• Düzeltmeler: gönderim sonrası taslaklar, bildirimler, ek hatırlatıcısı
 </tr-TR>
 <fi-FI>
-• Lähetetty viesti siirtyy heti Lähtevät-kansioon: ikkuna sulkeutuu ja lähetys jatkuu taustalla, heikolla yhteydellä uusintayrityksin jopa vuorokauden ajan
-• Lähettämisen jälkeen Luonnoksiin ei jää kopioita
-• Luotettavampi mobiilidatalla: vähemmän yhteyksiä, selkeämmät virheet
-• Sää ei enää katoa widgeteistä
+• Postilaatikoiden yhteenveto: kaikki laatikot yhdessä näkymässä uusine viesteineen ja kansioineen; ympyrät Oma päivä -näkymän alalaidassa
+• Valitse aloitusnäkymä: posti, Oma päivä tai yhteenveto
+• Viesti siirtyy heti Lähtevät-kansioon ja lähtee taustalla; heikolla yhteydellä uusintayritykset vuorokauden
+• Luotettavampi mobiilidatalla; sää ei katoa widgeteistä
 • Puhelinnumerot viesteissä: soitto, tekstiviesti, viestisovellukset
-• Korjauksia ilmoitusten toimintoihin ja liitemuistutukseen
+• Korjauksia: luonnokset, ilmoitukset, liitemuistutus
 </fi-FI>
 <hi-IN>
-• भेजा गया ईमेल तुरंत आउटबॉक्स में जाता है: विंडो बंद हो जाती है और भेजना बैकग्राउंड में जारी रहता है; कमज़ोर कनेक्शन पर एक दिन तक दोबारा कोशिश होती है
-• भेजने के बाद ड्राफ़्ट में कोई कॉपी नहीं बचती
-• मोबाइल डेटा पर ज़्यादा भरोसेमंद: कम कनेक्शन, साफ़ त्रुटियाँ
-• विजेट से मौसम अब गायब नहीं होता
+• मेलबॉक्स सारांश: सभी मेलबॉक्स एक स्क्रीन पर, नए मेल और फ़ोल्डर के साथ; «मेरा दिन» के नीचे मेलबॉक्स गोलों में
+• प्रारंभ स्क्रीन चुनें: मेल, «मेरा दिन» या सारांश
+• भेजा गया ईमेल तुरंत आउटबॉक्स में जाता है और बैकग्राउंड में भेजा जाता है; कमज़ोर कनेक्शन पर एक दिन तक दोबारा कोशिश होती है
+• मोबाइल डेटा पर ज़्यादा भरोसेमंद; विजेट से मौसम अब गायब नहीं होता
 • ईमेल में फ़ोन नंबर: कॉल, SMS, मैसेंजर
-• नोटिफ़िकेशन कार्रवाइयों और अटैचमेंट रिमाइंडर में सुधार
+• सुधार: भेजने के बाद ड्राफ़्ट, नोटिफ़िकेशन, अटैचमेंट रिमाइंडर
 </hi-IN>
 <cs-CZ>
-• Odeslaná zpráva jde hned do složky K odeslání: okno se zavře a odesílání pokračuje na pozadí, při slabém připojení s opakováním až jeden den
-• Po odeslání nezůstávají kopie v Konceptech
-• Spolehlivější na mobilních datech: méně připojení, srozumitelnější chyby
-• Počasí už nemizí z widgetů
+• Přehled schránek: všechny schránky na jedné obrazovce s novou poštou a složkami; schránky v kroužcích dole na obrazovce „Můj den“
+• Výběr úvodní obrazovky: pošta, „Můj den“ nebo přehled
+• Odeslaná zpráva jde hned do složky K odeslání a odchází na pozadí, při slabém připojení s opakováním až jeden den
+• Spolehlivější na mobilních datech; počasí už nemizí z widgetů
 • Telefonní čísla v e-mailech: hovor, SMS, komunikátory
-• Opravy akcí v oznámeních a připomínky přílohy
+• Opravy: koncepty po odeslání, oznámení, připomínka přílohy
 </cs-CZ>
 <sv-SE>
-• Skickad e-post hamnar direkt i Utkorgen: fönstret stängs och sändningen fortsätter i bakgrunden – vid dålig anslutning görs nya försök i upp till ett dygn
-• Inga kopior blir kvar i Utkast efter sändning
-• Pålitligare på mobildata: färre anslutningar, tydligare fel
-• Vädret försvinner inte längre från widgetar
+• Översikt över inkorgar: alla inkorgar på en skärm med ny e-post och mappar; inkorgar som cirklar längst ned i ”Min dag”
+• Välj startskärm: e-post, ”Min dag” eller översikten
+• Skickad e-post hamnar direkt i Utkorgen och skickas i bakgrunden – vid dålig anslutning görs nya försök i upp till ett dygn
+• Pålitligare på mobildata; vädret försvinner inte från widgetar
 • Telefonnummer i e-post: ring, sms, meddelandeappar
-• Rättningar av åtgärder i aviseringar och påminnelsen om bilagor
+• Rättningar: utkast efter sändning, aviseringar, påminnelse om bilagor
 </sv-SE>
 <ja-JP>
-• 送信したメールはすぐに送信トレイへ。画面はすぐ閉じ、送信はバックグラウンドで続行。接続が悪いときは最大1日再試行します
-• 送信後に下書きにコピーが残りません
-• モバイルデータでより安定：接続回数が減り、エラーがわかりやすく
-• ウィジェットの天気が消えなくなりました
+• メールボックス一覧：すべてのメールボックスを新着メールやフォルダとともに1画面に表示。「今日の予定」の下部にも丸いアイコンで表示
+• 起動時の画面を選択：メール、「今日の予定」または一覧
+• 送信したメールはすぐに送信トレイへ移り、バックグラウンドで送信。接続が悪いときは最大1日再試行します
+• モバイルデータでより安定。ウィジェットの天気が消えなくなりました
 • メール内の電話番号：通話、SMS、メッセンジャー
-• 通知の操作と添付ファイルの確認の修正
+• 修正：送信後の下書き、通知、添付ファイルの確認
 </ja-JP>
 ```
 
@@ -303,35 +326,35 @@ and the attachment reminder.
 
 ```
 <ru-RU>
-• Письмо сразу уходит в «Исходящие»: окно закрывается, отправка идёт в фоне, при плохой связи — повторы до суток
-• После отправки в «Черновиках» не остаётся копий
-• Надёжнее на мобильном интернете: меньше подключений, понятные ошибки
-• Погода в виджетах больше не пропадает
+• Сводка ящиков: все ящики на одном экране — новые письма и папки каждого; ящики кружками внизу «Моего дня»
+• Начальный экран на выбор: почта, «Мой день» или сводка ящиков
+• Письмо сразу уходит в «Исходящие» и отправляется в фоне — при плохой связи повторы до суток
+• Надёжнее на мобильном интернете; погода в виджетах больше не пропадает
 • Номер телефона в письме: позвонить, SMS, мессенджеры
-• Исправления уведомлений и напоминания о вложении
+• Исправления: черновики после отправки, уведомления, напоминание о вложении
 </ru-RU>
 <en-US>
-• Sent mail goes straight to the Outbox: the window closes and delivery continues in the background, retrying for up to a day on a poor connection
-• No leftover copies in Drafts after sending
-• More reliable on mobile data: fewer connections, clearer errors
-• Weather in widgets no longer disappears
+• Mailboxes overview: all mailboxes on one screen with new mail and folders; mailbox circles at the bottom of My day
+• Choose the start screen: mail, My day or the overview
+• Sent mail goes straight to the Outbox and is delivered in the background, retrying for up to a day on a poor connection
+• More reliable on mobile data; weather in widgets no longer disappears
 • Phone numbers in emails: call, SMS, messengers
-• Fixes for notification actions and the attachment reminder
+• Fixes: drafts after sending, notifications, attachment reminder
 </en-US>
 <de-DE>
-• Gesendete E-Mails landen sofort im Postausgang: Das Fenster schließt sich, der Versand läuft im Hintergrund – bei schlechter Verbindung mit Wiederholungen bis zu einem Tag
-• Nach dem Senden bleiben keine Kopien in den Entwürfen
-• Zuverlässiger im Mobilfunknetz: weniger Verbindungen, klarere Fehler
-• Das Wetter im Widget verschwindet nicht mehr
+• Postfach-Übersicht: alle Postfächer auf einem Bildschirm mit neuen E-Mails und Ordnern; Postfach-Kreise unten in „Mein Tag“
+• Startbildschirm wählbar: E-Mail, „Mein Tag“ oder Übersicht
+• E-Mails gehen sofort in den Postausgang und im Hintergrund raus – bei schlechter Verbindung bis zu einem Tag
+• Zuverlässiger im Mobilfunknetz; das Wetter im Widget bleibt
 • Telefonnummern in E-Mails: anrufen, SMS, Messenger
-• Korrekturen bei Benachrichtigungsaktionen und der Anhang-Erinnerung
+• Korrekturen: Entwürfe nach dem Senden, Benachrichtigungen, Anhang-Erinnerung
 </de-DE>
 <fr-FR>
-• Le message part aussitôt dans la boîte d’envoi : la fenêtre se ferme, l’envoi continue en arrière-plan, avec de nouvelles tentatives pendant 24 h si la connexion est mauvaise
-• Plus de copie dans les brouillons après l’envoi
-• Plus fiable en données mobiles : moins de connexions, erreurs plus claires
-• La météo ne disparaît plus des widgets
+• Aperçu des boîtes : toutes vos boîtes sur un écran, nouveaux messages et dossiers ; cercles en bas de « Ma journée »
+• Écran d’accueil au choix : e-mail, « Ma journée » ou aperçu
+• Le message part aussitôt dans la boîte d’envoi, envoyé en arrière-plan ; nouvelles tentatives pendant 24 h si besoin
+• Plus fiable en données mobiles ; la météo reste dans les widgets
 • Numéros dans les e-mails : appel, SMS, messageries
-• Corrections des actions de notification et du rappel de pièce jointe
+• Corrections : brouillons après envoi, notifications, rappel de pièce jointe
 </fr-FR>
 ```

@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">Warna bawaan</string>
     <string name="outlookCategoriesHint">Dari kotak surat Exchange, dengan warna Outlook. Anda bisa memilih warna sendiri — hanya terlihat di aplikasi.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Nomor ekstensi</string>
+    <string name="phoneExtBody">Untuk menelepon ekstensi {ext} dari ponsel, masukkan nomor utama organisasi{org}: aplikasi memanggilnya lalu ekstensi setelah panggilan dijawab. Nomor akan diingat.</string>
+    <string name="phoneExtMain">Nomor utama organisasi</string>
+    <string name="phoneExtDialAsIs">Panggil apa adanya</string>
 </resources>

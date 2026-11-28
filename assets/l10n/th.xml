@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">สีเริ่มต้น</string>
     <string name="outlookCategoriesHint">จากกล่อง Exchange ด้วยสีเดียวกับ Outlook เลือกสีของคุณเองได้ — แสดงเฉพาะในแอป</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">หมายเลขต่อ</string>
+    <string name="phoneExtBody">หากต้องการโทรหาหมายเลขต่อ {ext} จากมือถือ ให้ใส่หมายเลขหลักขององค์กร{org} แอปจะโทรไปที่หมายเลขนั้น แล้วกดหมายเลขต่อเมื่อมีผู้รับสาย ระบบจะจำหมายเลขไว้</string>
+    <string name="phoneExtMain">หมายเลขหลักขององค์กร</string>
+    <string name="phoneExtDialAsIs">โทรตามนี้</string>
 </resources>

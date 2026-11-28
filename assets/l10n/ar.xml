@@ -4531,4 +4531,8 @@
     <string name="categoryColorDefault">اللون الافتراضي</string>
     <string name="outlookCategoriesHint">من صناديق Exchange بألوان Outlook. يمكنك اختيار لون خاص بك — يظهر في التطبيق فقط.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">رقم داخلي</string>
+    <string name="phoneExtBody">للاتصال بالرقم الداخلي {ext} من الهاتف المحمول، أدخل الرقم الرئيسي للمؤسسة{org}: يطلبه التطبيق ثم يطلب الرقم الداخلي بعد الرد. سيُحفظ الرقم.</string>
+    <string name="phoneExtMain">الرقم الرئيسي للمؤسسة</string>
+    <string name="phoneExtDialAsIs">اطلب كما هو</string>
 </resources>

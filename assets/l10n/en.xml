@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Default color</string>
     <string name="outlookCategoriesHint">From Exchange mailboxes, with Outlook colors. You can pick your own color — it is shown only in the app.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Extension</string>
+    <string name="phoneExtBody">To call extension {ext} from a mobile phone, enter the organization\'s main number{org}: the app dials it and then the extension once the call is answered. The number is remembered.</string>
+    <string name="phoneExtMain">Organization\'s main number</string>
+    <string name="phoneExtDialAsIs">Dial as is</string>
 </resources>

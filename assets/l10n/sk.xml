@@ -4468,4 +4468,8 @@
     <string name="categoryColorDefault">Predvolená farba</string>
     <string name="outlookCategoriesHint">Zo schránok Exchange, s farbami ako v Outlooku. Môžete zvoliť vlastnú farbu — uvidíte ju len v aplikácii.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Klapka</string>
+    <string name="phoneExtBody">Ak chcete z mobilu volať na klapku {ext}, zadajte hlavné číslo organizácie{org}: aplikácia ho vytočí a po prijatí hovoru zadá klapku. Číslo si zapamätá.</string>
+    <string name="phoneExtMain">Hlavné číslo organizácie</string>
+    <string name="phoneExtDialAsIs">Vytočiť takto</string>
 </resources>

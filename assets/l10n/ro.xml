@@ -4468,4 +4468,8 @@
     <string name="categoryColorDefault">Culoare implicită</string>
     <string name="outlookCategoriesHint">Din căsuțele Exchange, cu culorile din Outlook. Puteți alege propria culoare — se vede doar în aplicație.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Interior</string>
+    <string name="phoneExtBody">Pentru a suna interiorul {ext} de pe mobil, introduceți numărul principal al organizației{org}: aplicația îl formează, iar după răspuns — interiorul. Numărul este memorat.</string>
+    <string name="phoneExtMain">Numărul principal al organizației</string>
+    <string name="phoneExtDialAsIs">Formează așa</string>
 </resources>

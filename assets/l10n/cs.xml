@@ -4468,4 +4468,8 @@
     <string name="categoryColorDefault">Výchozí barva</string>
     <string name="outlookCategoriesHint">Ze schránek Exchange, s barvami jako v Outlooku. Můžete zvolit vlastní barvu — uvidíte ji jen v aplikaci.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Linka</string>
+    <string name="phoneExtBody">Chcete-li z mobilu volat na linku {ext}, zadejte hlavní číslo organizace{org}: aplikace ho vytočí a po přijetí hovoru zadá linku. Číslo si zapamatuje.</string>
+    <string name="phoneExtMain">Hlavní číslo organizace</string>
+    <string name="phoneExtDialAsIs">Vytočit takto</string>
 </resources>

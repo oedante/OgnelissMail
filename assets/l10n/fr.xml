@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Couleur par défaut</string>
     <string name="outlookCategoriesHint">Issues des boîtes Exchange, avec les couleurs d\'Outlook. Vous pouvez choisir votre couleur — elle n\'est visible que dans l\'application.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Poste</string>
+    <string name="phoneExtBody">Pour appeler le poste {ext} depuis un mobile, saisissez le numéro principal de l’organisation{org} : l’application le compose, puis le poste une fois l’appel décroché. Le numéro est mémorisé.</string>
+    <string name="phoneExtMain">Numéro principal de l’organisation</string>
+    <string name="phoneExtDialAsIs">Composer tel quel</string>
 </resources>

@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Standardfarge</string>
     <string name="outlookCategoriesHint">Fra Exchange-postbokser, med fargene fra Outlook. Du kan velge din egen farge — den vises bare i appen.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Internnummer</string>
+    <string name="phoneExtBody">For å ringe internnummer {ext} fra mobilen, skriv inn organisasjonens hovednummer{org}: appen ringer det og taster internnummeret når noen svarer. Nummeret huskes.</string>
+    <string name="phoneExtMain">Organisasjonens hovednummer</string>
+    <string name="phoneExtDialAsIs">Ring som det er</string>
 </resources>

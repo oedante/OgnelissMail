@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Varsayılan renk</string>
     <string name="outlookCategoriesHint">Exchange posta kutularından, Outlook renkleriyle. Kendi renginizi seçebilirsiniz — yalnızca uygulamada görünür.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Dahili numara</string>
+    <string name="phoneExtBody">{ext} dahili numarasını cep telefonundan aramak için kurumun ana numarasını{org} girin: uygulama ana numarayı arar, cevaplanınca dahiliyi tuşlar. Numara hatırlanır.</string>
+    <string name="phoneExtMain">Kurumun ana numarası</string>
+    <string name="phoneExtDialAsIs">Olduğu gibi ara</string>
 </resources>

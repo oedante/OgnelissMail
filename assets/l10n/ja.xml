@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">既定の色</string>
     <string name="outlookCategoriesHint">Exchange のメールボックスから、Outlook と同じ色で表示します。独自の色も選べます（アプリ内でのみ表示）。</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">内線番号</string>
+    <string name="phoneExtBody">携帯電話から内線 {ext} にかけるには、組織の代表番号{org}を入力してください。アプリが代表番号に発信し、応答後に内線番号を送ります。番号は保存されます。</string>
+    <string name="phoneExtMain">組織の代表番号</string>
+    <string name="phoneExtDialAsIs">そのまま発信</string>
 </resources>

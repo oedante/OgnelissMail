@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Standaardkleur</string>
     <string name="outlookCategoriesHint">Uit Exchange-postvakken, met de kleuren van Outlook. Je kunt een eigen kleur kiezen — die zie je alleen in de app.</string>
     <string name="smsShort">Sms</string>
+    <string name="phoneExtTitle">Toestel</string>
+    <string name="phoneExtBody">Om toestel {ext} vanaf een mobiel te bellen, vul je het hoofdnummer van de organisatie{org} in: de app belt het en kiest het toestel zodra er wordt opgenomen. Het nummer wordt onthouden.</string>
+    <string name="phoneExtMain">Hoofdnummer van de organisatie</string>
+    <string name="phoneExtDialAsIs">Zo bellen</string>
 </resources>

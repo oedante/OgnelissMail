@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Color predeterminado</string>
     <string name="outlookCategoriesHint">De los buzones Exchange, con los colores de Outlook. Puedes elegir tu propio color: solo se verá en la app.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Extensión</string>
+    <string name="phoneExtBody">Para llamar a la extensión {ext} desde el móvil, introduce el número principal de la organización{org}: la app lo marca y, al contestar, marca la extensión. El número se recuerda.</string>
+    <string name="phoneExtMain">Número principal de la organización</string>
+    <string name="phoneExtDialAsIs">Marcar tal cual</string>
 </resources>

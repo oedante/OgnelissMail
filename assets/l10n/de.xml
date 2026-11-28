@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">Standardfarbe</string>
     <string name="outlookCategoriesHint">Aus Exchange-Postfächern, mit den Farben aus Outlook. Eine eigene Farbe ist möglich – sie gilt nur in der App.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Durchwahl</string>
+    <string name="phoneExtBody">Um die Durchwahl {ext} vom Handy anzurufen, geben Sie die Hauptnummer der Organisation{org} ein: Die App wählt sie und nach Annahme die Durchwahl. Die Nummer wird gespeichert.</string>
+    <string name="phoneExtMain">Hauptnummer der Organisation</string>
+    <string name="phoneExtDialAsIs">So wählen</string>
 </resources>

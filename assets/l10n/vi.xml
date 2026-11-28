@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">Màu mặc định</string>
     <string name="outlookCategoriesHint">Từ hộp thư Exchange, với màu như trong Outlook. Bạn có thể chọn màu riêng — chỉ hiển thị trong ứng dụng.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Số máy lẻ</string>
+    <string name="phoneExtBody">Để gọi số máy lẻ {ext} từ điện thoại di động, hãy nhập số chính của tổ chức{org}: ứng dụng sẽ gọi số đó rồi bấm số máy lẻ khi có người nghe. Số sẽ được lưu lại.</string>
+    <string name="phoneExtMain">Số chính của tổ chức</string>
+    <string name="phoneExtDialAsIs">Gọi như hiện tại</string>
 </resources>

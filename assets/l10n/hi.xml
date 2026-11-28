@@ -4447,4 +4447,8 @@
     <string name="categoryColorDefault">डिफ़ॉल्ट रंग</string>
     <string name="outlookCategoriesHint">Exchange मेलबॉक्स से, Outlook के रंगों के साथ। आप अपना रंग चुन सकते हैं — वह केवल ऐप में दिखेगा।</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">एक्सटेंशन</string>
+    <string name="phoneExtBody">मोबाइल से एक्सटेंशन {ext} पर कॉल करने के लिए संगठन का मुख्य नंबर{org} डालें: ऐप उसे डायल करेगा और कॉल उठने पर एक्सटेंशन। नंबर याद रखा जाएगा।</string>
+    <string name="phoneExtMain">संगठन का मुख्य नंबर</string>
+    <string name="phoneExtDialAsIs">जैसा है वैसा डायल करें</string>
 </resources>

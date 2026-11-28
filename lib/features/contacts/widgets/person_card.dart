@@ -170,10 +170,10 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
           subtitle: Text(label),
           onTap: onTap,
           // Удержание номера — позвонить, SMS, мессенджеры (2.7.2).
-          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : null,
+          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value, email: widget.email)) : null,
           // Полный номер — ещё и SMS (2.7.5).
           trailing: trailing ??
-              (phone && PhoneActions.isFull(value)
+              (phone && PhoneActions.canSms(value)
                   ? IconButton(
                       tooltip: l10n.tr('phoneSms'),
                       icon: const Icon(AppIcons.chat_bubble),
@@ -295,7 +295,7 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                     FilledButton.tonalIcon(
                       icon: const Icon(AppIcons.phone),
                       label: Text(l10n.tr('call')),
-                      onPressed: () => unawaited(PhoneActions.call(number, l10n)),
+                      onPressed: () => unawaited(PhoneActions.call(number, l10n, context: context, email: widget.email)),
                     ),
                   // SMS — на полный номер (2.7.5).
                   if (PhoneActions.smsNumber(mobile: p?.phoneMobile, work: p?.phoneWork) case final number?)
@@ -324,10 +324,10 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                           onPressed: () => Clipboard.setData(ClipboardData(text: widget.email)),
                         )),
                     if ((p?.phoneWork ?? '').trim().isNotEmpty)
-                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), phone: true, onTap: () => unawaited(PhoneActions.call(p.phoneWork!, l10n))),
+                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), phone: true, onTap: () => unawaited(PhoneActions.call(p.phoneWork!, l10n, context: context, email: widget.email))),
                     if ((p?.phoneMobile ?? '').trim().isNotEmpty)
                       row(AppIcons.smartphone, p!.phoneMobile!, l10n.tr('phoneMobile'), phone: true,
-                          onTap: () => unawaited(PhoneActions.call(p.phoneMobile!, l10n))),
+                          onTap: () => unawaited(PhoneActions.call(p.phoneMobile!, l10n, context: context, email: widget.email))),
                     if ((p?.department ?? '').trim().isNotEmpty)
                       row(AppIcons.account_tree, p!.department!, l10n.tr('department')),
                     if ((p?.office ?? '').trim().isNotEmpty)

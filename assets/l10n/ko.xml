@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">기본 색</string>
     <string name="outlookCategoriesHint">Exchange 사서함에서 가져오며 Outlook 색을 사용합니다. 원하는 색을 고를 수 있으며 앱에서만 표시됩니다.</string>
     <string name="smsShort">문자</string>
+    <string name="phoneExtTitle">내선 번호</string>
+    <string name="phoneExtBody">휴대폰에서 내선 {ext}(으)로 전화하려면 조직의 대표 번호{org}를 입력하세요. 앱이 대표 번호로 전화를 걸고 연결되면 내선 번호를 누릅니다. 번호는 저장됩니다.</string>
+    <string name="phoneExtMain">조직 대표 번호</string>
+    <string name="phoneExtDialAsIs">그대로 걸기</string>
 </resources>

@@ -4468,4 +4468,8 @@
     <string name="categoryColorDefault">צבע ברירת מחדל</string>
     <string name="outlookCategoriesHint">מתיבות Exchange, בצבעי Outlook. אפשר לבחור צבע משלך — הוא מוצג רק באפליקציה.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">שלוחה</string>
+    <string name="phoneExtBody">כדי להתקשר לשלוחה {ext} מהנייד, הזינו את המספר הראשי של הארגון{org}: האפליקציה תחייג אליו ואחרי המענה — את השלוחה. המספר יישמר.</string>
+    <string name="phoneExtMain">המספר הראשי של הארגון</string>
+    <string name="phoneExtDialAsIs">חייג כמו שהוא</string>
 </resources>

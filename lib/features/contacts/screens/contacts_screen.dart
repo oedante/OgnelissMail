@@ -842,8 +842,9 @@ class _GalTile extends ConsumerWidget {
           if (phone?.isNotEmpty == true)
             // Удержание кнопки — SMS и мессенджеры номера (2.7.4).
             GestureDetector(
-              onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
-              child: btn(AppIcons.phone, l10n.tr('call'), () => unawaited(PhoneActions.call(phone!, l10n))),
+              onLongPress: () => unawaited(PhoneActions.show(context, phone!, email: person.email)),
+              child: btn(AppIcons.phone, l10n.tr('call'),
+                  () => unawaited(PhoneActions.call(phone!, l10n, context: context, email: person.email))),
             )
           else
             const SizedBox(width: 40),
@@ -985,7 +986,7 @@ class _ContactTile extends ConsumerWidget {
             if (phone?.isNotEmpty == true)
               // Удержание кнопки — SMS и мессенджеры номера.
               GestureDetector(
-                onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
+                onLongPress: () => unawaited(PhoneActions.show(context, phone!, email: contact.email)),
                 child: _actionBtn(context, AppIcons.phone, l10n.tr('call'), () => _callPhone(context, phone!)),
               )
             else
@@ -1123,7 +1124,9 @@ class _ContactTile extends ConsumerWidget {
   }
 
   /// Позвонить по номеру (системное приложение телефона).
-  Future<void> _callPhone(BuildContext context, String phone) => PhoneActions.call(phone, l10n);
+  /// Добавочный — через основной номер организации контакта.
+  Future<void> _callPhone(BuildContext context, String phone) =>
+      PhoneActions.call(phone, l10n, context: context, email: contact.email);
 
   Widget _actionBtn(BuildContext context, IconData icon, String tooltip, VoidCallback onTap) {
     return SizedBox(
@@ -1546,8 +1549,9 @@ class _ContactCard extends ConsumerWidget {
     // (2.7.2); остального — скопировать.
     Widget row(IconData icon, String value, String label, {VoidCallback? onTap, Widget? trailing, bool phone = false}) => InkWell(
           onTap: onTap ?? () => copy(value),
-          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : () => copy(value),
-          onSecondaryTapUp: secondaryAsHold(phone ? () => unawaited(PhoneActions.show(context, value)) : () => copy(value)),
+          onLongPress: phone ? () => unawaited(PhoneActions.show(context, value, email: email)) : () => copy(value),
+          onSecondaryTapUp:
+              secondaryAsHold(phone ? () => unawaited(PhoneActions.show(context, value, email: email)) : () => copy(value)),
           child: ConstrainedBox(
             constraints: const BoxConstraints(minHeight: Sizes.tapTarget + Space.s),
             child: Padding(
@@ -1562,7 +1566,7 @@ class _ContactCard extends ConsumerWidget {
                   ]),
                 ),
                 // Полный номер — ещё и SMS (2.7.5).
-                if (trailing == null && phone && PhoneActions.isFull(value))
+                if (trailing == null && phone && PhoneActions.canSms(value))
                   IconButton(
                     key: ValueKey('contact_sms_$value'),
                     tooltip: l10n.tr('phoneSms'),

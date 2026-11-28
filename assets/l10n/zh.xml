@@ -4426,4 +4426,8 @@
     <string name="categoryColorDefault">默认颜色</string>
     <string name="outlookCategoriesHint">来自 Exchange 邮箱，颜色与 Outlook 相同。可以自选颜色——仅在应用中显示。</string>
     <string name="smsShort">短信</string>
+    <string name="phoneExtTitle">分机号</string>
+    <string name="phoneExtBody">要用手机拨打分机 {ext}，请输入单位总机号码{org}：应用会先拨总机，接通后再拨分机。号码会被记住。</string>
+    <string name="phoneExtMain">单位总机号码</string>
+    <string name="phoneExtDialAsIs">直接拨打</string>
 </resources>

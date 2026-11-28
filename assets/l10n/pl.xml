@@ -4489,4 +4489,8 @@
     <string name="categoryColorDefault">Kolor domyślny</string>
     <string name="outlookCategoriesHint">Ze skrzynek Exchange, z kolorami jak w Outlooku. Możesz wybrać własny kolor — będzie widoczny tylko w aplikacji.</string>
     <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Numer wewnętrzny</string>
+    <string name="phoneExtBody">Aby zadzwonić z komórki na numer wewnętrzny {ext}, podaj główny numer organizacji{org}: aplikacja go wybierze, a po odebraniu — numer wewnętrzny. Numer zostanie zapamiętany.</string>
+    <string name="phoneExtMain">Główny numer organizacji</string>
+    <string name="phoneExtDialAsIs">Wybierz bez zmian</string>
 </resources>

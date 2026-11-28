@@ -4472,4 +4472,10 @@
     <string name="phoneExtBody">Ak chcete z mobilu volať na klapku {ext}, zadajte hlavné číslo organizácie{org}: aplikácia ho vytočí a po prijatí hovoru zadá klapku. Číslo si zapamätá.</string>
     <string name="phoneExtMain">Hlavné číslo organizácie</string>
     <string name="phoneExtDialAsIs">Vytočiť takto</string>
+    <string name="threadUnderMail">Konverzácia pod správou</string>
+    <string name="threadUnderAlways">Vždy</string>
+    <string name="threadUnderAlwaysDesc">Aj keď je správa otvorená z obrazovky konverzácie</string>
+    <string name="threadUnderStandalone">Pri otvorení z upozornenia</string>
+    <string name="threadUnderStandaloneDesc">Aj z hľadania, odkazu či widgetu – keď správa nie je otvorená z obrazovky konverzácie</string>
+    <string name="threadUnderNever">Nikdy</string>
 </resources>

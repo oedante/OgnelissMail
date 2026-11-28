@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Soittaaksesi alanumeroon {ext} matkapuhelimesta anna organisaation päänumero{org}: sovellus soittaa siihen ja näppäilee alanumeron, kun puheluun vastataan. Numero muistetaan.</string>
     <string name="phoneExtMain">Organisaation päänumero</string>
     <string name="phoneExtDialAsIs">Soita sellaisenaan</string>
+    <string name="threadUnderMail">Keskustelu viestin alla</string>
+    <string name="threadUnderAlways">Aina</string>
+    <string name="threadUnderAlwaysDesc">Myös kun viesti avataan keskustelunäkymästä</string>
+    <string name="threadUnderStandalone">Kun avataan ilmoituksesta</string>
+    <string name="threadUnderStandaloneDesc">Myös hausta, linkistä tai pienoissovelluksesta – kun viestiä ei avata keskustelunäkymästä</string>
+    <string name="threadUnderNever">Ei koskaan</string>
 </resources>

@@ -4430,4 +4430,10 @@
     <string name="phoneExtBody">要用手机拨打分机 {ext}，请输入单位总机号码{org}：应用会先拨总机，接通后再拨分机。号码会被记住。</string>
     <string name="phoneExtMain">单位总机号码</string>
     <string name="phoneExtDialAsIs">直接拨打</string>
+    <string name="threadUnderMail">邮件下方显示会话</string>
+    <string name="threadUnderAlways">始终</string>
+    <string name="threadUnderAlwaysDesc">从会话页面打开邮件时也显示</string>
+    <string name="threadUnderStandalone">从通知打开时</string>
+    <string name="threadUnderStandaloneDesc">从搜索、链接、小组件打开时也显示——只要不是从会话页面打开</string>
+    <string name="threadUnderNever">从不</string>
 </resources>

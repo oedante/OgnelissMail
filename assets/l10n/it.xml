@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Per chiamare l’interno {ext} dal cellulare, inserisci il numero principale dell’organizzazione{org}: l’app lo compone e, alla risposta, digita l’interno. Il numero viene ricordato.</string>
     <string name="phoneExtMain">Numero principale dell’organizzazione</string>
     <string name="phoneExtDialAsIs">Componi così</string>
+    <string name="threadUnderMail">Conversazione sotto l’email</string>
+    <string name="threadUnderAlways">Sempre</string>
+    <string name="threadUnderAlwaysDesc">Anche quando l’email è aperta dalla schermata della conversazione</string>
+    <string name="threadUnderStandalone">All’apertura da una notifica</string>
+    <string name="threadUnderStandaloneDesc">Anche da ricerca, link o widget, quando l’email non è aperta dalla conversazione</string>
+    <string name="threadUnderNever">Mai</string>
 </resources>

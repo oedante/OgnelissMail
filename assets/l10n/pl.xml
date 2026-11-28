@@ -4493,4 +4493,10 @@
     <string name="phoneExtBody">Aby zadzwonić z komórki na numer wewnętrzny {ext}, podaj główny numer organizacji{org}: aplikacja go wybierze, a po odebraniu — numer wewnętrzny. Numer zostanie zapamiętany.</string>
     <string name="phoneExtMain">Główny numer organizacji</string>
     <string name="phoneExtDialAsIs">Wybierz bez zmian</string>
+    <string name="threadUnderMail">Rozmowa pod wiadomością</string>
+    <string name="threadUnderAlways">Zawsze</string>
+    <string name="threadUnderAlwaysDesc">Także gdy wiadomość jest otwarta z ekranu rozmowy</string>
+    <string name="threadUnderStandalone">Po otwarciu z powiadomienia</string>
+    <string name="threadUnderStandaloneDesc">Także z wyszukiwania, linku lub widżetu — gdy wiadomość nie jest otwarta z ekranu rozmowy</string>
+    <string name="threadUnderNever">Nigdy</string>
 </resources>

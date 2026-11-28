@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">A(z) {ext} mellék mobilról való hívásához adja meg a szervezet fő számát{org}: az alkalmazás felhívja, majd a hívás fogadása után beüti a melléket. A számot megjegyzi.</string>
     <string name="phoneExtMain">A szervezet fő száma</string>
     <string name="phoneExtDialAsIs">Hívás így</string>
+    <string name="threadUnderMail">Beszélgetés a levél alatt</string>
+    <string name="threadUnderAlways">Mindig</string>
+    <string name="threadUnderAlwaysDesc">Akkor is, ha a levelet a beszélgetés képernyőjéről nyitja meg</string>
+    <string name="threadUnderStandalone">Értesítésből megnyitva</string>
+    <string name="threadUnderStandaloneDesc">Keresésből, hivatkozásból, widgetről is – ha a levél nem a beszélgetés képernyőjéről nyílik</string>
+    <string name="threadUnderNever">Soha</string>
 </resources>

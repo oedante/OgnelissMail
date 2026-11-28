@@ -4430,4 +4430,10 @@
     <string name="phoneExtBody">Untuk menelepon ekstensi {ext} dari ponsel, masukkan nomor utama organisasi{org}: aplikasi memanggilnya lalu ekstensi setelah panggilan dijawab. Nomor akan diingat.</string>
     <string name="phoneExtMain">Nomor utama organisasi</string>
     <string name="phoneExtDialAsIs">Panggil apa adanya</string>
+    <string name="threadUnderMail">Percakapan di bawah email</string>
+    <string name="threadUnderAlways">Selalu</string>
+    <string name="threadUnderAlwaysDesc">Juga saat email dibuka dari layar percakapan</string>
+    <string name="threadUnderStandalone">Saat dibuka dari notifikasi</string>
+    <string name="threadUnderStandaloneDesc">Juga dari pencarian, tautan, atau widget — saat email tidak dibuka dari layar percakapan</string>
+    <string name="threadUnderNever">Tidak pernah</string>
 </resources>

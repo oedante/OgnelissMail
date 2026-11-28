@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Para llamar a la extensión {ext} desde el móvil, introduce el número principal de la organización{org}: la app lo marca y, al contestar, marca la extensión. El número se recuerda.</string>
     <string name="phoneExtMain">Número principal de la organización</string>
     <string name="phoneExtDialAsIs">Marcar tal cual</string>
+    <string name="threadUnderMail">Conversación debajo del correo</string>
+    <string name="threadUnderAlways">Siempre</string>
+    <string name="threadUnderAlwaysDesc">También al abrir el correo desde la pantalla de la conversación</string>
+    <string name="threadUnderStandalone">Al abrir desde una notificación</string>
+    <string name="threadUnderStandaloneDesc">También desde la búsqueda, un enlace o un widget, cuando el correo no se abre desde la conversación</string>
+    <string name="threadUnderNever">Nunca</string>
 </resources>

@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Para ligar para o ramal {ext} pelo celular, informe o número principal da organização{org}: o app liga para ele e, quando atenderem, disca o ramal. O número fica salvo.</string>
     <string name="phoneExtMain">Número principal da organização</string>
     <string name="phoneExtDialAsIs">Discar assim</string>
+    <string name="threadUnderMail">Conversa abaixo do e-mail</string>
+    <string name="threadUnderAlways">Sempre</string>
+    <string name="threadUnderAlwaysDesc">Também quando o e-mail é aberto pela tela da conversa</string>
+    <string name="threadUnderStandalone">Ao abrir por uma notificação</string>
+    <string name="threadUnderStandaloneDesc">Também pela busca, links e widgets — quando o e-mail não é aberto pela conversa</string>
+    <string name="threadUnderNever">Nunca</string>
 </resources>

@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Um die Durchwahl {ext} vom Handy anzurufen, geben Sie die Hauptnummer der Organisation{org} ein: Die App wählt sie und nach Annahme die Durchwahl. Die Nummer wird gespeichert.</string>
     <string name="phoneExtMain">Hauptnummer der Organisation</string>
     <string name="phoneExtDialAsIs">So wählen</string>
+    <string name="threadUnderMail">Unterhaltung unter der E-Mail</string>
+    <string name="threadUnderAlways">Immer</string>
+    <string name="threadUnderAlwaysDesc">Auch wenn die E-Mail aus der Unterhaltung geöffnet wird</string>
+    <string name="threadUnderStandalone">Beim Öffnen aus einer Benachrichtigung</string>
+    <string name="threadUnderStandaloneDesc">Auch aus Suche, Links und Widgets – wenn die E-Mail nicht aus der Unterhaltung geöffnet wird</string>
+    <string name="threadUnderNever">Nie</string>
 </resources>

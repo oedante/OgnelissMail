@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">{ext} dahili numarasını cep telefonundan aramak için kurumun ana numarasını{org} girin: uygulama ana numarayı arar, cevaplanınca dahiliyi tuşlar. Numara hatırlanır.</string>
     <string name="phoneExtMain">Kurumun ana numarası</string>
     <string name="phoneExtDialAsIs">Olduğu gibi ara</string>
+    <string name="threadUnderMail">E-postanın altında konuşma</string>
+    <string name="threadUnderAlways">Her zaman</string>
+    <string name="threadUnderAlwaysDesc">E-posta konuşma ekranından açıldığında da</string>
+    <string name="threadUnderStandalone">Bildirimden açıldığında</string>
+    <string name="threadUnderStandaloneDesc">Aramadan, bağlantıdan veya widget\'tan da — e-posta konuşma ekranından açılmadığında</string>
+    <string name="threadUnderNever">Hiçbir zaman</string>
 </resources>

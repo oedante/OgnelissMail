@@ -4472,4 +4472,10 @@
     <string name="phoneExtBody">כדי להתקשר לשלוחה {ext} מהנייד, הזינו את המספר הראשי של הארגון{org}: האפליקציה תחייג אליו ואחרי המענה — את השלוחה. המספר יישמר.</string>
     <string name="phoneExtMain">המספר הראשי של הארגון</string>
     <string name="phoneExtDialAsIs">חייג כמו שהוא</string>
+    <string name="threadUnderMail">שיחה מתחת להודעה</string>
+    <string name="threadUnderAlways">תמיד</string>
+    <string name="threadUnderAlwaysDesc">גם כשההודעה נפתחת ממסך השיחה</string>
+    <string name="threadUnderStandalone">בפתיחה מהתראה</string>
+    <string name="threadUnderStandaloneDesc">גם מחיפוש, קישור או וידג׳ט — כשההודעה לא נפתחת ממסך השיחה</string>
+    <string name="threadUnderNever">אף פעם</string>
 </resources>

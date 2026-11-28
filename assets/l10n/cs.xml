@@ -4472,4 +4472,10 @@
     <string name="phoneExtBody">Chcete-li z mobilu volat na linku {ext}, zadejte hlavní číslo organizace{org}: aplikace ho vytočí a po přijetí hovoru zadá linku. Číslo si zapamatuje.</string>
     <string name="phoneExtMain">Hlavní číslo organizace</string>
     <string name="phoneExtDialAsIs">Vytočit takto</string>
+    <string name="threadUnderMail">Konverzace pod zprávou</string>
+    <string name="threadUnderAlways">Vždy</string>
+    <string name="threadUnderAlwaysDesc">I když je zpráva otevřena z obrazovky konverzace</string>
+    <string name="threadUnderStandalone">Při otevření z oznámení</string>
+    <string name="threadUnderStandaloneDesc">I z hledání, odkazu či widgetu – když zpráva není otevřena z obrazovky konverzace</string>
+    <string name="threadUnderNever">Nikdy</string>
 </resources>

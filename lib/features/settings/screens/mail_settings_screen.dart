@@ -28,6 +28,7 @@ import '../widgets/translation_settings_section.dart';
 import '../providers/settings_provider.dart';
 import '../../../services/security/tracker_blocker.dart' show trackerBlockerProvider;
 import 'package:go_router/go_router.dart';
+import '../../mail/providers/thread_under_mail.dart';
 import '../../mail/providers/startup_folder.dart';
 import '../../mail/providers/reading_pane.dart';
 import '../../../widgets/common/adaptive_layout.dart' show AdaptiveLayout, PanePosition;
@@ -100,6 +101,33 @@ class MailSettingsScreen extends ConsumerWidget {
       entries: [for (final f in StartupFolder.values) AppMenuEntry(value: f, label: _startupLabel(f, l10n))],
     );
     if (picked != null) await ref.read(startupFolderProvider.notifier).set(picked);
+  }
+
+  String _threadUnderLabel(ThreadUnderMail m, AppLocalizations l10n) => switch (m) {
+        ThreadUnderMail.always => l10n.tr('threadUnderAlways'),
+        ThreadUnderMail.standalone => l10n.tr('threadUnderStandalone'),
+        ThreadUnderMail.never => l10n.tr('threadUnderNever'),
+      };
+
+  Future<void> _pickThreadUnder(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
+    final picked = await showChoiceSheet<ThreadUnderMail>(
+      context,
+      title: l10n.tr('threadUnderMail'),
+      selected: ref.read(threadUnderMailProvider),
+      entries: [
+        for (final m in ThreadUnderMail.values)
+          AppMenuEntry(
+            value: m,
+            label: _threadUnderLabel(m, l10n),
+            subtitle: switch (m) {
+              ThreadUnderMail.always => l10n.tr('threadUnderAlwaysDesc'),
+              ThreadUnderMail.standalone => l10n.tr('threadUnderStandaloneDesc'),
+              ThreadUnderMail.never => null,
+            },
+          ),
+      ],
+    );
+    if (picked != null) await ref.read(threadUnderMailProvider.notifier).set(picked);
   }
 
   Future<void> _pickPhotoSize(BuildContext context, WidgetRef ref, AppLocalizations l10n) async {
@@ -226,6 +254,14 @@ class MailSettingsScreen extends ConsumerWidget {
               subtitle: l10n.tr('threadingDesc'),
               value: settings.groupByConversation,
               onChanged: (v) => notifier.setGroupByConversation(v),
+            ),
+            // Беседа под письмом (2.7.5, просьба владельца 28.11.2026).
+            SettingsItem(
+              key: const ValueKey('thread_under_mail'),
+              icon: AppIcons.view_agenda,
+              title: l10n.tr('threadUnderMail'),
+              subtitle: _threadUnderLabel(ref.watch(threadUnderMailProvider), l10n),
+              onTap: () => _pickThreadUnder(context, ref, l10n),
             ),
             // Сколько строк текста письма показывать (1.6.31): в ленте и в
             // карточке по удержанию — отдельно. Пустые строки пропускаются.

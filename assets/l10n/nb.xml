@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">For å ringe internnummer {ext} fra mobilen, skriv inn organisasjonens hovednummer{org}: appen ringer det og taster internnummeret når noen svarer. Nummeret huskes.</string>
     <string name="phoneExtMain">Organisasjonens hovednummer</string>
     <string name="phoneExtDialAsIs">Ring som det er</string>
+    <string name="threadUnderMail">Samtale under e-posten</string>
+    <string name="threadUnderAlways">Alltid</string>
+    <string name="threadUnderAlwaysDesc">Også når e-posten åpnes fra samtaleskjermen</string>
+    <string name="threadUnderStandalone">Når den åpnes fra et varsel</string>
+    <string name="threadUnderStandaloneDesc">Også fra søk, lenker og moduler – når e-posten ikke åpnes fra samtaleskjermen</string>
+    <string name="threadUnderNever">Aldri</string>
 </resources>

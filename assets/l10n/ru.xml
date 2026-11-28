@@ -4493,4 +4493,10 @@
     <string name="phoneExtBody">Чтобы позвонить на добавочный {ext} с мобильного, нужен основной номер организации{org}: приложение наберёт его, а после ответа — добавочный. Номер запомнится.</string>
     <string name="phoneExtMain">Основной номер организации</string>
     <string name="phoneExtDialAsIs">Набрать как есть</string>
+    <string name="threadUnderMail">Беседа под письмом</string>
+    <string name="threadUnderAlways">Всегда</string>
+    <string name="threadUnderAlwaysDesc">И когда письмо открыто с экрана беседы</string>
+    <string name="threadUnderStandalone">При открытии из уведомления</string>
+    <string name="threadUnderStandaloneDesc">И из поиска, ссылки, виджета — когда письмо открыто не с экрана беседы</string>
+    <string name="threadUnderNever">Никогда</string>
 </resources>

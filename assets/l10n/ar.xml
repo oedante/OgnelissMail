@@ -4535,4 +4535,10 @@
     <string name="phoneExtBody">للاتصال بالرقم الداخلي {ext} من الهاتف المحمول، أدخل الرقم الرئيسي للمؤسسة{org}: يطلبه التطبيق ثم يطلب الرقم الداخلي بعد الرد. سيُحفظ الرقم.</string>
     <string name="phoneExtMain">الرقم الرئيسي للمؤسسة</string>
     <string name="phoneExtDialAsIs">اطلب كما هو</string>
+    <string name="threadUnderMail">المحادثة أسفل الرسالة</string>
+    <string name="threadUnderAlways">دائمًا</string>
+    <string name="threadUnderAlwaysDesc">حتى عند فتح الرسالة من شاشة المحادثة</string>
+    <string name="threadUnderStandalone">عند الفتح من إشعار</string>
+    <string name="threadUnderStandaloneDesc">وأيضًا من البحث أو رابط أو أداة — عندما لا تُفتح الرسالة من شاشة المحادثة</string>
+    <string name="threadUnderNever">أبدًا</string>
 </resources>

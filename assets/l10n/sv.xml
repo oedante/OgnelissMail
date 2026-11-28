@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">För att ringa anknytning {ext} från mobilen anger du organisationens huvudnummer{org}: appen ringer det och slår anknytningen när någon svarar. Numret sparas.</string>
     <string name="phoneExtMain">Organisationens huvudnummer</string>
     <string name="phoneExtDialAsIs">Ring som det är</string>
+    <string name="threadUnderMail">Konversation under mejlet</string>
+    <string name="threadUnderAlways">Alltid</string>
+    <string name="threadUnderAlwaysDesc">Även när mejlet öppnas från konversationsvyn</string>
+    <string name="threadUnderStandalone">När det öppnas från en avisering</string>
+    <string name="threadUnderStandaloneDesc">Även från sökning, länkar och widgetar – när mejlet inte öppnas från konversationen</string>
+    <string name="threadUnderNever">Aldrig</string>
 </resources>

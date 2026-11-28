@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">Pour appeler le poste {ext} depuis un mobile, saisissez le numéro principal de l’organisation{org} : l’application le compose, puis le poste une fois l’appel décroché. Le numéro est mémorisé.</string>
     <string name="phoneExtMain">Numéro principal de l’organisation</string>
     <string name="phoneExtDialAsIs">Composer tel quel</string>
+    <string name="threadUnderMail">Conversation sous le message</string>
+    <string name="threadUnderAlways">Toujours</string>
+    <string name="threadUnderAlwaysDesc">Même quand le message est ouvert depuis l’écran de la conversation</string>
+    <string name="threadUnderStandalone">À l’ouverture depuis une notification</string>
+    <string name="threadUnderStandaloneDesc">Aussi depuis la recherche, un lien ou un widget — quand le message n’est pas ouvert depuis la conversation</string>
+    <string name="threadUnderNever">Jamais</string>
 </resources>

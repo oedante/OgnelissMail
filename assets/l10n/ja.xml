@@ -4430,4 +4430,10 @@
     <string name="phoneExtBody">携帯電話から内線 {ext} にかけるには、組織の代表番号{org}を入力してください。アプリが代表番号に発信し、応答後に内線番号を送ります。番号は保存されます。</string>
     <string name="phoneExtMain">組織の代表番号</string>
     <string name="phoneExtDialAsIs">そのまま発信</string>
+    <string name="threadUnderMail">メールの下に会話を表示</string>
+    <string name="threadUnderAlways">常に</string>
+    <string name="threadUnderAlwaysDesc">会話画面からメールを開いたときも表示</string>
+    <string name="threadUnderStandalone">通知から開いたとき</string>
+    <string name="threadUnderStandaloneDesc">検索・リンク・ウィジェットからも。会話画面から開いた場合を除く</string>
+    <string name="threadUnderNever">表示しない</string>
 </resources>

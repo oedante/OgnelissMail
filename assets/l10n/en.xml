@@ -4451,4 +4451,10 @@
     <string name="phoneExtBody">To call extension {ext} from a mobile phone, enter the organization\'s main number{org}: the app dials it and then the extension once the call is answered. The number is remembered.</string>
     <string name="phoneExtMain">Organization\'s main number</string>
     <string name="phoneExtDialAsIs">Dial as is</string>
+    <string name="threadUnderMail">Conversation below the email</string>
+    <string name="threadUnderAlways">Always</string>
+    <string name="threadUnderAlwaysDesc">Also when the email is opened from the conversation screen</string>
+    <string name="threadUnderStandalone">When opened from a notification</string>
+    <string name="threadUnderStandaloneDesc">Also from search, links and widgets — whenever the email isn\'t opened from the conversation screen</string>
+    <string name="threadUnderNever">Never</string>
 </resources>

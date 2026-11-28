@@ -4472,4 +4472,10 @@
     <string name="phoneExtBody">Pentru a suna interiorul {ext} de pe mobil, introduceți numărul principal al organizației{org}: aplicația îl formează, iar după răspuns — interiorul. Numărul este memorat.</string>
     <string name="phoneExtMain">Numărul principal al organizației</string>
     <string name="phoneExtDialAsIs">Formează așa</string>
+    <string name="threadUnderMail">Conversația sub mesaj</string>
+    <string name="threadUnderAlways">Întotdeauna</string>
+    <string name="threadUnderAlwaysDesc">Și când mesajul e deschis din ecranul conversației</string>
+    <string name="threadUnderStandalone">La deschiderea dintr-o notificare</string>
+    <string name="threadUnderStandaloneDesc">Și din căutare, link sau widget — când mesajul nu e deschis din conversație</string>
+    <string name="threadUnderNever">Niciodată</string>
 </resources>

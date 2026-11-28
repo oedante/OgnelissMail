@@ -4430,4 +4430,10 @@
     <string name="phoneExtBody">휴대폰에서 내선 {ext}(으)로 전화하려면 조직의 대표 번호{org}를 입력하세요. 앱이 대표 번호로 전화를 걸고 연결되면 내선 번호를 누릅니다. 번호는 저장됩니다.</string>
     <string name="phoneExtMain">조직 대표 번호</string>
     <string name="phoneExtDialAsIs">그대로 걸기</string>
+    <string name="threadUnderMail">메일 아래 대화</string>
+    <string name="threadUnderAlways">항상</string>
+    <string name="threadUnderAlwaysDesc">대화 화면에서 메일을 열 때도 표시</string>
+    <string name="threadUnderStandalone">알림에서 열 때</string>
+    <string name="threadUnderStandaloneDesc">검색, 링크, 위젯에서도 — 대화 화면에서 열지 않은 경우</string>
+    <string name="threadUnderNever">표시 안 함</string>
 </resources>

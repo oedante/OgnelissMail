@@ -4430,4 +4430,10 @@
     <string name="phoneExtBody">Để gọi số máy lẻ {ext} từ điện thoại di động, hãy nhập số chính của tổ chức{org}: ứng dụng sẽ gọi số đó rồi bấm số máy lẻ khi có người nghe. Số sẽ được lưu lại.</string>
     <string name="phoneExtMain">Số chính của tổ chức</string>
     <string name="phoneExtDialAsIs">Gọi như hiện tại</string>
+    <string name="threadUnderMail">Cuộc hội thoại dưới thư</string>
+    <string name="threadUnderAlways">Luôn luôn</string>
+    <string name="threadUnderAlwaysDesc">Cả khi mở thư từ màn hình hội thoại</string>
+    <string name="threadUnderStandalone">Khi mở từ thông báo</string>
+    <string name="threadUnderStandaloneDesc">Cả từ tìm kiếm, liên kết, tiện ích — khi thư không được mở từ màn hình hội thoại</string>
+    <string name="threadUnderNever">Không bao giờ</string>
 </resources>

@@ -104,6 +104,7 @@ import '../widgets/mail_html_view.dart';
 import '../widgets/desktop_mail_web_view.dart';
 import '../../../widgets/common/readable_width.dart';
 import '../providers/conversation_mute.dart';
+import '../providers/thread_under_mail.dart';
 import '../widgets/read_receipt_banner.dart';
 import '../widgets/delivery_status_banner.dart';
 import '../widgets/mail_notice_bar.dart';
@@ -782,7 +783,11 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     _whenShown(() {
       if (!mounted) return;
       final conv = e.conversationId;
-      if (conv != null) unawaited(_loadConversation(conv));
+      // Беседа под письмом — по настройке (2.7.5): не нужна — не читаем.
+      if (conv != null &&
+          showThreadUnderMail(ref.read(threadUnderMailProvider), fromConversation: widget.pagerLabel != null)) {
+        unawaited(_loadConversation(conv));
+      }
       // ActiveSync не отдаёт заголовки рассылки и проверки отправителя —
       // при первом открытии они читаются из начала MIME (одним запросом).
       if (account.usesEas && e.listUnsubscribe == null && (e.authResults ?? '').isEmpty) {
@@ -2036,8 +2041,8 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                     : _plainBody(shown, theme),
               ),
 
-            // ── Цепочка беседы ──
-            if (widget.pagerLabel == null &&
+            // ── Цепочка беседы (настройка «Беседа под письмом», 2.7.5) ──
+            if (showThreadUnderMail(ref.watch(threadUnderMailProvider), fromConversation: widget.pagerLabel != null) &&
                 _conversationEmails != null &&
                 _conversationEmails!.length > 1) ...[
               const Divider(height: 24),
@@ -2053,8 +2058,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                   }
                   context.push(mailOpenPath(context, e.id, accountId: e.accountId));
                 },
-                // Длинная беседа — целиком на экране беседы (2.6.8).
-                onOpenAll: (email.conversationId ?? '').isEmpty
+                // Длинная беседа — целиком на экране беседы (2.6.8); открыто
+                // с него — он и так позади.
+                onOpenAll: (email.conversationId ?? '').isEmpty || widget.pagerLabel != null
                     ? null
                     : () => context.push(conversationPath(email.conversationId!, accountId: email.accountId)),
               ),

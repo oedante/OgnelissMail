@@ -81,6 +81,7 @@ import '../../../services/mail/own_addresses.dart';
 import '../../../services/security/mail_classification.dart';
 import '../../../services/security/smime_service.dart' show smimeServiceProvider, CmsSignature;
 import '../../settings/providers/categories_provider.dart';
+import '../widgets/flag_due_sheet.dart';
 import '../widgets/categories_sheet.dart';
 import '../../../features/settings/providers/settings_provider.dart';
 import '../../../features/settings/providers/feature_flags_provider.dart';
@@ -2727,9 +2728,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         if (!draft) _Cmd(AppIcons.drive_file_move, l10n.tr('moveTo'), () => unawaited(_moveEmail(email, l10n))),
       ],
       [
-        _Cmd(AppIcons.flag, l10n.tr('flag'), () => _toggleFlag(email),
+        // Флажок и его срок — одной кнопкой (2.7.5, замечание владельца
+        // 28.11.2026), как в меню «Ещё».
+        _Cmd(AppIcons.flag, l10n.tr('flag'), () => unawaited(_pickFlagDue(email, l10n)),
             selected: email.isFlagged, color: email.isFlagged ? AppColors.errorRed : null),
-        _Cmd(AppIcons.event, l10n.tr('flagDueTitle'), () => unawaited(_pickFlagDue(email, l10n))),
         _Cmd(email.isRead ? AppIcons.mark_email_unread : AppIcons.mark_email_read,
             l10n.tr(email.isRead ? 'markUnread' : 'markRead'), () => _setReadKey(email, !email.isRead)),
         if (!draft)
@@ -3516,46 +3518,12 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
         : email.copyWith(isFlagged: flagged, followUpAt: dueAt, clearFollowUp: dueAt == null));
   }
 
-  /// Срок флажка (как в Outlook): сегодня, завтра, на этой неделе, на
+  /// «Флаг» со сроком (как в Outlook): сегодня, завтра, на этой неделе, на
   /// следующей неделе, без даты; «Снять флажок» — если флажок стоит.
   Future<void> _pickFlagDue(EmailModel email, AppLocalizations l10n) async {
-    final own = email.controlState == ControlState.none;
-    final hasDue = email.isFlagged && email.followUpAt != null && own;
-    String? sub(FlagDue d) {
-      final at = FlagDues.atFor(d);
-      return at == null ? null : FlagDues.label(at, l10n);
-    }
-
-    final picked = await showActionSheet<String>(
-      context,
-      title: l10n.tr('flagDueTitle'),
-      leading: const Icon(AppIcons.flag),
-      items: [
-        ActionSheetItem(icon: AppIcons.today, label: l10n.tr('flagToday'), value: 'today'),
-        ActionSheetItem(icon: AppIcons.event, label: l10n.tr('flagTomorrow'), subtitle: sub(FlagDue.tomorrow), value: 'tomorrow'),
-        ActionSheetItem(icon: AppIcons.date_range, label: l10n.tr('flagThisWeek'), subtitle: sub(FlagDue.thisWeek), value: 'week'),
-        ActionSheetItem(icon: AppIcons.next_week, label: l10n.tr('flagNextWeek'), subtitle: sub(FlagDue.nextWeek), value: 'next'),
-        ActionSheetItem(icon: AppIcons.flag, label: l10n.tr('flagNoDate'), value: 'none',
-            checked: email.isFlagged && own && !hasDue),
-        if (email.isFlagged) ActionSheetItem(icon: AppIcons.clear, label: l10n.tr('flagClear'), value: 'clear'),
-      ],
-    );
+    final picked = await pickFlagDue(context, email);
     if (!mounted || picked == null) return;
-    final current = _email ?? email;
-    switch (picked) {
-      case 'clear':
-        _setFlag(current, false, FlagDue.none);
-      case 'tomorrow':
-        _setFlag(current, true, FlagDue.tomorrow);
-      case 'week':
-        _setFlag(current, true, FlagDue.thisWeek);
-      case 'next':
-        _setFlag(current, true, FlagDue.nextWeek);
-      case 'none':
-        _setFlag(current, true, FlagDue.none);
-      default:
-        _setFlag(current, true, FlagDue.today);
-    }
+    _setFlag(_email ?? email, picked.flagged, picked.due);
   }
 
   /// Кнопка «Ещё» письма (1.8.8) — круглая, как в карточке по удержанию.

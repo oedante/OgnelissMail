@@ -3746,16 +3746,36 @@ class EasEngine implements MailEngine {
     }
   }
 
+  /// Для тестов: [_followUpOf].
+  MailFollowUp? debugFollowUpOf(WbxmlElement? flag) => _followUpOf(flag);
+
   /// Подробности флажка из ответа сервера; null — флажка нет.
   MailFollowUp? _followUpOf(WbxmlElement? flag) {
     if (flag == null) return null;
     final status = int.tryParse((flag.childText('FlagStatus') ?? flag.childText('Status') ?? '').trim()) ?? 0;
     if (status == 0) return null;
+    // День начала и срока — из «плавающих» StartDate и DueDate (календарный
+    // день в UTC-части). UtcDueDate — местная полночь в UTC: к востоку от
+    // Гринвича это предыдущий день по UTC, и флажок «Сегодня» из Outlook
+    // попадал во вчера (4PDA, 28.11.2026). Без плавающей даты — местный
+    // день UtcDueDate.
+    DateTime? day(String floating, String utcTag) {
+      final f = _parseEasDate(flag.childText(floating));
+      if (f != null) {
+        final u = f.toUtc();
+        return DateTime.utc(u.year, u.month, u.day);
+      }
+      final utc = _parseEasDate(flag.childText(utcTag));
+      if (utc == null) return null;
+      final l = utc.toLocal();
+      return DateTime.utc(l.year, l.month, l.day);
+    }
+
     return MailFollowUp(
       flagType: flag.childText('FlagType'),
       status: status,
-      start: _parseEasDate(flag.childText('UtcStartDate')),
-      due: _parseEasDate(flag.childText('UtcDueDate')),
+      start: day('StartDate', 'UtcStartDate'),
+      due: day('DueDate', 'UtcDueDate'),
       reminder: flag.childText('ReminderSet') == '0' ? null : _parseEasDate(flag.childText('ReminderTime')),
     );
   }

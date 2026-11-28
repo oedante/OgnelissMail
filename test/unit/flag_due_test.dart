@@ -2,6 +2,7 @@
 // «флажок устанавливается без даты — нужно, как в Outlook, „сегодня“»).
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mail_engine/mail_engine.dart' show EasEngine, WbxmlElement;
 import 'package:ogneliss/data/database/app_database.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/mail/flag_due.dart';
@@ -69,5 +70,21 @@ void main() {
     await mail('stale', flagged: false, control: 0);
     final due = await db.dueFollowUps(DateTime(2026, 11, 24));
     expect({for (final e in due) e.id}, {'control', 'stale'});
+  });
+
+  // 4PDA, 28.11.2026: флажок «Сегодня» из Outlook у пользователя к востоку от
+  // Гринвича — во вчерашнем дне. Срок — из плавающей DueDate, не из
+  // UtcDueDate (местная полночь в UTC — предыдущий день по UTC).
+  test('ActiveSync: срок флажка — день из DueDate, а не из UtcDueDate', () {
+    final flag = WbxmlElement(name: 'Flag', namespace: 'Email');
+    flag.addChild('FlagStatus', namespace: 'Email', text: '2');
+    flag.addChild('StartDate', namespace: 'Tasks', text: '2026-11-27T00:00:00.000Z');
+    flag.addChild('UtcStartDate', namespace: 'Tasks', text: '2026-11-26T19:00:00.000Z');
+    flag.addChild('DueDate', namespace: 'Tasks', text: '2026-11-27T00:00:00.000Z');
+    flag.addChild('UtcDueDate', namespace: 'Tasks', text: '2026-11-26T19:00:00.000Z');
+    final f = EasEngine().debugFollowUpOf(flag)!;
+    expect(f.due, DateTime.utc(2026, 11, 27));
+    expect(f.start, DateTime.utc(2026, 11, 27));
+    expect(FlagDues.fromServer(f.due), DateTime(2026, 11, 27, 18));
   });
 }

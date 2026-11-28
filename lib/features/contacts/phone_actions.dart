@@ -39,9 +39,30 @@ class PhoneApp {
 abstract final class PhoneActions {
   static const _channel = MethodChannel('ogneliss/device_contacts');
 
-  /// Номер для ссылок tel: и sms: — цифры и «+».
+  /// Номер для ссылок tel: и sms: — цифры и «+»; добавочный («доб. 123»,
+  /// «ext. 12») отбрасывается — иначе его цифры уходили в номер.
   @visibleForTesting
-  static String clean(String phone) => phone.replaceAll(RegExp(r'[^\d+]'), '');
+  static String clean(String phone) =>
+      phone.split(RegExp(r'(доб|ext|вн\.|#)', caseSensitive: false)).first.replaceAll(RegExp(r'[^\d+]'), '');
+
+  /// Полный номер — с кодом страны или города (2.7.5, просьба владельца
+  /// 28.11.2026): на него можно позвонить с мобильного и написать SMS.
+  /// Короткий внутренний («39-397») — нет.
+  static bool isFull(String? phone) {
+    final c = clean(phone ?? '');
+    final digits = c.replaceAll('+', '').length;
+    return digits >= 10 || (c.startsWith('+') && digits >= 8);
+  }
+
+  /// Номер для звонка: первый полный, иначе первый какой есть; null — нет.
+  static String? callNumber(Iterable<String?> phones) {
+    final list = [for (final p in phones) if ((p ?? '').trim().isNotEmpty) p!.trim()];
+    return list.where(isFull).firstOrNull ?? list.firstOrNull;
+  }
+
+  /// Номер для SMS: полный мобильный, иначе полный рабочий; null — некуда.
+  static String? smsNumber({String? mobile, String? work}) =>
+      [mobile, work].map((p) => (p ?? '').trim()).where(isFull).firstOrNull;
 
   /// Мессенджеры, связанные с номером в контактах телефона (Android).
   static Future<List<PhoneApp>> appsFor(String phone) async {

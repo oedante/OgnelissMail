@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/navigation/app_router.dart' show mailOpenPath;
 import '../../../core/theme/app_icons.dart';
@@ -153,12 +152,6 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
     return dn.isNotEmpty ? dn : fallback;
   }
 
-  Future<void> _call(String number) async {
-    final cleaned = number.replaceAll(RegExp(r'[^\d+]'), '');
-    if (cleaned.isEmpty) return;
-    await launchUrl(Uri.parse('tel:$cleaned'));
-  }
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -178,7 +171,15 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
           onTap: onTap,
           // Удержание номера — позвонить, SMS, мессенджеры (2.7.2).
           onLongPress: phone ? () => unawaited(PhoneActions.show(context, value)) : null,
-          trailing: trailing,
+          // Полный номер — ещё и SMS (2.7.5).
+          trailing: trailing ??
+              (phone && PhoneActions.isFull(value)
+                  ? IconButton(
+                      tooltip: l10n.tr('phoneSms'),
+                      icon: const Icon(AppIcons.chat_bubble),
+                      onPressed: () => unawaited(PhoneActions.sms(value, l10n)),
+                    )
+                  : null),
           minTileHeight: Sizes.tapTarget,
           contentPadding: const EdgeInsets.symmetric(horizontal: Space.l),
         );
@@ -290,11 +291,18 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                         context.push('/attachment-hub?from=${Uri.encodeQueryComponent(widget.email)}');
                       },
                     ),
-                  if ((p?.phoneMobile ?? p?.phoneWork ?? '').trim().isNotEmpty)
+                  if (PhoneActions.callNumber([p?.phoneMobile, p?.phoneWork]) case final number?)
                     FilledButton.tonalIcon(
                       icon: const Icon(AppIcons.phone),
                       label: Text(l10n.tr('call')),
-                      onPressed: () => _call((p!.phoneMobile ?? '').trim().isNotEmpty ? p.phoneMobile! : p.phoneWork!),
+                      onPressed: () => unawaited(PhoneActions.call(number, l10n)),
+                    ),
+                  // SMS — на полный номер (2.7.5).
+                  if (PhoneActions.smsNumber(mobile: p?.phoneMobile, work: p?.phoneWork) case final number?)
+                    OutlinedButton.icon(
+                      icon: const Icon(AppIcons.chat_bubble),
+                      label: Text(l10n.tr('smsShort')),
+                      onPressed: () => unawaited(PhoneActions.sms(number, l10n)),
                     ),
                 ],
               ),
@@ -316,10 +324,10 @@ class _PersonCardState extends ConsumerState<_PersonCard> {
                           onPressed: () => Clipboard.setData(ClipboardData(text: widget.email)),
                         )),
                     if ((p?.phoneWork ?? '').trim().isNotEmpty)
-                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), phone: true, onTap: () => _call(p.phoneWork!)),
+                      row(AppIcons.phone, p!.phoneWork!, l10n.tr('phoneWork'), phone: true, onTap: () => unawaited(PhoneActions.call(p.phoneWork!, l10n))),
                     if ((p?.phoneMobile ?? '').trim().isNotEmpty)
                       row(AppIcons.smartphone, p!.phoneMobile!, l10n.tr('phoneMobile'), phone: true,
-                          onTap: () => _call(p.phoneMobile!)),
+                          onTap: () => unawaited(PhoneActions.call(p.phoneMobile!, l10n))),
                     if ((p?.department ?? '').trim().isNotEmpty)
                       row(AppIcons.account_tree, p!.department!, l10n.tr('department')),
                     if ((p?.office ?? '').trim().isNotEmpty)

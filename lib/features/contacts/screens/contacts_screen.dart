@@ -41,7 +41,6 @@ import '../../../services/sync/sync_service.dart' show syncServiceProvider;
 import '../../../l10n/app_localizations.dart';
 import '../../../widgets/common/animated_appearance.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 import '../../../widgets/common/adaptive_layout.dart';
 import '../../../widgets/common/shared_mailbox_badge.dart';
 import '../../settings/providers/account_groups_provider.dart';
@@ -799,7 +798,8 @@ class _GalTile extends ConsumerWidget {
     final sub = [person.jobTitle, person.department, person.company, person.email]
         .map((v) => v?.trim() ?? '')
         .firstWhere((v) => v.isNotEmpty, orElse: () => '');
-    final phone = (person.phoneWork?.isNotEmpty == true) ? person.phoneWork : person.phoneMobile;
+    // Полный номер — раньше короткого внутреннего (2.7.5).
+    final phone = PhoneActions.callNumber([person.phoneWork, person.phoneMobile]);
     Widget btn(IconData icon, String tip, VoidCallback onTap) => SizedBox(
           width: 40,
           child: IconButton(
@@ -843,16 +843,7 @@ class _GalTile extends ConsumerWidget {
             // Удержание кнопки — SMS и мессенджеры номера (2.7.4).
             GestureDetector(
               onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
-              child: btn(AppIcons.phone, l10n.tr('call'), () async {
-              final cleaned = phone!.replaceAll(RegExp(r'[^\d+]'), '');
-              if (cleaned.isEmpty) return;
-              try {
-                final ok = await launchUrl(Uri.parse('tel:$cleaned'), mode: LaunchMode.externalApplication);
-                if (!ok) showInlineError(l10n.tr('cannotOpenFile').replaceAll('{e}', phone));
-              } catch (_) {
-                showInlineError(l10n.tr('cannotOpenFile').replaceAll('{e}', phone));
-              }
-              }),
+              child: btn(AppIcons.phone, l10n.tr('call'), () => unawaited(PhoneActions.call(phone!, l10n))),
             )
           else
             const SizedBox(width: 40),
@@ -934,7 +925,8 @@ class _ContactTile extends ConsumerWidget {
         .map((v) => v?.trim() ?? '')
         .firstWhere((v) => v.isNotEmpty, orElse: () => '');
     final photosOn = ref.watch(moduleSettingsProvider).showContactPhotos;
-    final phone = (contact.phoneWork?.isNotEmpty == true) ? contact.phoneWork : contact.phoneMobile;
+    // Полный номер — раньше короткого внутреннего (2.7.5).
+    final phone = PhoneActions.callNumber([contact.phoneWork, contact.phoneMobile]);
     return Material(
       color: selected ? scheme.secondaryContainer : Colors.transparent,
       // Удержание — карточка контакта «как в Telegram» (1.6.47): позвонить,
@@ -991,7 +983,11 @@ class _ContactTile extends ConsumerWidget {
             // Звёздочка — VIP одним нажатием (1.6.49+95).
             if (contact.email.contains('@')) _VipStar(email: contact.email, l10n: l10n),
             if (phone?.isNotEmpty == true)
-              _actionBtn(context, AppIcons.phone, l10n.tr('call'), () => _callPhone(context, phone!))
+              // Удержание кнопки — SMS и мессенджеры номера.
+              GestureDetector(
+                onLongPress: () => unawaited(PhoneActions.show(context, phone!)),
+                child: _actionBtn(context, AppIcons.phone, l10n.tr('call'), () => _callPhone(context, phone!)),
+              )
             else
               const SizedBox(width: 40),
             if (contact.email.isNotEmpty)
@@ -1020,6 +1016,7 @@ class _ContactTile extends ConsumerWidget {
     final pinned = ref.read(pinnedContactsProvider.notifier).isPinned(contact);
     final work = (contact.phoneWork ?? '').trim();
     final mobile = (contact.phoneMobile ?? '').trim();
+    final sms = PhoneActions.smsNumber(mobile: mobile, work: work);
     unawaited(showPeekCard(
       context,
       anchor: peekAnchorOf(context),
@@ -1035,6 +1032,9 @@ class _ContactTile extends ConsumerWidget {
           if (mobile.isNotEmpty)
             PeekAction(
                 icon: AppIcons.smartphone, label: l10n.tr('phoneMobile'), onTap: () => unawaited(_callPhone(context, mobile))),
+          // SMS — на полный номер (2.7.5): мобильный, иначе рабочий.
+          if (sms != null)
+            PeekAction(icon: AppIcons.chat_bubble, label: l10n.tr('smsShort'), onTap: () => unawaited(PhoneActions.sms(sms, l10n))),
           if (email.isNotEmpty)
             PeekAction(
               icon: AppIcons.mail,
@@ -1123,19 +1123,7 @@ class _ContactTile extends ConsumerWidget {
   }
 
   /// Позвонить по номеру (системное приложение телефона).
-  /// Номер очищаем от пробелов/скобок — tel: их не принимает.
-  Future<void> _callPhone(BuildContext context, String phone) async {
-    final cleaned = phone.replaceAll(RegExp(r'[^\d+]'), '');
-    if (cleaned.isEmpty) return;
-    final uri = Uri.parse('tel:$cleaned');
-    // Плашки скрыты (19.10) — ошибка строкой на экране.
-    try {
-      final ok = await launchUrl(uri, mode: LaunchMode.externalApplication);
-      if (!ok) showInlineError(l10n.tr('cannotOpenFile').replaceAll('{e}', phone));
-    } catch (_) {
-      showInlineError(l10n.tr('cannotOpenFile').replaceAll('{e}', phone));
-    }
-  }
+  Future<void> _callPhone(BuildContext context, String phone) => PhoneActions.call(phone, l10n);
 
   Widget _actionBtn(BuildContext context, IconData icon, String tooltip, VoidCallback onTap) {
     return SizedBox(
@@ -1492,7 +1480,10 @@ class _ContactCard extends ConsumerWidget {
     final email = c.email.trim();
     final work = (c.phoneWork ?? '').trim();
     final mobile = (c.phoneMobile ?? '').trim();
-    final phone = work.isNotEmpty ? work : mobile;
+    // Звонок — на полный номер, если он есть; SMS — только на полный
+    // (2.7.5, просьба владельца 28.11.2026).
+    final phone = PhoneActions.callNumber([work, mobile]) ?? '';
+    final sms = PhoneActions.smsNumber(mobile: mobile, work: work);
     final vip = email.contains('@') && ref.watch(focusModeProvider.select((s) => isVipEmail(s, email)));
     final pinned = ref.watch(pinnedContactsProvider).contains(contactPinKey(c));
     final container = ProviderScope.containerOf(context, listen: false);
@@ -1520,6 +1511,12 @@ class _ContactCard extends ConsumerWidget {
             label: l10n.tr('call'),
             keepOpen: true,
             onTap: () => unawaited(tile._callPhone(context, phone))),
+      if (sms != null)
+        PeekAction(
+            icon: AppIcons.chat_bubble,
+            label: l10n.tr('smsShort'),
+            keepOpen: true,
+            onTap: () => unawaited(PhoneActions.sms(sms, l10n))),
       if (email.isNotEmpty)
         PeekAction(
           icon: AppIcons.manage_search,
@@ -1564,6 +1561,15 @@ class _ContactCard extends ConsumerWidget {
                     Text(label, style: theme.textTheme.bodySmall?.copyWith(color: muted)),
                   ]),
                 ),
+                // Полный номер — ещё и SMS (2.7.5).
+                if (trailing == null && phone && PhoneActions.isFull(value))
+                  IconButton(
+                    key: ValueKey('contact_sms_$value'),
+                    tooltip: l10n.tr('phoneSms'),
+                    visualDensity: VisualDensity.compact,
+                    icon: Icon(AppIcons.chat_bubble, size: 20, color: theme.colorScheme.primary),
+                    onPressed: () => unawaited(PhoneActions.sms(value, l10n)),
+                  ),
                 trailing ??
                     IconButton(
                       tooltip: l10n.tr('copy'),

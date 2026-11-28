@@ -4420,4 +4420,5 @@
     <string name="categoriesTitle">分類</string>
     <string name="categoriesLocalHint">端末に保存されます（このメールボックスにはサーバーの分類がありません）</string>
     <string name="categoryColor">分類の色</string>
+    <string name="attachFromGallery">写真とビデオ</string>
 </resources>

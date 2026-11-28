@@ -4420,4 +4420,5 @@
     <string name="categoriesTitle">범주</string>
     <string name="categoriesLocalHint">기기에 저장됨: 이 메일함은 서버에 범주가 없습니다</string>
     <string name="categoryColor">범주 색</string>
+    <string name="attachFromGallery">사진 및 동영상</string>
 </resources>

@@ -4441,4 +4441,5 @@
     <string name="categoriesTitle">Categorías</string>
     <string name="categoriesLocalHint">Se guardan en el dispositivo: este buzón no tiene categorías en el servidor</string>
     <string name="categoryColor">Color de la categoría</string>
+    <string name="attachFromGallery">Fotos y vídeos</string>
 </resources>

@@ -4420,4 +4420,5 @@
     <string name="categoriesTitle">Kategori</string>
     <string name="categoriesLocalHint">Disimpan di perangkat: kotak surat ini tidak punya kategori di server</string>
     <string name="categoryColor">Warna kategori</string>
+    <string name="attachFromGallery">Foto dan video</string>
 </resources>

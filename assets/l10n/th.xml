@@ -4420,4 +4420,5 @@
     <string name="categoriesTitle">หมวดหมู่</string>
     <string name="categoriesLocalHint">จัดเก็บบนอุปกรณ์: กล่องนี้ไม่มีหมวดหมู่บนเซิร์ฟเวอร์</string>
     <string name="categoryColor">สีของหมวดหมู่</string>
+    <string name="attachFromGallery">รูปภาพและวิดีโอ</string>
 </resources>

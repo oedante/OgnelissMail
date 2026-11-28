@@ -264,7 +264,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     if (what == 'template') return _template();
     List<ChosenFile> picked;
     try {
-      picked = await FilePick.files(type: what == 'photo' ? FileType.image : FileType.any);
+      picked = await FilePick.files(type: what == 'photo' ? FileType.media : FileType.any);
     } catch (e) {
       AppLogger.warning('Быстрый ответ: выбор файлов не удался — $e');
       return;

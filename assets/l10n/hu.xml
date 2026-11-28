@@ -4441,4 +4441,5 @@
     <string name="categoriesTitle">Kategóriák</string>
     <string name="categoriesLocalHint">Az eszközön tárolva: ennek a postafióknak nincsenek kategóriái a szerveren</string>
     <string name="categoryColor">Kategória színe</string>
+    <string name="attachFromGallery">Fotók és videók</string>
 </resources>

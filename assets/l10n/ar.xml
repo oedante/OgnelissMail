@@ -4525,4 +4525,5 @@
     <string name="categoriesTitle">الفئات</string>
     <string name="categoriesLocalHint">تُحفظ على الجهاز: لا توجد فئات لهذا الصندوق على الخادم</string>
     <string name="categoryColor">لون الفئة</string>
+    <string name="attachFromGallery">الصور ومقاطع الفيديو</string>
 </resources>

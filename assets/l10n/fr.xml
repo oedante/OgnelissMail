@@ -4441,4 +4441,5 @@
     <string name="categoriesTitle">Catégories</string>
     <string name="categoriesLocalHint">Enregistrées sur l’appareil : cette boîte n’a pas de catégories sur le serveur</string>
     <string name="categoryColor">Couleur de catégorie</string>
+    <string name="attachFromGallery">Photos et vidéos</string>
 </resources>

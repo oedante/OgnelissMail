@@ -4441,4 +4441,5 @@
     <string name="categoriesTitle">Categorie</string>
     <string name="categoriesLocalHint">Salvate sul dispositivo: questa casella non ha categorie sul server</string>
     <string name="categoryColor">Colore della categoria</string>
+    <string name="attachFromGallery">Foto e video</string>
 </resources>

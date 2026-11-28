@@ -4441,4 +4441,5 @@
     <string name="categoriesTitle">Luokat</string>
     <string name="categoriesLocalHint">Tallennetaan laitteeseen: tällä postilaatikolla ei ole luokkia palvelimella</string>
     <string name="categoryColor">Luokan väri</string>
+    <string name="attachFromGallery">Kuvat ja videot</string>
 </resources>

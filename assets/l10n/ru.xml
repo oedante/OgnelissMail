@@ -4483,4 +4483,5 @@
     <string name="categoriesTitle">Категории</string>
     <string name="categoriesLocalHint">Хранятся на телефоне: у этого ящика на сервере категорий нет</string>
     <string name="categoryColor">Цвет категории</string>
+    <string name="attachFromGallery">Фото и видео</string>
 </resources>

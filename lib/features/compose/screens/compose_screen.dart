@@ -1,7 +1,7 @@
 // lib/features/compose/screens/compose_screen.dart
 import '../widgets/mail_tips_strip.dart';
 import '../compose_window.dart' show ComposeWindow;
-import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
+import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick, FileType;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
 import '../../../widgets/common/file_drop_zone.dart';
@@ -5370,6 +5370,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Откуда (14.11.2026, просьба владельца): файл с устройства или из
     // вложений почты («Вложения» — все файлы из писем).
     final from = await showActionSheet<String>(context, items: [
+      // Фото и видео из галереи (2.7.5, жалоба пользователей iPhone
+      // 27.11.2026: «нельзя вставить файл из галереи» — «Файл с устройства»
+      // на iPhone открывает «Файлы», где галереи нет).
+      ActionSheetItem(icon: AppIcons.photo_library, label: l10n.tr('attachFromGallery'), value: 'gallery'),
       ActionSheetItem(icon: AppIcons.folder_open, label: l10n.tr('attachFromDevice'), value: 'device'),
       ActionSheetItem(icon: AppIcons.attach_email, label: l10n.tr('attachFromMail'), value: 'mail'),
     ]);
@@ -5379,7 +5383,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       return;
     }
     try {
-      await _addChosenFiles(await FilePick.files());
+      await _addChosenFiles(await FilePick.files(type: from == 'gallery' ? FileType.media : FileType.any));
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
       quietError('${l10n.tr('error')}: $e');

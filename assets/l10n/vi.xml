@@ -4420,4 +4420,5 @@
     <string name="categoriesTitle">Thể loại</string>
     <string name="categoriesLocalHint">Lưu trên thiết bị: hộp thư này không có thể loại trên máy chủ</string>
     <string name="categoryColor">Màu thể loại</string>
+    <string name="attachFromGallery">Ảnh và video</string>
 </resources>

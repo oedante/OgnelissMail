@@ -19,8 +19,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   test('цвет категории: стандартная Outlook — своим, выбранный — выбранным', () {
-    expect(categoryColor('Красная категория', const {}), categoryPalette[0]);
-    expect(categoryColor('Blue category', const {}), categoryPalette[4]);
+    expect(categoryColor('Красная категория', const {}), CategoryColors.outlookColor(0));
+    expect(categoryColor('Blue category', const {}), CategoryColors.outlookColor(7));
+    expect(categoryPalette, contains(CategoryColors.outlookColor(7)), reason: 'палитра — цвета Outlook');
     expect(categoryColor('Проекты', const {}), categoryColor('Проекты', const {}), reason: 'постоянный');
     expect(categoryColor('Проекты', {'Проекты': 0xFF123456}), const Color(0xFF123456));
   });

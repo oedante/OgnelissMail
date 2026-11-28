@@ -169,6 +169,20 @@ class GraphEngine {
   Future<List<GraphCategory>> masterCategories() async =>
       parseCategories(await list_('/me/outlook/masterCategories', maxPages: 2));
 
+  /// Цвет категории в главном списке Outlook (MailboxSettings.ReadWrite,
+  /// 2.7.5): есть — новый цвет, нет — добавить с ним. [color] — номер цвета
+  /// Outlook 0–24 (preset0…preset24).
+  Future<void> setMasterCategoryColor(String name, int color) async {
+    final key = name.trim().toLowerCase();
+    final found = (await masterCategories()).where((c) => c.name.trim().toLowerCase() == key).firstOrNull;
+    final preset = 'preset$color';
+    if (found?.id != null) {
+      await patch('/me/outlook/masterCategories/${Uri.encodeComponent(found!.id!)}', {'color': preset});
+    } else {
+      await post('/me/outlook/masterCategories', {'displayName': name.trim(), 'color': preset});
+    }
+  }
+
   // ════════════════════════ Правила «Входящих» ════════════════════════
 
   static const _rules = '/me/mailFolders/inbox/messageRules';
@@ -488,7 +502,10 @@ class GraphEngine {
   static List<GraphCategory> parseCategories(List<Map<String, dynamic>> list) => [
         for (final c in list)
           if (_s(c['displayName']) case final name?)
-            GraphCategory(name: name, color: int.tryParse('${c['color'] ?? ''}'.replaceFirst('preset', '')) ?? -1),
+            GraphCategory(
+                name: name,
+                color: int.tryParse('${c['color'] ?? ''}'.replaceFirst('preset', '')) ?? -1,
+                id: _s(c['id'])),
       ];
 
   /// Действия messageRule → коды.

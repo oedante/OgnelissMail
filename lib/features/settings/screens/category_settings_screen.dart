@@ -3,6 +3,8 @@
 // цвет (2.7.5), сброс к стандартным, экспорт/импорт настроек (через буфер
 // обмена, JSON). Ниже — категории Outlook ящиков Exchange с их цветами.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
@@ -11,18 +13,32 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/utils/category_colors.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../mail/widgets/categories_sheet.dart' show pickCategoryColor;
+import '../../mail/widgets/categories_sheet.dart' show pickCategoryColor, refreshOutlookCategories;
 import '../providers/categories_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 
-class CategorySettingsScreen extends ConsumerWidget {
+class CategorySettingsScreen extends ConsumerStatefulWidget {
   const CategorySettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategorySettingsScreen> createState() => _CategorySettingsScreenState();
+}
+
+class _CategorySettingsScreenState extends ConsumerState<CategorySettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Категории и цвета Outlook — свежие (2.7.5: раньше раз в сутки).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(refreshOutlookCategories(ref, maxAge: const Duration(minutes: 1)));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final ru = l10n.isRussian;
     final categories = ref.watch(categoriesProvider);

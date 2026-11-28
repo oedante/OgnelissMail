@@ -11,6 +11,7 @@
 
 import 'dart:async';
 import 'dart:io' show SocketException;
+import 'dart:math' show Random;
 import 'dart:typed_data';
 import 'package:mail_engine/mail_engine.dart' show decodeBase64Off;
 import 'package:xml/xml.dart';
@@ -1836,16 +1837,80 @@ class EwsService {
   /// без цвета). null — список не получен (EWS закрыт, ошибка).
   Future<List<({String name, int color})>?> getCategoryList(AccountModel account) async {
     try {
-      final doc = await _soapRequest(
-          account, EwsXmlBuilder.buildGetCategoryList(sharedMailbox: account.sharedMailboxEmail),
-          timeoutSeconds: 20);
-      final data = doc.findAllElements('XmlData').firstOrNull?.innerText.trim();
-      if (data == null || data.isEmpty) return null;
-      return parseCategoryListXml(utf8.decode(base64.decode(data), allowMalformed: true));
+      final xml = await _categoryListXml(account);
+      return xml == null ? null : parseCategoryListXml(xml);
     } catch (e) {
       AppLogger.debug('EWS CategoryList: $e');
       return null;
     }
+  }
+
+  Future<String?> _categoryListXml(AccountModel account) async {
+    final doc = await _soapRequest(
+        account, EwsXmlBuilder.buildGetCategoryList(sharedMailbox: account.sharedMailboxEmail),
+        timeoutSeconds: 20);
+    final data = doc.findAllElements('XmlData').firstOrNull?.innerText.trim();
+    if (data == null || data.isEmpty) return null;
+    return utf8.decode(base64.decode(data), allowMalformed: true);
+  }
+
+  /// Цвет категории в главном списке Outlook (2.7.5, решение владельца
+  /// 28.11.2026: «свой цвет категории — в Outlook»): список читается, у
+  /// категории меняется цвет (нет — добавляется), список записывается
+  /// целиком. [color] — номер цвета Outlook 0–24.
+  Future<bool> setCategoryColor(AccountModel account, String name, int color) async {
+    try {
+      final xml = await _categoryListXml(account);
+      if (xml == null) return false;
+      final updated = withCategoryColor(xml, name, color);
+      final doc = await _soapRequest(
+          account,
+          EwsXmlBuilder.buildUpdateCategoryList(base64.encode(utf8.encode(updated)),
+              sharedMailbox: account.sharedMailboxEmail),
+          timeoutSeconds: 20);
+      return EwsXmlParser.parseResponseSuccess(doc);
+    } catch (e) {
+      AppLogger.debug('EWS CategoryList — цвет: $e');
+      return false;
+    }
+  }
+
+  /// Главный список категорий с новым цветом категории [name] (без учёта
+  /// регистра); нет такой — добавляется по образцу соседней (те же поля, что
+  /// пишет Outlook), с новым guid. Остальное — как было.
+  static String withCategoryColor(String xml, String name, int color) {
+    final s = xml.startsWith('\uFEFF') ? xml.substring(1) : xml;
+    final doc = XmlDocument.parse(s);
+    final root = doc.rootElement;
+    final key = name.trim().toLowerCase();
+    final cats = root.findElements('category').toList();
+    final found = cats.where((c) => (c.getAttribute('name') ?? '').trim().toLowerCase() == key).firstOrNull;
+    if (found != null) {
+      found.setAttribute('color', '$color');
+      return doc.toXmlString();
+    }
+    final el = XmlElement(XmlName('category'));
+    final sample = cats.firstOrNull;
+    if (sample != null) {
+      for (final a in sample.attributes) {
+        el.setAttribute(a.name.qualified, a.value);
+      }
+    }
+    el.setAttribute('name', name.trim());
+    el.setAttribute('color', '$color');
+    el.setAttribute('keyboardShortcut', '0');
+    if (el.getAttribute('usageCount') != null) el.setAttribute('usageCount', '0');
+    if (el.getAttribute('lastSessionUsed') != null) el.setAttribute('lastSessionUsed', '0');
+    el.setAttribute('renameOnFirstUse', '0');
+    el.setAttribute('guid', _newGuid());
+    root.children.add(el);
+    return doc.toXmlString();
+  }
+
+  static String _newGuid() {
+    final r = Random.secure();
+    String hex(int n) => [for (var i = 0; i < n; i++) r.nextInt(16).toRadixString(16)].join().toUpperCase();
+    return '{${hex(8)}-${hex(4)}-4${hex(3)}-${['8', '9', 'A', 'B'][r.nextInt(4)]}${hex(3)}-${hex(12)}}';
   }
 
   /// Разбор XML главного списка категорий Outlook

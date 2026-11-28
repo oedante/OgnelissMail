@@ -104,32 +104,24 @@ final categoriesProvider =
 // ── Цвета категорий (2.7.5, замечание владельца 27.11.2026: «теги и
 // категории — одно и то же, и не реализованы категории по цветам») ──
 
+/// Цвета Outlook в окне выбора (номера preset0…preset24): так выбранный
+/// цвет уходит в главный список категорий Exchange ровно тем же (2.7.5).
+const List<int> categoryPaletteOutlook = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+
 /// Палитра категорий — цвета категорий Outlook (красная, оранжевая,
-/// жёлтая, зелёная, синяя, фиолетовая и др.).
-const List<Color> categoryPalette = [
-  Color(0xFFE74856), // красная
-  Color(0xFFF7630C), // оранжевая
-  Color(0xFFC19C00), // жёлтая (тёмная — читается на светлом фоне)
-  Color(0xFF16C60C), // зелёная
-  Color(0xFF0078D4), // синяя
-  Color(0xFF8764B8), // фиолетовая
-  Color(0xFF00B7C3), // бирюзовая
-  Color(0xFF8E562E), // коричневая
-  Color(0xFFE3008C), // розовая
-  Color(0xFF498205), // оливковая
-  Color(0xFF515C6B), // серо-синяя
-  Color(0xFF7A7574), // серая
-];
+/// персиковая, жёлтая, зелёная, бирюзовая, оливковая, синяя, фиолетовая,
+/// клюквенная, стальная, серая).
+final List<Color> categoryPalette = [for (final i in categoryPaletteOutlook) CategoryColors.outlookColor(i)!];
 
 /// Стандартные категории Outlook по названию цвета (русский и английский
-/// Outlook) — сразу своим цветом.
+/// Outlook) — номер цвета Outlook.
 const Map<String, int> _outlookPresets = {
   'красная категория': 0, 'red category': 0,
   'оранжевая категория': 1, 'orange category': 1,
-  'желтая категория': 2, 'жёлтая категория': 2, 'yellow category': 2,
-  'зеленая категория': 3, 'зелёная категория': 3, 'green category': 3,
-  'синяя категория': 4, 'blue category': 4,
-  'фиолетовая категория': 5, 'purple category': 5,
+  'желтая категория': 3, 'жёлтая категория': 3, 'yellow category': 3,
+  'зеленая категория': 4, 'зелёная категория': 4, 'green category': 4,
+  'синяя категория': 7, 'blue category': 7,
+  'фиолетовая категория': 8, 'лиловая категория': 8, 'purple category': 8,
 };
 
 /// Цвет категории: выбранный пользователем, цвет из Outlook (главный
@@ -141,7 +133,7 @@ Color categoryColor(String name, Map<String, int> chosen) {
   final server = CategoryColors.serverColor(name);
   if (server != null) return server;
   final preset = _outlookPresets[name.trim().toLowerCase()];
-  if (preset != null) return categoryPalette[preset];
+  if (preset != null) return CategoryColors.outlookColor(preset)!;
   var h = 0;
   for (final u in name.trim().toLowerCase().codeUnits) {
     h = (h * 31 + u) & 0x7fffffff;
@@ -170,6 +162,9 @@ class CategoryColorsNotifier extends StateNotifier<Map<String, int>> {
     state = {...state, name: color.toARGB32()};
     await _p.setString(_key, jsonEncode(state));
   }
+
+  /// Обновился главный список категорий Outlook — перерисовать цвета.
+  void touch() => state = {...state};
 
   /// Вернуть цвет по умолчанию (из Outlook или палитры).
   Future<void> clear(String name) async {

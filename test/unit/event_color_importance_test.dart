@@ -1,10 +1,12 @@
 // Цвет, важность и приватность встречи уходят на сервер (1.6.4).
+import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ogneliss/core/utils/category_colors.dart';
 import 'package:ogneliss/data/models/calendar_event_model.dart';
 import 'package:ogneliss/services/mail/ews/ews_xml_builder.dart';
 import 'package:ogneliss/services/mail/ews/ews_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:xml/xml.dart';
 
 void main() {
   CalendarEventModel ev({EventPriority p = EventPriority.normal, bool private = false, int? color}) =>
@@ -39,6 +41,42 @@ void main() {
     final xml = EwsXmlBuilder.buildUpdateCalendarItem('E', 'CK', ev(p: EventPriority.low));
     expect(xml, contains('<t:Importance>Low</t:Importance>'));
     expect(xml, contains('<t:DeleteItemField><t:FieldURI FieldURI="item:Categories"/>'));
+  });
+
+  test('цвет категории — в главный список Outlook (2.7.5): меняется только он, новая — по образцу', () {
+    const xml = '<?xml version="1.0"?><categories default="Красная категория" xmlns="CategoryList.xsd">'
+        '<category name="Красная категория" color="0" keyboardShortcut="1" usageCount="3" '
+        'lastTimeUsed="2026-11-01T10:00:00.000" lastSessionUsed="5" guid="{AAAA}" renameOnFirstUse="1"/>'
+        '<category name="Праздники" color="9" keyboardShortcut="0" guid="{BBBB}"/>'
+        '</categories>';
+    final changed = EwsService.withCategoryColor(xml, 'праздники', 4);
+    final list = EwsService.parseCategoryListXml(changed);
+    expect(list.map((c) => (c.name, c.color)), [('Красная категория', 0), ('Праздники', 4)]);
+    expect(changed, contains('guid="{BBBB}"'));
+    expect(changed, contains('xmlns="CategoryList.xsd"'));
+
+    final added = EwsService.withCategoryColor(xml, 'Проект Н-102', 7);
+    final list2 = EwsService.parseCategoryListXml(added);
+    expect(list2.map((c) => (c.name, c.color)).last, ('Проект Н-102', 7));
+    final el = XmlDocument.parse(added).findAllElements('category').last;
+    expect(el.getAttribute('keyboardShortcut'), '0');
+    expect(el.getAttribute('usageCount'), '0');
+    expect(el.getAttribute('lastSessionUsed'), '0');
+    expect(el.getAttribute('renameOnFirstUse'), '0');
+    expect(el.getAttribute('lastTimeUsed'), isNotNull, reason: 'поля — как у соседней категории');
+    expect(el.getAttribute('guid'), matches(RegExp(r'^\{[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}\}$')));
+    expect(el.name.namespaceUri, 'CategoryList.xsd', reason: 'в пространстве имён списка');
+
+    final req = EwsXmlBuilder.buildUpdateCategoryList('QUJD');
+    expect(req, contains('<m:UpdateUserConfiguration>'));
+    expect(req, contains('<t:UserConfigurationName Name="CategoryList">'));
+    expect(req, contains('<t:DistinguishedFolderId Id="calendar"/>'));
+    expect(req, contains('<t:XmlData>QUJD</t:XmlData>'));
+  });
+
+  test('номер цвета Outlook по цвету: точно и ближайший', () {
+    expect(CategoryColors.outlookIndexOf(CategoryColors.outlookColor(7)!), 7);
+    expect(CategoryColors.outlookIndexOf(const Color(0xFFD9535E)), 0, reason: 'почти красный Outlook');
   });
 
   test('главный список категорий ящика (CategoryList): разбор и цвета', () async {

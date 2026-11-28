@@ -17,11 +17,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/logging/app_logger.dart';
 import '../../../core/utils/category_colors.dart';
 import '../../../data/models/email_model.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../data/models/account_model.dart';
 import '../../../services/mail/email_actions_service.dart' show EmailActionsService, emailActionsProvider;
+import '../../../services/mail/engine/mail_engine_service.dart' show mailEngineServiceProvider;
 import '../../../widgets/common/app_sheet.dart';
 import '../../settings/providers/categories_provider.dart';
 import '../providers/mail_providers.dart' show accountsProvider;
@@ -115,6 +117,8 @@ Future<CategoryChanges?> pickCategoryChanges(BuildContext context, WidgetRef ref
   };
   final state = {...initial};
   final input = TextEditingController();
+  // Цвета — свежие из Outlook (не старше 10 минут).
+  if (anyExchange) unawaited(refreshOutlookCategories(ref));
   final result = await showAppSheet<CategoryChanges>(
     context: context,
     isScrollControlled: true,
@@ -259,9 +263,66 @@ Future<void> pickCategoryColor(BuildContext context, WidgetRef ref, String name)
   final notifier = ref.read(categoryColorsProvider.notifier);
   if (picked == Colors.transparent) {
     await notifier.clear(name);
-  } else {
-    await notifier.set(name, picked);
+    return;
   }
+  // Сразу — в приложении; следом — в Outlook (2.7.5).
+  await notifier.set(name, picked);
+  unawaited(pushCategoryColorToOutlook(ref, name, picked));
+}
+
+/// Ящики, у которых есть главный список категорий Outlook (Exchange с EWS
+/// или Microsoft 365).
+List<AccountModel> _outlookAccounts(WidgetRef ref) {
+  try {
+    return [for (final a in ref.read(accountsProvider)) if (a.isMsExchange && a.hasEwsExtras) a];
+  } catch (_) {
+    return const []; // ящики ещё не загружены — в Outlook нечего писать
+  }
+}
+
+/// Цвет категории — в главный список категорий Outlook ящиков Exchange
+/// (2.7.5, решение владельца 28.11.2026: «свой цвет категории — в
+/// Outlook»). Категории там нет — добавляется. Записано хоть в один ящик —
+/// свой цвет в приложении больше не нужен: цвет берётся из Outlook. Не
+/// записано (нет связи, сервер отказал) — остаётся свой цвет в приложении,
+/// без сообщения (только журнал).
+Future<void> pushCategoryColorToOutlook(WidgetRef ref, String name, Color color) async {
+  final accounts = _outlookAccounts(ref);
+  if (accounts.isEmpty) return;
+  final engine = ref.read(mailEngineServiceProvider);
+  final notifier = ref.read(categoryColorsProvider.notifier);
+  final index = CategoryColors.outlookIndexOf(color);
+  var ok = false;
+  for (final a in accounts) {
+    try {
+      ok = await engine.setMasterCategoryColor(a, name, index) || ok;
+    } catch (e) {
+      AppLogger.debug('Цвет категории в Outlook: $e');
+    }
+  }
+  if (ok && CategoryColors.serverColor(name)?.toARGB32() == CategoryColors.outlookColor(index)?.toARGB32()) {
+    await notifier.clear(name);
+  } else {
+    notifier.touch();
+  }
+}
+
+/// Перечитать главный список категорий Outlook, если он старше [maxAge]
+/// (открыли «Категории» — 2.7.5: раньше раз в сутки), и перерисовать цвета.
+Future<void> refreshOutlookCategories(WidgetRef ref, {Duration maxAge = const Duration(minutes: 10)}) async {
+  final accounts = _outlookAccounts(ref);
+  if (accounts.isEmpty) return;
+  final engine = ref.read(mailEngineServiceProvider);
+  final notifier = ref.read(categoryColorsProvider.notifier);
+  var changed = false;
+  for (final a in accounts) {
+    try {
+      changed = await engine.refreshCategoryList(a, maxAge: maxAge) || changed;
+    } catch (e) {
+      AppLogger.debug('Категории Outlook: $e');
+    }
+  }
+  if (changed) notifier.touch();
 }
 
 /// Метка категории: название её цветом на светлой подложке.

@@ -1490,6 +1490,20 @@ $mailboxes
     </m:GetUserConfiguration>''';
   }
 
+  /// Записать главный список категорий (2.7.5: цвет категории из приложения —
+  /// в Outlook). [xmlDataBase64] — весь список, как его вернул
+  /// [buildGetCategoryList], с изменением.
+  static String buildUpdateCategoryList(String xmlDataBase64, {String? sharedMailbox}) {
+    return '''<m:UpdateUserConfiguration>
+      <m:UserConfiguration>
+        <t:UserConfigurationName Name="CategoryList">
+          ${folderIdFor('calendar', sharedMailbox: sharedMailbox)}
+        </t:UserConfigurationName>
+        <t:XmlData>$xmlDataBase64</t:XmlData>
+      </m:UserConfiguration>
+    </m:UpdateUserConfiguration>''';
+  }
+
   /// Запрос скрытой конфигурации OWA (для импорта подписи со старого Exchange).
   static String buildGetUserConfiguration() {
     return '''<m:GetUserConfiguration>

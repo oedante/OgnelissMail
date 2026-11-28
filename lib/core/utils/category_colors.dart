@@ -56,6 +56,24 @@ class CategoryColors {
   static Color? outlookColor(int index) =>
       index >= 0 && index < _outlook.length ? _outlook[index] : null;
 
+  /// Номер цвета Outlook для [c]: точное совпадение, иначе ближайший.
+  static int outlookIndexOf(Color c) {
+    final exact = _outlook.indexWhere((o) => o.toARGB32() == c.toARGB32());
+    if (exact >= 0) return exact;
+    var best = 0;
+    var bestD = 1 << 30;
+    for (var i = 0; i < _outlook.length; i++) {
+      final o = _outlook[i];
+      final dr = (o.r - c.r) * 255, dg = (o.g - c.g) * 255, db = (o.b - c.b) * 255;
+      final d = (dr * dr + dg * dg + db * db).round();
+      if (d < bestD) {
+        bestD = d;
+        best = i;
+      }
+    }
+    return best;
+  }
+
   static void _apply(List<({String name, Color color})> list) {
     serverList = List.unmodifiable(list);
     _server = {for (final c in list) c.name.trim().toLowerCase(): c.color};

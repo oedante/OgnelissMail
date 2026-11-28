@@ -112,6 +112,10 @@ class FakeImapServer {
   /// (связь встала посреди скачивания).
   final hangOn = <String>{};
 
+  /// То же, но один раз: первая такая команда остаётся без ответа, следующие —
+  /// как обычно (ответ на вход потерялся на мобильном интернете).
+  final hangOnceOn = <String>{};
+
   /// Сколько соединений было открыто.
   int get connectionCount => _conns.length;
 
@@ -242,6 +246,11 @@ class _Conn {
       return;
     }
     if (srv.hangOn.any(cmd.contains)) return;
+    final once = srv.hangOnceOn.where(cmd.contains).firstOrNull;
+    if (once != null) {
+      srv.hangOnceOn.remove(once);
+      return;
+    }
     final upper = cmd.toUpperCase();
     if (upper == 'CAPABILITY') {
       write('* CAPABILITY ${srv.caps}');

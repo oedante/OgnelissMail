@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">The app opens on this screen. Back from other sections returns here; Back from here closes the app</string>
     <string name="msgSizeOnly">Message: {size}</string>
     <string name="msgSizeHelpUnknown">Your mail server decides how large a message can be — the limit differs between servers. The app sets no limit of its own. If a message is larger than the server allows, the server rejects it: the app shows why and remembers the limit for this mailbox. The size includes attachments, the text with pasted images and the quote.</string>
+    <string name="categoriesTitle">Categories</string>
+    <string name="categoriesLocalHint">Stored on this device: this mailbox has no categories on the server</string>
+    <string name="categoryColor">Category color</string>
 </resources>

@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">L’app s’ouvre sur cet écran. Retour depuis les autres sections y ramène ; depuis cet écran, il ferme l’app</string>
     <string name="msgSizeOnly">Message : {size}</string>
     <string name="msgSizeHelpUnknown">C’est le serveur de messagerie qui fixe la taille maximale d’un message — elle varie selon les serveurs. L’app n’impose aucune limite. Si le message est trop grand, le serveur le refuse : l’app en indique la raison et retient la limite pour cette boîte. La taille comprend les pièces jointes, le texte avec images collées et la citation.</string>
+    <string name="categoriesTitle">Catégories</string>
+    <string name="categoriesLocalHint">Enregistrées sur l’appareil : cette boîte n’a pas de catégories sur le serveur</string>
+    <string name="categoryColor">Couleur de catégorie</string>
 </resources>

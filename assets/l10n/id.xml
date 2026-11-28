@@ -4417,4 +4417,7 @@
     <string name="startScreenHint">Aplikasi dibuka di layar ini. Kembali dari bagian lain menuju ke sini; dari sini menutup aplikasi</string>
     <string name="msgSizeOnly">Email: {size}</string>
     <string name="msgSizeHelpUnknown">Server email yang menentukan seberapa besar pesan boleh dikirim — batasnya berbeda tiap server. Aplikasi tidak punya batas sendiri. Jika pesan melebihi batas, server menolaknya: aplikasi menampilkan alasannya dan mengingat batas untuk kotak surat ini. Ukuran mencakup lampiran, teks dengan gambar tempelan, dan kutipan.</string>
+    <string name="categoriesTitle">Kategori</string>
+    <string name="categoriesLocalHint">Disimpan di perangkat: kotak surat ini tidak punya kategori di server</string>
+    <string name="categoryColor">Warna kategori</string>
 </resources>

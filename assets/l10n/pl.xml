@@ -4480,4 +4480,7 @@
     <string name="startScreenHint">Aplikacja otwiera się na tym ekranie. Wstecz z innych sekcji wraca tutaj, a stąd zamyka aplikację</string>
     <string name="msgSizeOnly">Wiadomość: {size}</string>
     <string name="msgSizeHelpUnknown">O maksymalnym rozmiarze decyduje serwer poczty — każdy ma swój limit. Aplikacja nie narzuca własnego. Jeśli wiadomość przekroczy limit, serwer ją odrzuci: aplikacja pokaże przyczynę i zapamięta limit dla tej skrzynki. Rozmiar obejmuje załączniki, tekst z wklejonymi obrazami i cytat.</string>
+    <string name="categoriesTitle">Kategorie</string>
+    <string name="categoriesLocalHint">Zapisane na urządzeniu: ta skrzynka nie ma kategorii na serwerze</string>
+    <string name="categoryColor">Kolor kategorii</string>
 </resources>

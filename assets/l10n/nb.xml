@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Appen åpnes på denne skjermen. Tilbake fra andre deler fører hit, herfra lukkes appen</string>
     <string name="msgSizeOnly">E-post: {size}</string>
     <string name="msgSizeHelpUnknown">E-postserveren avgjør hvor stor en e-post kan være — grensen varierer mellom servere. Appen har ingen egen grense. Er e-posten for stor, avviser serveren den: appen viser årsaken og husker grensen for postboksen. Størrelsen omfatter vedlegg, tekst med innlimte bilder og sitatet.</string>
+    <string name="categoriesTitle">Kategorier</string>
+    <string name="categoriesLocalHint">Lagret på enheten: denne postboksen har ingen kategorier på serveren</string>
+    <string name="categoryColor">Kategorifarge</string>
 </resources>

@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Uygulama bu ekranla açılır. Diğer bölümlerde Geri buraya döner, buradan uygulamayı kapatır</string>
     <string name="msgSizeOnly">E-posta: {size}</string>
     <string name="msgSizeHelpUnknown">Bir e-postanın ne kadar büyük olabileceğine posta sunucusu karar verir; sınır sunucudan sunucuya değişir. Uygulamanın kendi sınırı yoktur. E-posta sınırı aşarsa sunucu reddeder: uygulama nedenini gösterir ve bu kutunun sınırını hatırlar. Boyuta ekler, yapıştırılmış görselli metin ve alıntı dahildir.</string>
+    <string name="categoriesTitle">Kategoriler</string>
+    <string name="categoriesLocalHint">Cihazda saklanır: bu kutunun sunucuda kategorileri yok</string>
+    <string name="categoryColor">Kategori rengi</string>
 </resources>

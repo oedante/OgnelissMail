@@ -5,6 +5,7 @@
 
 import 'dart:convert';
 
+import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -98,3 +99,76 @@ final categoriesProvider =
   final prefs = ref.watch(sharedPrefsProvider);
   return CategoriesNotifier(prefs);
 });
+
+// ── Цвета категорий (2.7.5, замечание владельца 27.11.2026: «теги и
+// категории — одно и то же, и не реализованы категории по цветам») ──
+
+/// Палитра категорий — цвета категорий Outlook (красная, оранжевая,
+/// жёлтая, зелёная, синяя, фиолетовая и др.).
+const List<Color> categoryPalette = [
+  Color(0xFFE74856), // красная
+  Color(0xFFF7630C), // оранжевая
+  Color(0xFFC19C00), // жёлтая (тёмная — читается на светлом фоне)
+  Color(0xFF16C60C), // зелёная
+  Color(0xFF0078D4), // синяя
+  Color(0xFF8764B8), // фиолетовая
+  Color(0xFF00B7C3), // бирюзовая
+  Color(0xFF8E562E), // коричневая
+  Color(0xFFE3008C), // розовая
+  Color(0xFF498205), // оливковая
+  Color(0xFF515C6B), // серо-синяя
+  Color(0xFF7A7574), // серая
+];
+
+/// Стандартные категории Outlook по названию цвета (русский и английский
+/// Outlook) — сразу своим цветом.
+const Map<String, int> _outlookPresets = {
+  'красная категория': 0, 'red category': 0,
+  'оранжевая категория': 1, 'orange category': 1,
+  'желтая категория': 2, 'жёлтая категория': 2, 'yellow category': 2,
+  'зеленая категория': 3, 'зелёная категория': 3, 'green category': 3,
+  'синяя категория': 4, 'blue category': 4,
+  'фиолетовая категория': 5, 'purple category': 5,
+};
+
+/// Цвет категории: выбранный пользователем, стандартный Outlook по
+/// названию, иначе — постоянный цвет палитры по названию.
+Color categoryColor(String name, Map<String, int> chosen) {
+  final c = chosen[name];
+  if (c != null) return Color(c);
+  final preset = _outlookPresets[name.trim().toLowerCase()];
+  if (preset != null) return categoryPalette[preset];
+  var h = 0;
+  for (final u in name.trim().toLowerCase().codeUnits) {
+    h = (h * 31 + u) & 0x7fffffff;
+  }
+  return categoryPalette[h % categoryPalette.length];
+}
+
+/// Выбранные цвета категорий: название → ARGB.
+class CategoryColorsNotifier extends StateNotifier<Map<String, int>> {
+  final SharedPreferences _p;
+  static const _key = 'category_colors_v1';
+
+  CategoryColorsNotifier(this._p) : super(_load(_p));
+
+  static Map<String, int> _load(SharedPreferences p) {
+    try {
+      final raw = p.getString(_key);
+      if (raw == null) return const {};
+      return {for (final e in (jsonDecode(raw) as Map).entries) '${e.key}': (e.value as num).toInt()};
+    } catch (_) {
+      return const {};
+    }
+  }
+
+  Future<void> set(String name, Color color) async {
+    state = {...state, name: color.toARGB32()};
+    await _p.setString(_key, jsonEncode(state));
+  }
+}
+
+final categoryColorsProvider = StateNotifierProvider<CategoryColorsNotifier, Map<String, int>>(
+  (ref) => CategoryColorsNotifier(ref.watch(sharedPrefsProvider)),
+);
+

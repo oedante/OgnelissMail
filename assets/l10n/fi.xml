@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Sovellus avautuu tähän näkymään. Takaisin muista osioista palaa tänne, täältä sovellus sulkeutuu</string>
     <string name="msgSizeOnly">Viesti: {size}</string>
     <string name="msgSizeHelpUnknown">Viestin enimmäiskoon määrää postipalvelin — raja vaihtelee palvelimittain. Sovelluksella ei ole omaa rajaa. Jos viesti on liian suuri, palvelin hylkää sen: sovellus näyttää syyn ja muistaa rajan tälle postilaatikolle. Kokoon lasketaan liitteet, teksti liitettyine kuvineen ja lainaus.</string>
+    <string name="categoriesTitle">Luokat</string>
+    <string name="categoriesLocalHint">Tallennetaan laitteeseen: tällä postilaatikolla ei ole luokkia palvelimella</string>
+    <string name="categoryColor">Luokan väri</string>
 </resources>

@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">O app abre nesta tela. Voltar a partir de outras seções retorna para ela; a partir dela, fecha o app</string>
     <string name="msgSizeOnly">Mensagem: {size}</string>
     <string name="msgSizeHelpUnknown">Quem decide o tamanho máximo é o servidor de e-mail — cada servidor tem seu limite. O app não impõe limite próprio. Se a mensagem passar do limite, o servidor a recusa: o app mostra o motivo e guarda o limite desta caixa. O tamanho inclui anexos, texto com imagens coladas e a citação.</string>
+    <string name="categoriesTitle">Categorias</string>
+    <string name="categoriesLocalHint">Salvas no aparelho: esta caixa não tem categorias no servidor</string>
+    <string name="categoryColor">Cor da categoria</string>
 </resources>

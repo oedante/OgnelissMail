@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">ऐप इसी स्क्रीन से खुलता है। दूसरे सेक्शन से «वापस» यहीं लाता है, यहाँ से ऐप बंद करता है</string>
     <string name="msgSizeOnly">संदेश: {size}</string>
     <string name="msgSizeHelpUnknown">संदेश कितना बड़ा हो सकता है, यह मेल सर्वर तय करता है — हर सर्वर की सीमा अलग होती है। ऐप की अपनी कोई सीमा नहीं है। अगर संदेश सीमा से बड़ा हो, तो सर्वर उसे अस्वीकार करेगा: ऐप कारण दिखाएगा और इस मेलबॉक्स की सीमा याद रखेगा। आकार में अटैचमेंट, चिपकाई गई तस्वीरों वाला टेक्स्ट और उद्धरण शामिल हैं।</string>
+    <string name="categoriesTitle">श्रेणियाँ</string>
+    <string name="categoriesLocalHint">डिवाइस पर सहेजी जाती हैं: इस मेलबॉक्स की सर्वर पर श्रेणियाँ नहीं हैं</string>
+    <string name="categoryColor">श्रेणी का रंग</string>
 </resources>

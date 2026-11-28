@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">De app opent op dit scherm. Terug vanuit andere onderdelen brengt je hier; vanaf hier sluit de app</string>
     <string name="msgSizeOnly">Bericht: {size}</string>
     <string name="msgSizeHelpUnknown">Hoe groot een bericht mag zijn, bepaalt de mailserver — elke server heeft een eigen limiet. De app stelt zelf geen limiet. Is het bericht te groot, dan weigert de server het: de app toont de reden en onthoudt de limiet voor dit postvak. De grootte omvat bijlagen, tekst met geplakte afbeeldingen en het citaat.</string>
+    <string name="categoriesTitle">Categorieën</string>
+    <string name="categoriesLocalHint">Op dit apparaat opgeslagen: dit postvak heeft geen categorieën op de server</string>
+    <string name="categoryColor">Categoriekleur</string>
 </resources>

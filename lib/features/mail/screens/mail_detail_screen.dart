@@ -81,6 +81,7 @@ import '../../../services/mail/own_addresses.dart';
 import '../../../services/security/mail_classification.dart';
 import '../../../services/security/smime_service.dart' show smimeServiceProvider, CmsSignature;
 import '../../settings/providers/categories_provider.dart';
+import '../widgets/categories_sheet.dart';
 import '../../../features/settings/providers/settings_provider.dart';
 import '../../../features/settings/providers/feature_flags_provider.dart';
 import '../../settings/widgets/feature_settings_sections.dart' show ExperimentalKeys, QuotePeopleMode, quotePeopleMode;
@@ -2161,7 +2162,6 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     final sig = settled && p7m == null && _smimeP7s(email) != null ? _sigView(email, l10n) : null;
     final folder = settled ? _folderTypeNow(email) : null;
     final junk = folder == FolderType.junk;
-    final showCats = acc != null && acc.isMsExchange && email.categories.isNotEmpty;
     final laterAt = email.remindAt?.toLocal();
     final control = email.controlState != 0 && mailControl ? _controlParts(email, l10n) : null;
 
@@ -2331,26 +2331,17 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
           expanded: (_) => _restoreBanner(email, junk, theme, l10n),
         ),
 
-      // ── Теги и категории Outlook ── (раньше — своей строкой чипов, 05.10):
-      // нажатие открывает тот же выбор, добавить — «Ещё» в нижней панели.
-      for (final tag in email.tags)
+      // ── Категории (2.7.5: теги и категории Outlook — одно, своим цветом) ──
+      // Нажатие открывает тот же выбор.
+      for (final c in mailCategoriesOf(email))
         MailNotice(
-          id: 'tag:$tag',
-          label: tag,
-          color: AppTheme.getTagColor(tag),
-          detail: '$tag · ${l10n.tr('editTags')}',
-          onTap: () => _editTags(context, email, l10n),
+          id: 'cat:$c',
+          icon: AppIcons.label,
+          iconColor: categoryColor(c, r.watch(categoryColorsProvider)),
+          label: c,
+          detail: '$c · ${l10n.tr('categoriesTitle')}',
+          onTap: () => unawaited(_editCategories(email)),
         ),
-      if (showCats)
-        for (final c in email.categories)
-          MailNotice(
-            id: 'cat:$c',
-            icon: AppIcons.label,
-            iconColor: AppColors.accentOrangeText(context),
-            label: c,
-            detail: '$c · ${l10n.tr('outlookCategories')}',
-            onTap: () => _editCategories(context, acc, email, l10n),
-          ),
     ];
   }
 
@@ -3158,7 +3149,6 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
   ) {
     // Действия сгруппированы по смыслу (раньше — сплошная сетка из 20+
     // значков, где «Экспорт», «Сохранить PDF» и «Печать» делали одно и то же).
-    final isExchange = ref.read(accountsProvider).any((a) => a.id == email.accountId && a.isMsExchange);
     final convMuted = ref.read(mutedConversationsProvider.notifier).isMuted(email.accountId, email.conversationId);
     // Та же карточка, что по удержанию письма в ленте (1.8.8, замечание
     // владельца 29.10.2026): шапка с письмом и все действия по группам —
@@ -3201,9 +3191,10 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
               safeSetState(() => _email = email.copyWith(isRead: newRead));
             }
           }),
+          // Флажок и его срок — одной кнопкой (2.7.5, замечание владельца
+          // 27.11.2026): сегодня, завтра, неделя, без даты, «Снять флажок».
           _peekAction(AppIcons.flag, l10n.tr('flag'), fill: email.isFlagged,
-              () => _toggleFlag(email)),
-          _peekAction(AppIcons.event, l10n.tr('flagDueTitle'), () => unawaited(_pickFlagDue(email, l10n))),
+              () => unawaited(_pickFlagDue(email, l10n))),
           // Важность (замечание 07.10.2026: поставить было нельзя)
           _peekAction(AppIcons.priority_high, l10n.tr('importance'),
               () => unawaited(_pickImportance(email, l10n))),
@@ -3214,13 +3205,9 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
                 l10n.tr(email.controlState == 0 ? 'controlSet' : 'controlFilter'),
                 () => unawaited(_controlMenu(email)),
                 fill: email.controlState != 0),
-          _peekAction(AppIcons.label, l10n.tr('addTag'), () => _editTags(context, email, l10n)),
-          // Категории Outlook — только у Exchange
-          if (isExchange)
-            _peekAction(AppIcons.new_label, l10n.tr('outlookCategories'), () {
-              final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-              if (acc != null) _editCategories(context, acc, email, l10n);
-            }),
+          // Категории — одной кнопкой вместо «Добавить тег» и «Категории
+          // Outlook» (2.7.5): у Exchange — на сервер, у остальных — на телефоне.
+          _peekAction(AppIcons.label, l10n.tr('categoriesTitle'), () => unawaited(_editCategories(email))),
           _peekAction(AppIcons.report, l10n.tr('moveToJunk'), () => _moveToJunk(email, l10n)),
           // Заблокировать отправителя и «Чистка» (1.10.x).
           _peekAction(AppIcons.block,
@@ -3498,145 +3485,16 @@ class _MailDetailScreenState extends ConsumerState<MailDetailScreen>
     if (!choice.clear) _closeAfterAction();
   }
 
-  /// Редактор серверных категорий Outlook: как теги, но пишет и на сервер (EWS).
-  Future<void> _editCategories(BuildContext context, AccountModel account, EmailModel email, AppLocalizations l10n) async {
-    final selected = email.categories.toSet();
-    final customController = TextEditingController();
-    final result = await showDialog<Set<String>>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSt) => AlertDialog(
-          title: Text(l10n.tr('outlookCategories')),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(l10n.tr('outlookCategoriesSynced'),
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
-                const SizedBox(height: Space.s),
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    for (final c in {...ref.read(categoriesProvider), ...selected})
-                      FilterChip(
-                        label: Text(c, style: Theme.of(context).textTheme.labelMedium),
-                        selected: selected.contains(c),
-                        onSelected: (v) => setSt(() => v ? selected.add(c) : selected.remove(c)),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: Space.m),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: customController,
-                        decoration: InputDecoration(isDense: true, hintText: l10n.tr('customCategory')),
-                        onSubmitted: (v) {
-                          final t = v.trim();
-                          if (t.isNotEmpty) setSt(() { selected.add(t); customController.clear(); });
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: l10n.tr('add'),
-                      icon: const Icon(AppIcons.add),
-                      onPressed: () {
-                        final t = customController.text.trim();
-                        if (t.isNotEmpty) setSt(() { selected.add(t); customController.clear(); });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(l10n.cancel)),
-            FilledButton(onPressed: () => Navigator.of(ctx).pop(selected), child: Text(l10n.save)),
-          ],
-        ),
-      ),
-    );
-    if (result == null || !context.mounted) return;
-    final cats = result.toList();
-    final ok = await ref.read(emailActionsProvider).setCategories(account, email.id, cats);
-    safeSetState(() => _email = _email!.copyWith(categories: cats));
-    await ref.read(emailsProvider.notifier).refresh();
-    if (!mounted) return;
-    // На сервер не ушло — сказать, что категории только на телефоне.
-    if (ok) {
-      AppLogger.info(l10n.tr('categoriesSavedSynced'));
-    } else {
-      showInlineNotice(l10n.tr('categoriesSavedLocal'));
-    }
-  }
-
-  /// Редактор тегов письма (локально): переключаемые предустановленные + свой тег.
-  Future<void> _editTags(BuildContext context, EmailModel email, AppLocalizations l10n) async {
-    final selected = email.tags.toSet();
-    final customController = TextEditingController();
-    final result = await showDialog<Set<String>>(
-      context: context,
-      builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setSt) => AlertDialog(
-          title: Text(l10n.tr('emailTags')),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 6,
-                  runSpacing: 6,
-                  children: [
-                    for (final tag in {...ref.read(categoriesProvider), ...selected})
-                      FilterChip(
-                        label: Text(tag, style: Theme.of(context).textTheme.labelMedium),
-                        selected: selected.contains(tag),
-                        onSelected: (v) => setSt(() => v ? selected.add(tag) : selected.remove(tag)),
-                      ),
-                  ],
-                ),
-                const SizedBox(height: Space.m),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: customController,
-                        decoration: InputDecoration(isDense: true, hintText: l10n.tr('customTag')),
-                        onSubmitted: (v) {
-                          final t = v.trim();
-                          if (t.isNotEmpty) setSt(() { selected.add(t); customController.clear(); });
-                        },
-                      ),
-                    ),
-                    IconButton(
-                      tooltip: l10n.tr('add'),
-                      icon: const Icon(AppIcons.add),
-                      onPressed: () {
-                        final t = customController.text.trim();
-                        if (t.isNotEmpty) setSt(() { selected.add(t); customController.clear(); });
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(onPressed: () => Navigator.of(ctx).pop(), child: Text(l10n.cancel)),
-            FilledButton(onPressed: () => Navigator.of(ctx).pop(selected), child: Text(l10n.save)),
-          ],
-        ),
-      ),
-    );
-    if (result == null) return;
-    final tags = result.toList();
-    await ref.read(emailActionsProvider).setTags(email.id, tags, accountId: email.accountId);
-    safeSetState(() => _email = _email!.copyWith(tags: tags));
+  /// «Категории» (2.7.5): одно окно вместо тегов и категорий Outlook.
+  Future<void> _editCategories(EmailModel email) async {
+    final next = await showCategoriesSheet(context, ref, email);
+    if (next == null || !mounted) return;
+    final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    final exchange = acc?.isMsExchange ?? false;
+    safeSetState(() => _email = _email!.copyWith(
+          categories: exchange ? next : _email!.categories,
+          tags: exchange ? const [] : next,
+        ));
     await ref.read(emailsProvider.notifier).refresh();
   }
 

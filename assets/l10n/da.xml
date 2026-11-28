@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Appen åbner på denne skærm. Tilbage fra andre sektioner fører hertil; herfra lukkes appen</string>
     <string name="msgSizeOnly">Mail: {size}</string>
     <string name="msgSizeHelpUnknown">Mailserveren bestemmer, hvor stor en mail må være — grænsen er forskellig fra server til server. Appen har ingen egen grænse. Er mailen for stor, afviser serveren den: appen viser årsagen og husker grænsen for postkassen. Størrelsen omfatter vedhæftede filer, tekst med indsatte billeder og citatet.</string>
+    <string name="categoriesTitle">Kategorier</string>
+    <string name="categoriesLocalHint">Gemt på enheden: denne postkasse har ingen kategorier på serveren</string>
+    <string name="categoryColor">Kategorifarve</string>
 </resources>

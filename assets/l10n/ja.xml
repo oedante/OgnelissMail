@@ -4417,4 +4417,7 @@
     <string name="startScreenHint">アプリはこの画面で開きます。ほかの画面で「戻る」を押すとここに戻り、ここで押すとアプリを閉じます</string>
     <string name="msgSizeOnly">メール: {size}</string>
     <string name="msgSizeHelpUnknown">メールの最大サイズはメールサーバーが決めます（サーバーごとに異なります）。アプリ独自の上限はありません。上限を超えるとサーバーが受け付けず、アプリが理由を表示してこのメールボックスの上限を記憶します。サイズには添付ファイル、貼り付けた画像を含む本文、引用が含まれます。</string>
+    <string name="categoriesTitle">分類</string>
+    <string name="categoriesLocalHint">端末に保存されます（このメールボックスにはサーバーの分類がありません）</string>
+    <string name="categoryColor">分類の色</string>
 </resources>

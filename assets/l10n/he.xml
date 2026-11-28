@@ -4459,4 +4459,7 @@
     <string name="startScreenHint">האפליקציה נפתחת במסך הזה. «חזרה» ממקומות אחרים מובילה אליו, וממנו — סוגרת את האפליקציה</string>
     <string name="msgSizeOnly">הודעה: {size}</string>
     <string name="msgSizeHelpUnknown">שרת הדואר קובע כמה גדולה יכולה להיות הודעה — המגבלה שונה משרת לשרת. לאפליקציה אין מגבלה משלה. אם ההודעה גדולה מדי, השרת דוחה אותה: האפליקציה מציגה את הסיבה וזוכרת את המגבלה לתיבה הזו. הגודל כולל קבצים מצורפים, טקסט עם תמונות מודבקות והציטוט.</string>
+    <string name="categoriesTitle">קטגוריות</string>
+    <string name="categoriesLocalHint">נשמרות במכשיר: לתיבה הזו אין קטגוריות בשרת</string>
+    <string name="categoryColor">צבע הקטגוריה</string>
 </resources>

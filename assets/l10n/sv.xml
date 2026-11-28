@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Appen öppnas på den här skärmen. Bakåt från andra delar leder hit, härifrån stängs appen</string>
     <string name="msgSizeOnly">Meddelande: {size}</string>
     <string name="msgSizeHelpUnknown">Hur stort ett meddelande får vara bestämmer e-postservern — gränsen skiljer sig mellan servrar. Appen har ingen egen gräns. Är meddelandet för stort avvisar servern det: appen visar varför och kommer ihåg gränsen för inkorgen. Storleken omfattar bilagor, text med inklistrade bilder och citatet.</string>
+    <string name="categoriesTitle">Kategorier</string>
+    <string name="categoriesLocalHint">Sparas på enheten: den här inkorgen har inga kategorier på servern</string>
+    <string name="categoryColor">Kategorifärg</string>
 </resources>

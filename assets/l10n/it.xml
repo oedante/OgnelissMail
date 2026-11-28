@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">L’app si apre su questa schermata. Indietro dalle altre sezioni riporta qui; da qui chiude l’app</string>
     <string name="msgSizeOnly">Messaggio: {size}</string>
     <string name="msgSizeHelpUnknown">La dimensione massima la decide il server di posta: ogni server ha il suo limite. L’app non ne impone uno proprio. Se il messaggio supera il limite, il server lo rifiuta: l’app mostra il motivo e ricorda il limite per questa casella. La dimensione comprende allegati, testo con immagini incollate e citazione.</string>
+    <string name="categoriesTitle">Categorie</string>
+    <string name="categoriesLocalHint">Salvate sul dispositivo: questa casella non ha categorie sul server</string>
+    <string name="categoryColor">Colore della categoria</string>
 </resources>

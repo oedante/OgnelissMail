@@ -4459,4 +4459,7 @@
     <string name="startScreenHint">Aplikace se otevírá na této obrazovce. Zpět z jiných částí vede sem, odsud aplikaci zavře</string>
     <string name="msgSizeOnly">Zpráva: {size}</string>
     <string name="msgSizeHelpUnknown">Jak velká může být zpráva, rozhoduje poštovní server — každý má jiný limit. Aplikace žádný vlastní limit nemá. Pokud je zpráva větší, server ji odmítne: aplikace ukáže důvod a zapamatuje si limit pro tuto schránku. Do velikosti patří přílohy, text s vloženými obrázky a citace.</string>
+    <string name="categoriesTitle">Kategorie</string>
+    <string name="categoriesLocalHint">Uloženo v zařízení: tato schránka nemá kategorie na serveru</string>
+    <string name="categoryColor">Barva kategorie</string>
 </resources>

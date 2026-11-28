@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">La app se abre en esta pantalla. Atrás desde otras secciones vuelve aquí; desde aquí cierra la app</string>
     <string name="msgSizeOnly">Mensaje: {size}</string>
     <string name="msgSizeHelpUnknown">El tamaño máximo lo decide el servidor de correo: cada servidor tiene su límite. La app no impone ninguno propio. Si el mensaje supera el límite, el servidor lo rechaza: la app muestra el motivo y recuerda el límite para este buzón. El tamaño incluye adjuntos, texto con imágenes pegadas y la cita.</string>
+    <string name="categoriesTitle">Categorías</string>
+    <string name="categoriesLocalHint">Se guardan en el dispositivo: este buzón no tiene categorías en el servidor</string>
+    <string name="categoryColor">Color de la categoría</string>
 </resources>

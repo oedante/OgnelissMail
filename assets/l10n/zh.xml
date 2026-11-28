@@ -4417,4 +4417,7 @@
     <string name="startScreenHint">应用从此画面打开。在其他页面按返回会回到这里，在这里按返回则关闭应用</string>
     <string name="msgSizeOnly">邮件：{size}</string>
     <string name="msgSizeHelpUnknown">邮件最大能多大由邮件服务器决定，不同服务器限制不同。应用本身不设限制。如果邮件超过限制，服务器会拒收：应用会显示原因并记住此邮箱的限制。大小包括附件、带粘贴图片的正文和引用内容。</string>
+    <string name="categoriesTitle">类别</string>
+    <string name="categoriesLocalHint">保存在设备上：此邮箱在服务器上没有类别</string>
+    <string name="categoryColor">类别颜色</string>
 </resources>

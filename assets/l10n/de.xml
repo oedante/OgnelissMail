@@ -4438,4 +4438,7 @@
     <string name="startScreenHint">Die App öffnet mit diesem Bildschirm. „Zurück“ aus anderen Bereichen führt hierher, von hier aus wird die App geschlossen</string>
     <string name="msgSizeOnly">Nachricht: {size}</string>
     <string name="msgSizeHelpUnknown">Wie groß eine Nachricht sein darf, entscheidet der Mailserver – das Limit ist je nach Server verschieden. Die App setzt kein eigenes Limit. Ist die Nachricht größer, lehnt der Server sie ab: Die App zeigt den Grund und merkt sich das Limit für dieses Postfach. Zur Größe zählen Anhänge, Text mit eingefügten Bildern und Zitat.</string>
+    <string name="categoriesTitle">Kategorien</string>
+    <string name="categoriesLocalHint">Auf dem Gerät gespeichert: Dieses Postfach hat keine Kategorien auf dem Server</string>
+    <string name="categoryColor">Kategoriefarbe</string>
 </resources>

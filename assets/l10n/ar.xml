@@ -4522,4 +4522,7 @@
     <string name="startScreenHint">يُفتح التطبيق على هذه الشاشة. يعود زر الرجوع من الأقسام الأخرى إليها، ومنها يُغلق التطبيق</string>
     <string name="msgSizeOnly">الرسالة: {size}</string>
     <string name="msgSizeHelpUnknown">خادم البريد هو من يحدد الحجم الأقصى للرسالة، ويختلف الحد من خادم لآخر. ليس للتطبيق حد خاص به. إذا كانت الرسالة أكبر من المسموح يرفضها الخادم، فيعرض التطبيق السبب ويتذكر الحد لهذا الصندوق. يشمل الحجم المرفقات والنص مع الصور الملصقة والاقتباس.</string>
+    <string name="categoriesTitle">الفئات</string>
+    <string name="categoriesLocalHint">تُحفظ على الجهاز: لا توجد فئات لهذا الصندوق على الخادم</string>
+    <string name="categoryColor">لون الفئة</string>
 </resources>

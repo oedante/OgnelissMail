@@ -99,6 +99,7 @@ import '../widgets/account_auth_banner.dart';
 import '../widgets/auto_reply_strip.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../widgets/email_list_tile.dart';
+import '../widgets/categories_sheet.dart' show showCategoriesSheet;
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailOpenHandoff;
 import '../widgets/mail_peek_card.dart';
@@ -3053,7 +3054,14 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           label: l10n.tr('later'),
           onTap: () => unawaited(_snoozeSingle(email, l10n)),
         ),
-        PeekAction(icon: AppIcons.label, label: l10n.tr('addTag'), onTap: () => _showTagPicker(email, l10n)),
+        PeekAction(
+            icon: AppIcons.label,
+            label: l10n.tr('categoriesTitle'),
+            onTap: () async {
+              if (await showCategoriesSheet(context, ref, email) != null && mounted) {
+                await ref.read(emailsProvider.notifier).refresh();
+              }
+            }),
         PeekAction(
           icon: AppIcons.push_pin,
           filled: pinned,
@@ -3439,36 +3447,6 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         onSettled: unhide,
       ),
     );
-  }
-
-  /// Метки письма (1.8.8): карточкой, как меню «⋮»; нажатие ставит или
-  /// снимает метку. Раньше шторка показывала метки, но нажатие ничего не
-  /// меняло.
-  Future<void> _showTagPicker(EmailModel email, AppLocalizations l10n) async {
-    final tags = ref.read(categoriesProvider);
-    if (tags.isEmpty) {
-      quietNotice(l10n.tr('noTags'));
-      return;
-    }
-    final t = await showChoiceSheet<String>(
-      context,
-      title: l10n.tr('addTag'),
-      entries: [
-        for (final tag in tags)
-          AppMenuEntry(
-            value: tag,
-            label: tag,
-            icon: AppIcons.label,
-            iconColor: AppTheme.getTagColor(tag),
-            checked: email.tags.contains(tag),
-          ),
-      ],
-    );
-    if (t == null || !mounted) return;
-    final next = email.tags.contains(t) ? [for (final x in email.tags) if (x != t) x] : [...email.tags, t];
-    unawaited(HapticFeedback.selectionClick());
-    await ref.read(emailActionsProvider).setTags(email.id, next, accountId: email.accountId);
-    await ref.read(emailsProvider.notifier).refresh();
   }
 
   void _showFilterSheet(BuildContext context, AppLocalizations l10n) {

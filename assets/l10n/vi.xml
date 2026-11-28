@@ -4417,4 +4417,7 @@
     <string name="startScreenHint">Ứng dụng mở ở màn hình này. Quay lại từ các mục khác sẽ về đây; từ đây sẽ đóng ứng dụng</string>
     <string name="msgSizeOnly">Thư: {size}</string>
     <string name="msgSizeHelpUnknown">Kích thước tối đa của thư do máy chủ thư quyết định — mỗi máy chủ có giới hạn riêng. Ứng dụng không đặt giới hạn riêng. Nếu thư vượt giới hạn, máy chủ sẽ từ chối: ứng dụng hiển thị lý do và ghi nhớ giới hạn cho hộp thư này. Kích thước gồm tệp đính kèm, nội dung có ảnh dán và phần trích dẫn.</string>
+    <string name="categoriesTitle">Thể loại</string>
+    <string name="categoriesLocalHint">Lưu trên thiết bị: hộp thư này không có thể loại trên máy chủ</string>
+    <string name="categoryColor">Màu thể loại</string>
 </resources>

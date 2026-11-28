@@ -2177,6 +2177,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     _editorWatch?.cancel();
     _lifecycle?.dispose();
     _copyTimer?.cancel();
+    _mentionGalTimer?.cancel();
     // Дослать черновик ДО освобождения контроллеров: снимок уже сделан в
     // _markDraftChanged, forceSave лишь пишет его в БД. Пустой черновик сервис
     // не сохраняет (проверка isEmpty внутри).
@@ -2295,8 +2296,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // под клавиатуру (1.6.19): иначе он вместе с редактором в WebView
       // перестраивался в каждом кадре её появления, и шторка ехала рывками.
       resizeToAvoidBottomInset: ModalRoute.of(context)?.isCurrent ?? true,
-      // @-упоминание (2.7.5): подходящие люди — строкой над клавиатурой.
-      bottomNavigationBar: _mentionQuery == null ? null : _mentionStrip(l10n),
       // Белый (светлая тема) или фон темы — как у открытого письма.
       backgroundColor: mailPageColor(Theme.of(context)),
       appBar: TextScaleCapBar(child: AppBar(
@@ -2629,6 +2628,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
             );
             }),
           ),
+
+          // @-упоминание (2.7.5): подходящие люди — строкой над панелью и
+          // клавиатурой (в нижней панели Scaffold строка пряталась за
+          // клавиатурой — её и не было видно, пока набираешь «@…»).
+          if (_mentionQuery != null) _mentionStrip(l10n),
 
           // Нижняя панель
           Container(
@@ -4643,9 +4647,32 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     }
     setState(() => _mentionQuery = q);
     final seq = ++_mentionSeq;
+    _mentionGalTimer?.cancel();
     unawaited(_mentionCandidates(q).then((hits) {
-      if (mounted && seq == _mentionSeq) setState(() => _mentionHits = hits);
+      if (!mounted || seq != _mentionSeq) return;
+      setState(() => _mentionHits = hits);
+      // Адресная книга организации (Exchange) — коллега, с которым ещё не
+      // переписывались (замечание владельца 28.11.2026: «@ганиев» — пусто).
+      // Запрос к серверу — когда набор замер, с двух букв.
+      final acc = _fromAccount;
+      if (acc == null || !acc.isMsExchange || q.trim().length < 2) return;
+      _mentionGalTimer = Timer(const Duration(milliseconds: 400), () => unawaited(_mentionGal(acc, q.trim(), seq)));
     }));
+  }
+
+  Timer? _mentionGalTimer;
+
+  Future<void> _mentionGal(AccountModel acc, String q, int seq) async {
+    final gal = await safeAsync(() =>
+        ref.read(mailEngineServiceProvider).resolveNames(acc, q).timeout(const Duration(seconds: 15)));
+    if (gal == null || !mounted || seq != _mentionSeq) return;
+    final seen = {for (final c in _mentionHits) c.email.toLowerCase()};
+    final extra = [
+      for (final c in gal)
+        if (c.email.trim().isNotEmpty && !c.isGroup && seen.add(c.email.trim().toLowerCase())) c,
+    ];
+    if (extra.isEmpty) return;
+    setState(() => _mentionHits = [..._mentionHits, ...extra].take(12).toList());
   }
 
   /// Кого предложить: адресаты письма, затем контакты (избранные и частые);
@@ -4665,7 +4692,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     try {
       final db = ref.read(databaseProvider);
       final cap = query.isEmpty ? '' : query[0].toUpperCase() + query.substring(1);
-      final variants = {query, cap, q.trim()}.where((v) => v.isNotEmpty).toList();
+      final variants = {query, cap, q.trim(), q.trim().toUpperCase()}.where((v) => v.isNotEmpty).toList();
       final cond = variants.isEmpty ? '1' : List.filled(variants.length, 'display_name LIKE ?').join(' OR ');
       final rows = await db.customSelect(
         'SELECT id, email, display_name FROM contacts '
@@ -4681,6 +4708,21 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
         final email = r.read<String>('email');
         if (!seen.add(email.toLowerCase())) continue;
         out.add(ContactModel(id: r.read<String>('id'), email: email, displayName: r.read<String>('display_name')));
+      }
+      // Отправители писем — люди, которых нет в контактах.
+      if (query.isNotEmpty && out.length < 10) {
+        final senders = await db.customSelect(
+          'SELECT lower(from_email) AS e, MAX(from_name) AS n, COUNT(*) AS c FROM emails '
+          "WHERE from_email <> '' AND (lower(from_email) LIKE ? OR ${cond.replaceAll('display_name', 'from_name')}) "
+          'GROUP BY lower(from_email) ORDER BY c DESC LIMIT 6',
+          variables: [Variable.withString('%$query%'), for (final v in variants) Variable.withString('%$v%')],
+        ).get();
+        for (final r in senders) {
+          final email = r.read<String>('e');
+          final name = r.readNullable<String>('n') ?? '';
+          if (!PersonNames.plausible(name) || !seen.add(email)) continue;
+          out.add(ContactModel(id: 'sender:$email', email: email, displayName: name));
+        }
       }
     } catch (_) {}
     return out.take(10).toList();
@@ -4707,9 +4749,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     return Material(
       key: const ValueKey('mention_strip'),
       color: theme.colorScheme.surfaceContainer,
-      child: SafeArea(
-        top: false,
-        child: SizedBox(
+      child: SizedBox(
           height: 52,
           child: _mentionHits.isEmpty
               ? Padding(
@@ -4737,7 +4777,6 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                       ),
                   ],
                 ),
-        ),
       ),
     );
   }

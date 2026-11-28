@@ -169,6 +169,9 @@ class _PeoplePickerState extends ConsumerState<_PeoplePicker> {
       _picked[c.email.toLowerCase()] = c;
     }
     _resolveNames(_picked.values);
+    // Сразу — список контактов, без ввода (4PDA, 28.11.2026: «нажимаю на
+    // значок человека — выбора контактов нет», пока не начнёшь вводить имя).
+    unawaited(_search(''));
   }
 
   @override
@@ -189,8 +192,32 @@ class _PeoplePickerState extends ConsumerState<_PeoplePicker> {
     final seq = ++_seq;
     _deptMode = false;
     if (q.length < 2) {
+      // Без запроса — контакты всех ящиков и телефона: избранные, затем
+      // те, с кем переписываетесь чаще, затем по имени.
+      List<ContactModel> list = const [];
+      try {
+        final rows = await ref.read(databaseProvider).customSelect(
+          'SELECT id, email, display_name, job_title, company, avatar_url FROM contacts '
+          "WHERE email <> '' "
+          'ORDER BY is_favorite DESC, interaction_count DESC, display_name COLLATE NOCASE LIMIT 300',
+        ).get();
+        final seen = <String>{...widget.exclude};
+        list = [
+          for (final r in rows)
+            if (seen.add(r.read<String>('email').trim().toLowerCase()))
+              ContactModel(
+                id: r.read<String>('id'),
+                email: r.read<String>('email'),
+                displayName: r.read<String>('display_name'),
+                jobTitle: r.readNullable<String>('job_title'),
+                company: r.readNullable<String>('company'),
+                avatarUrl: r.readNullable<String>('avatar_url'),
+              ),
+        ];
+      } catch (_) {}
+      if (!mounted || seq != _seq) return;
       setState(() {
-        _results = const [];
+        _results = list;
         _searching = false;
       });
       return;

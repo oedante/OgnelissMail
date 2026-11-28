@@ -75,18 +75,31 @@ void main() {
     test('смена сети посреди скачивания — повтор на новом соединении сразу, без ожидания', () async {
       final m = inbox.add('Договор');
       srv.hangOn.add('BODY.PEEK[2]');
+      // Остановка приёма — через 30 с: повтор раньше неё — значит, по обрыву.
       ImapService.attachmentStall = const Duration(seconds: 30);
-      final download = imap.fetchAttachment(account(), folderId: 'INBOX', uid: m.uid, partNumber: '2');
-      await Future<void>.delayed(const Duration(milliseconds: 300));
-      expect(srv.connectionCount, 1);
-      imap.dropConnections(reason: 'смена сети');
-      // Обрыв замечен сразу: новое соединение — уже через доли секунды.
-      for (var i = 0; i < 30 && srv.connectionCount < 2; i++) {
-        await Future<void>.delayed(const Duration(milliseconds: 50));
+      int fetches() => srv.commands.where((c) => c.contains('BODY.PEEK[2]')).length;
+      // Ждём событий, а не фиксированные доли секунды (2.7.5: при
+      // параллельном прогоне тестов машина занята и 300 мс не хватало).
+      Future<void> until(bool Function() ok, String what) async {
+        final sw = Stopwatch()..start();
+        while (!ok()) {
+          if (sw.elapsed > const Duration(seconds: 10)) fail('не дождались: $what');
+          await Future<void>.delayed(const Duration(milliseconds: 20));
+        }
       }
-      expect(srv.connectionCount, 2);
+
+      final download = imap.fetchAttachment(account(), folderId: 'INBOX', uid: m.uid, partNumber: '2');
+      await until(() => fetches() == 1, 'запрос вложения');
+      expect(srv.connectionCount, 1);
+      final sw = Stopwatch()..start();
       imap.dropConnections(reason: 'смена сети');
-      await expectLater(download.timeout(const Duration(seconds: 3)), throwsA(isA<SocketException>()));
+      // Обрыв замечен сразу: новое соединение и повтор запроса — не через
+      // 30 с остановки приёма.
+      await until(() => srv.connectionCount >= 2 && fetches() == 2, 'повтор на новом соединении');
+      expect(srv.connectionCount, 2);
+      expect(sw.elapsed, lessThan(const Duration(seconds: 10)));
+      imap.dropConnections(reason: 'смена сети');
+      await expectLater(download.timeout(const Duration(seconds: 10)), throwsA(isA<SocketException>()));
     });
   });
 

@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokuj obrazy zewnętrzne</string>
     <string name="bold">Pogrubienie</string>
     <string name="bulletList">Lista punktowana</string>
-    <string name="byTag">Według tagu</string>
+    <string name="byTag">Według kategorii</string>
     <string name="cc">DW</string>
     <string name="clearFormatting">Wyczyść formatowanie</string>
     <string name="colorBlind">Tryb dla daltonistów</string>
@@ -4485,4 +4485,8 @@
     <string name="categoryColor">Kolor kategorii</string>
     <string name="attachFromGallery">Zdjęcia i filmy</string>
     <string name="mentionHint">Wzmianka: zacznij wpisywać imię</string>
+    <string name="categoriesMixedHint">Skrzynki Exchange: na serwerze i w Outlooku; pozostałe: na tym urządzeniu</string>
+    <string name="categoryColorDefault">Kolor domyślny</string>
+    <string name="outlookCategoriesHint">Ze skrzynek Exchange, z kolorami jak w Outlooku. Możesz wybrać własny kolor — będzie widoczny tylko w aplikacji.</string>
+    <string name="smsShort">SMS</string>
 </resources>

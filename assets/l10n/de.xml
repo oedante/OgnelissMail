@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Externe Bilder blockieren</string>
     <string name="bold">Fett</string>
     <string name="bulletList">Aufzählung</string>
-    <string name="byTag">Nach Tag</string>
+    <string name="byTag">Nach Kategorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Formatierung löschen</string>
     <string name="colorBlind">Farbenblind-Modus</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Kategoriefarbe</string>
     <string name="attachFromGallery">Fotos und Videos</string>
     <string name="mentionHint">Erwähnung: Namen eingeben</string>
+    <string name="categoriesMixedHint">Exchange-Postfächer: auf dem Server und in Outlook; andere: auf diesem Gerät</string>
+    <string name="categoryColorDefault">Standardfarbe</string>
+    <string name="outlookCategoriesHint">Aus Exchange-Postfächern, mit den Farben aus Outlook. Eine eigene Farbe ist möglich – sie gilt nur in der App.</string>
+    <string name="smsShort">SMS</string>
 </resources>

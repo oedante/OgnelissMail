@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Harici görselleri engelle</string>
     <string name="bold">Kalın</string>
     <string name="bulletList">Madde işaretli liste</string>
-    <string name="byTag">Etikete göre</string>
+    <string name="byTag">Kategoriye göre</string>
     <string name="cc">Bilgi</string>
     <string name="clearFormatting">Biçimlendirmeyi temizle</string>
     <string name="colorBlind">Renk körlüğü modu</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Kategori rengi</string>
     <string name="attachFromGallery">Fotoğraflar ve videolar</string>
     <string name="mentionHint">Bahsetme: bir ad yazmaya başlayın</string>
+    <string name="categoriesMixedHint">Exchange posta kutuları: sunucuda ve Outlook\'ta; diğerleri: bu cihazda</string>
+    <string name="categoryColorDefault">Varsayılan renk</string>
+    <string name="outlookCategoriesHint">Exchange posta kutularından, Outlook renkleriyle. Kendi renginizi seçebilirsiniz — yalnızca uygulamada görünür.</string>
+    <string name="smsShort">SMS</string>
 </resources>

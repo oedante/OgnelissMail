@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Externe afbeeldingen blokkeren</string>
     <string name="bold">Vet</string>
     <string name="bulletList">Lijst met opsommingstekens</string>
-    <string name="byTag">Op tag</string>
+    <string name="byTag">Op categorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Opmaak wissen</string>
     <string name="colorBlind">Kleurenblindmodus</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Categoriekleur</string>
     <string name="attachFromGallery">Foto’s en video’s</string>
     <string name="mentionHint">Vermelding: typ een naam</string>
+    <string name="categoriesMixedHint">Exchange-postvakken: op de server en in Outlook; andere: op dit apparaat</string>
+    <string name="categoryColorDefault">Standaardkleur</string>
+    <string name="outlookCategoriesHint">Uit Exchange-postvakken, met de kleuren van Outlook. Je kunt een eigen kleur kiezen — die zie je alleen in de app.</string>
+    <string name="smsShort">Sms</string>
 </resources>

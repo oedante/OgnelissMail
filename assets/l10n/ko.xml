@@ -121,7 +121,7 @@
     <string name="blockExternalImages">외부 이미지 차단</string>
     <string name="bold">굵게</string>
     <string name="bulletList">글머리 기호 목록</string>
-    <string name="byTag">태그별</string>
+    <string name="byTag">범주별</string>
     <string name="cc">참조</string>
     <string name="clearFormatting">서식 지우기</string>
     <string name="colorBlind">색각 보정 모드</string>
@@ -4422,4 +4422,8 @@
     <string name="categoryColor">범주 색</string>
     <string name="attachFromGallery">사진 및 동영상</string>
     <string name="mentionHint">멘션: 이름을 입력하세요</string>
+    <string name="categoriesMixedHint">Exchange 사서함: 서버와 Outlook에, 나머지: 이 기기에</string>
+    <string name="categoryColorDefault">기본 색</string>
+    <string name="outlookCategoriesHint">Exchange 사서함에서 가져오며 Outlook 색을 사용합니다. 원하는 색을 고를 수 있으며 앱에서만 표시됩니다.</string>
+    <string name="smsShort">문자</string>
 </resources>

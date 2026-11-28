@@ -121,7 +121,7 @@
     <string name="blockExternalImages">บล็อกรูปภาพภายนอก</string>
     <string name="bold">ตัวหนา</string>
     <string name="bulletList">รายการหัวข้อย่อย</string>
-    <string name="byTag">ตามแท็ก</string>
+    <string name="byTag">ตามหมวดหมู่</string>
     <string name="cc">สำเนา</string>
     <string name="clearFormatting">ล้างการจัดรูปแบบ</string>
     <string name="colorBlind">โหมดตาบอดสี</string>
@@ -4422,4 +4422,8 @@
     <string name="categoryColor">สีของหมวดหมู่</string>
     <string name="attachFromGallery">รูปภาพและวิดีโอ</string>
     <string name="mentionHint">กล่าวถึง: เริ่มพิมพ์ชื่อ</string>
+    <string name="categoriesMixedHint">กล่อง Exchange: บนเซิร์ฟเวอร์และใน Outlook; อื่น ๆ: บนอุปกรณ์นี้</string>
+    <string name="categoryColorDefault">สีเริ่มต้น</string>
+    <string name="outlookCategoriesHint">จากกล่อง Exchange ด้วยสีเดียวกับ Outlook เลือกสีของคุณเองได้ — แสดงเฉพาะในแอป</string>
+    <string name="smsShort">SMS</string>
 </resources>

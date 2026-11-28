@@ -121,7 +121,7 @@
     <string name="blockExternalImages">外部画像をブロック</string>
     <string name="bold">太字</string>
     <string name="bulletList">箇条書き</string>
-    <string name="byTag">タグ別</string>
+    <string name="byTag">分類別</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">書式をクリア</string>
     <string name="colorBlind">色覚サポートモード</string>
@@ -4422,4 +4422,8 @@
     <string name="categoryColor">分類の色</string>
     <string name="attachFromGallery">写真とビデオ</string>
     <string name="mentionHint">メンション: 名前を入力してください</string>
+    <string name="categoriesMixedHint">Exchange のメールボックスはサーバーと Outlook に、その他はこの端末に保存</string>
+    <string name="categoryColorDefault">既定の色</string>
+    <string name="outlookCategoriesHint">Exchange のメールボックスから、Outlook と同じ色で表示します。独自の色も選べます（アプリ内でのみ表示）。</string>
+    <string name="smsShort">SMS</string>
 </resources>

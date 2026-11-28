@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokér eksterne billeder</string>
     <string name="bold">Fed</string>
     <string name="bulletList">Punktliste</string>
-    <string name="byTag">Efter tag</string>
+    <string name="byTag">Efter kategori</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Ryd formatering</string>
     <string name="colorBlind">Farveblindetilstand</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Kategorifarve</string>
     <string name="attachFromGallery">Billeder og videoer</string>
     <string name="mentionHint">Omtale: begynd at skrive et navn</string>
+    <string name="categoriesMixedHint">Exchange-postkasser: på serveren og i Outlook; andre: på denne enhed</string>
+    <string name="categoryColorDefault">Standardfarve</string>
+    <string name="outlookCategoriesHint">Fra Exchange-postkasser med farverne fra Outlook. Du kan vælge din egen farve — den vises kun i appen.</string>
+    <string name="smsShort">SMS</string>
 </resources>

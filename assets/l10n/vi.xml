@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Chặn hình ảnh bên ngoài</string>
     <string name="bold">Đậm</string>
     <string name="bulletList">Danh sách dấu đầu dòng</string>
-    <string name="byTag">Theo thẻ</string>
+    <string name="byTag">Theo danh mục</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Xóa định dạng</string>
     <string name="colorBlind">Chế độ mù màu</string>
@@ -4422,4 +4422,8 @@
     <string name="categoryColor">Màu thể loại</string>
     <string name="attachFromGallery">Ảnh và video</string>
     <string name="mentionHint">Nhắc tên: bắt đầu nhập tên</string>
+    <string name="categoriesMixedHint">Hộp thư Exchange: trên máy chủ và Outlook; các hộp khác: trên thiết bị này</string>
+    <string name="categoryColorDefault">Màu mặc định</string>
+    <string name="outlookCategoriesHint">Từ hộp thư Exchange, với màu như trong Outlook. Bạn có thể chọn màu riêng — chỉ hiển thị trong ứng dụng.</string>
+    <string name="smsShort">SMS</string>
 </resources>

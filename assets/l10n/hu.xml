@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Külső képek letiltása</string>
     <string name="bold">Félkövér</string>
     <string name="bulletList">Felsorolás</string>
-    <string name="byTag">Címke szerint</string>
+    <string name="byTag">Kategória szerint</string>
     <string name="cc">Másolat</string>
     <string name="clearFormatting">Formázás törlése</string>
     <string name="colorBlind">Színtévesztő mód</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Kategória színe</string>
     <string name="attachFromGallery">Fotók és videók</string>
     <string name="mentionHint">Említés: kezdje beírni a nevet</string>
+    <string name="categoriesMixedHint">Exchange-postafiókok: a szerveren és az Outlookban; a többi: ezen az eszközön</string>
+    <string name="categoryColorDefault">Alapértelmezett szín</string>
+    <string name="outlookCategoriesHint">Az Exchange-postafiókokból, az Outlook színeivel. Választhat saját színt is — az csak az alkalmazásban látszik.</string>
+    <string name="smsShort">SMS</string>
 </resources>

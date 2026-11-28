@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blocca immagini esterne</string>
     <string name="bold">Grassetto</string>
     <string name="bulletList">Elenco puntato</string>
-    <string name="byTag">Per tag</string>
+    <string name="byTag">Per categoria</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Cancella formattazione</string>
     <string name="colorBlind">Modalità daltonismo</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Colore della categoria</string>
     <string name="attachFromGallery">Foto e video</string>
     <string name="mentionHint">Menzione: inizia a digitare un nome</string>
+    <string name="categoriesMixedHint">Caselle Exchange: sul server e in Outlook; le altre: su questo dispositivo</string>
+    <string name="categoryColorDefault">Colore predefinito</string>
+    <string name="outlookCategoriesHint">Dalle caselle Exchange, con i colori di Outlook. Puoi scegliere un colore tuo: sarà visibile solo nell\'app.</string>
+    <string name="smsShort">SMS</string>
 </resources>

@@ -121,7 +121,7 @@
     <string name="blockExternalImages">حظر الصور الخارجية</string>
     <string name="bold">غامق</string>
     <string name="bulletList">قائمة نقطية</string>
-    <string name="byTag">حسب الوسم</string>
+    <string name="byTag">حسب الفئة</string>
     <string name="cc">نسخة</string>
     <string name="clearFormatting">مسح التنسيق</string>
     <string name="colorBlind">وضع عمى الألوان</string>
@@ -4527,4 +4527,8 @@
     <string name="categoryColor">لون الفئة</string>
     <string name="attachFromGallery">الصور ومقاطع الفيديو</string>
     <string name="mentionHint">إشارة: ابدأ بكتابة اسم</string>
+    <string name="categoriesMixedHint">صناديق Exchange: على الخادم وفي Outlook؛ والبقية: على هذا الجهاز</string>
+    <string name="categoryColorDefault">اللون الافتراضي</string>
+    <string name="outlookCategoriesHint">من صناديق Exchange بألوان Outlook. يمكنك اختيار لون خاص بك — يظهر في التطبيق فقط.</string>
+    <string name="smsShort">SMS</string>
 </resources>

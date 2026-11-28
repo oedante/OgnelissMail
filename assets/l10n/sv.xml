@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blockera externa bilder</string>
     <string name="bold">Fet</string>
     <string name="bulletList">Punktlista</string>
-    <string name="byTag">Efter tagg</string>
+    <string name="byTag">Efter kategori</string>
     <string name="cc">Kopia</string>
     <string name="clearFormatting">Rensa formatering</string>
     <string name="colorBlind">Färgblindhetsläge</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Kategorifärg</string>
     <string name="attachFromGallery">Bilder och videor</string>
     <string name="mentionHint">Omnämnande: börja skriva ett namn</string>
+    <string name="categoriesMixedHint">Exchange-brevlådor: på servern och i Outlook; andra: på den här enheten</string>
+    <string name="categoryColorDefault">Standardfärg</string>
+    <string name="outlookCategoriesHint">Från Exchange-brevlådor, med färgerna från Outlook. Du kan välja en egen färg — den syns bara i appen.</string>
+    <string name="smsShort">Sms</string>
 </resources>

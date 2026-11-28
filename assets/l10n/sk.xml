@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokovať externé obrázky</string>
     <string name="bold">Tučné</string>
     <string name="bulletList">Odrážky</string>
-    <string name="byTag">Podľa štítka</string>
+    <string name="byTag">Podľa kategórie</string>
     <string name="cc">Kópia</string>
     <string name="clearFormatting">Vymazať formátovanie</string>
     <string name="colorBlind">Režim pre farbosleposť</string>
@@ -4464,4 +4464,8 @@
     <string name="categoryColor">Farba kategórie</string>
     <string name="attachFromGallery">Fotky a videá</string>
     <string name="mentionHint">Zmienka: začnite písať meno</string>
+    <string name="categoriesMixedHint">Schránky Exchange: na serveri a v Outlooku; ostatné: v tomto zariadení</string>
+    <string name="categoryColorDefault">Predvolená farba</string>
+    <string name="outlookCategoriesHint">Zo schránok Exchange, s farbami ako v Outlooku. Môžete zvoliť vlastnú farbu — uvidíte ju len v aplikácii.</string>
+    <string name="smsShort">SMS</string>
 </resources>

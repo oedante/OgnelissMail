@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Bloquer les images externes</string>
     <string name="bold">Gras</string>
     <string name="bulletList">Liste à puces</string>
-    <string name="byTag">Par étiquette</string>
+    <string name="byTag">Par catégorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Effacer la mise en forme</string>
     <string name="colorBlind">Mode daltonien</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Couleur de catégorie</string>
     <string name="attachFromGallery">Photos et vidéos</string>
     <string name="mentionHint">Mention : saisissez un nom</string>
+    <string name="categoriesMixedHint">Boîtes Exchange : sur le serveur et dans Outlook ; autres : sur cet appareil</string>
+    <string name="categoryColorDefault">Couleur par défaut</string>
+    <string name="outlookCategoriesHint">Issues des boîtes Exchange, avec les couleurs d\'Outlook. Vous pouvez choisir votre couleur — elle n\'est visible que dans l\'application.</string>
+    <string name="smsShort">SMS</string>
 </resources>

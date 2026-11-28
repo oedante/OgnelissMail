@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Estä ulkoiset kuvat</string>
     <string name="bold">Lihavointi</string>
     <string name="bulletList">Luettelomerkit</string>
-    <string name="byTag">Tunnisteen mukaan</string>
+    <string name="byTag">Luokan mukaan</string>
     <string name="cc">Kopio</string>
     <string name="clearFormatting">Poista muotoilu</string>
     <string name="colorBlind">Värisokeustila</string>
@@ -4443,4 +4443,8 @@
     <string name="categoryColor">Luokan väri</string>
     <string name="attachFromGallery">Kuvat ja videot</string>
     <string name="mentionHint">Maininta: aloita nimen kirjoittaminen</string>
+    <string name="categoriesMixedHint">Exchange-postilaatikot: palvelimella ja Outlookissa; muut: tällä laitteella</string>
+    <string name="categoryColorDefault">Oletusväri</string>
+    <string name="outlookCategoriesHint">Exchange-postilaatikoista Outlookin väreillä. Voit valita oman värin — se näkyy vain sovelluksessa.</string>
+    <string name="smsShort">Tekstiviesti</string>
 </resources>

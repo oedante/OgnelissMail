@@ -83,6 +83,10 @@ class CategoryColors {
     await prefs.setString(_prefKey, jsonEncode([for (final r in kept) {'n': r.name.trim(), 'c': r.color}]));
   }
 
+  /// Цвет категории из главного списка ящика (как в Outlook); null — такой
+  /// категории в списке нет.
+  static Color? serverColor(String name) => _server[name.trim().toLowerCase()];
+
   /// Цвет первой категории из списка; null — категорий нет.
   static Color? of(Iterable<String> categories) {
     for (final c in categories) {

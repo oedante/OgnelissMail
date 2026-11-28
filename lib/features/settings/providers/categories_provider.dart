@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart' show Color;
 import 'package:flutter_riverpod/legacy.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../core/utils/category_colors.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 
 /// Стандартные категории «из коробки» — нейтральные, для любых пользователей.
@@ -131,11 +132,14 @@ const Map<String, int> _outlookPresets = {
   'фиолетовая категория': 5, 'purple category': 5,
 };
 
-/// Цвет категории: выбранный пользователем, стандартный Outlook по
-/// названию, иначе — постоянный цвет палитры по названию.
+/// Цвет категории: выбранный пользователем, цвет из Outlook (главный
+/// список категорий ящика Exchange), стандартный Outlook по названию, иначе —
+/// постоянный цвет палитры по названию.
 Color categoryColor(String name, Map<String, int> chosen) {
   final c = chosen[name];
   if (c != null) return Color(c);
+  final server = CategoryColors.serverColor(name);
+  if (server != null) return server;
   final preset = _outlookPresets[name.trim().toLowerCase()];
   if (preset != null) return categoryPalette[preset];
   var h = 0;
@@ -164,6 +168,13 @@ class CategoryColorsNotifier extends StateNotifier<Map<String, int>> {
 
   Future<void> set(String name, Color color) async {
     state = {...state, name: color.toARGB32()};
+    await _p.setString(_key, jsonEncode(state));
+  }
+
+  /// Вернуть цвет по умолчанию (из Outlook или палитры).
+  Future<void> clear(String name) async {
+    if (!state.containsKey(name)) return;
+    state = {...state}..remove(name);
     await _p.setString(_key, jsonEncode(state));
   }
 }

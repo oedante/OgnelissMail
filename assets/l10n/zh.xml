@@ -121,7 +121,7 @@
     <string name="blockExternalImages">阻止外部图片</string>
     <string name="bold">粗体</string>
     <string name="bulletList">项目符号列表</string>
-    <string name="byTag">按标签</string>
+    <string name="byTag">按类别</string>
     <string name="cc">抄送</string>
     <string name="clearFormatting">清除格式</string>
     <string name="colorBlind">色盲模式</string>
@@ -4422,4 +4422,8 @@
     <string name="categoryColor">类别颜色</string>
     <string name="attachFromGallery">照片和视频</string>
     <string name="mentionHint">提及：开始输入姓名</string>
+    <string name="categoriesMixedHint">Exchange 邮箱：保存在服务器和 Outlook 中；其他：保存在本设备</string>
+    <string name="categoryColorDefault">默认颜色</string>
+    <string name="outlookCategoriesHint">来自 Exchange 邮箱，颜色与 Outlook 相同。可以自选颜色——仅在应用中显示。</string>
+    <string name="smsShort">短信</string>
 </resources>

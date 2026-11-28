@@ -3,6 +3,7 @@
 // звонок — на полный, если он есть; короткий внутренний — не для SMS.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:ogneliss/data/models/account_model.dart';
 import 'package:ogneliss/features/contacts/phone_actions.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +35,22 @@ void main() {
     expect(PhoneActions.viaMain('+7 (3496) 12-34-56', '39-397'), '+73496123456,39397');
   });
 
+  test('основной номер — только для своей организации (рабочий ящик, свой домен)', () {
+    AccountModel acc(String email, AccountType type, {String? kind}) =>
+        AccountModel(id: email, type: type, email: email, displayName: '', username: email,
+            accountKind: kind, createdAt: DateTime(2026));
+    final exchange = acc('me@yamal.example', AccountType.activesync);
+    final gmail = acc('me@gmail.com', AccountType.imap);
+    final workImap = acc('me@factory.example', AccountType.imap, kind: 'work');
+    final all = [exchange, gmail, workImap];
+    expect(PhoneActions.orgDomainFor('ivan@yamal.example', all), 'yamal.example');
+    expect(PhoneActions.orgDomainFor('ivan@factory.example', all), 'factory.example', reason: 'отмечен «рабочим»');
+    expect(PhoneActions.orgDomainFor('friend@gmail.com', all), isNull, reason: 'общедоступная почта');
+    expect(PhoneActions.orgDomainFor('ivan@partner.example', all), isNull, reason: 'чужая организация');
+    expect(PhoneActions.orgDomainFor(null, all), isNull, reason: 'без адреса — как есть');
+    expect(PhoneActions.orgDomainFor('ivan@yamal.example', [gmail]), isNull);
+  });
+
   test('основной номер запоминается по домену организации', () async {
     SharedPreferences.setMockInitialValues({});
     await PhoneActions.setMainNumber('andrey@yamal.example', '+7 3496 12-34-56');
@@ -41,6 +58,9 @@ void main() {
     expect(await PhoneActions.mainNumberFor('x@other.example'), isNull);
     await PhoneActions.setMainNumber('andrey@yamal.example', '');
     expect(await PhoneActions.mainNumberFor('ivan@yamal.example'), isNull);
+    // Без адреса — общего номера нет.
+    await PhoneActions.setMainNumber(null, '+7 3496 00-00-00');
+    expect(await PhoneActions.mainNumberFor(null), isNull);
   });
 
   testWidgets('окно «Добавочный номер»: ввели основной — запомнили', (tester) async {

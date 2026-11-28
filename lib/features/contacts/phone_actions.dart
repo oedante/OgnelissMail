@@ -16,11 +16,15 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb, visibleForTesting;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../core/logging/app_logger.dart';
 import '../../core/theme/app_icons.dart';
+import '../../core/utils/mail_domains.dart' show kPublicMailDomains;
+import '../../data/models/account_model.dart';
+import '../mail/providers/mail_providers.dart' show accountsProvider;
 import '../../l10n/app_localizations.dart';
 import '../../widgets/ui/action_sheet.dart';
 import '../../widgets/common/inline_notice.dart' show showInlineError;
@@ -65,7 +69,8 @@ abstract final class PhoneActions {
 
   /// Добавочный без основного номера («39-397»): до 6 цифр, без «+».
   /// С мобильного на него звонят через основной номер организации
-  /// (замечание владельца 28.11.2026).
+  /// (замечание владельца 28.11.2026) — у контактов своей организации
+  /// ([orgDomainFor]): короткий номер приходит из адресной книги Exchange.
   static bool isExtension(String? phone) {
     final c = clean(phone ?? '');
     final digits = c.replaceAll('+', '').length;
@@ -100,16 +105,40 @@ abstract final class PhoneActions {
     }
   }
 
+  /// Домен организации контакта [email] — если это домен своего рабочего
+  /// ящика (Exchange или отмеченного «рабочим»), не общедоступной почты
+  /// (2.7.5, решение владельца 28.11.2026: короткий номер приходит из
+  /// адресной книги Exchange; у остальных контакт и так с полным номером).
+  /// null — основной номер не подставляется, добавочный набирается как есть.
+  static String? orgDomainFor(String? email, Iterable<AccountModel> accounts) {
+    final d = _domainOf(email);
+    if (d.isEmpty || kPublicMailDomains.contains(d)) return null;
+    for (final a in accounts) {
+      if (a.isWork && _domainOf(a.email) == d) return d;
+    }
+    return null;
+  }
+
+  static List<AccountModel> _accountsOf(BuildContext context) {
+    try {
+      return ProviderScope.containerOf(context, listen: false).read(accountsProvider);
+    } catch (_) {
+      return const [];
+    }
+  }
+
   /// Основной номер организации для адреса [email] (по домену); null — не задан.
   static Future<String?> mainNumberFor(String? email) async {
-    final m = await _mains();
-    return m[_domainOf(email)] ?? m[''];
+    final d = _domainOf(email);
+    if (d.isEmpty) return null;
+    return (await _mains())[d];
   }
 
   /// Запомнить основной номер организации [email] (пусто — забыть).
   static Future<void> setMainNumber(String? email, String number) async {
     final m = await _mains();
     final key = _domainOf(email);
+    if (key.isEmpty) return;
     if (number.trim().isEmpty) {
       m.remove(key);
     } else {
@@ -172,7 +201,7 @@ abstract final class PhoneActions {
   /// через основной номер организации адреса [email]: его набор, после
   /// ответа — добавочный. Основной номер не задан — спросить ([context]).
   static Future<void> call(String phone, AppLocalizations l10n, {BuildContext? context, String? email}) async {
-    if (isExtension(phone) && context != null && context.mounted) {
+    if (isExtension(phone) && context != null && context.mounted && orgDomainFor(email, _accountsOf(context)) != null) {
       var main = await mainNumberFor(email);
       if (main == null) {
         if (!context.mounted) return;
@@ -233,8 +262,10 @@ abstract final class PhoneActions {
     if (number.isEmpty) return;
     unawaited(HapticFeedback.mediumImpact());
     final ext = isExtension(number);
+    // Основной номер — только для добавочных своей организации.
+    final org = ext && orgDomainFor(email, _accountsOf(context)) != null;
     final apps = ext ? const <PhoneApp>[] : await appsFor(number);
-    final main = ext ? await mainNumberFor(email) : null;
+    final main = org ? await mainNumberFor(email) : null;
     if (!context.mounted) return;
     final picked = await showActionSheet<String>(
       context,
@@ -244,7 +275,7 @@ abstract final class PhoneActions {
         ActionSheetItem(icon: AppIcons.phone, label: l10n.tr('call'), subtitle: main, value: 'call'),
         if (!ext && _extOf(number).isEmpty)
           ActionSheetItem(icon: AppIcons.chat_bubble, label: l10n.tr('phoneSms'), value: 'sms'),
-        if (ext)
+        if (org)
           ActionSheetItem(
               icon: AppIcons.business, label: l10n.tr('phoneExtMain'), subtitle: main, value: 'main'),
         for (var i = 0; i < apps.length; i++)

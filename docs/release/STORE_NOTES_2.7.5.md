@@ -48,8 +48,34 @@
   (звонок — на полный номер, если он есть; SMS — на мобильный, иначе на
   рабочий), у полного номера в «Связи» — значок SMS; «Ещё» карточки по
   удержанию — «SMS»; карточка человека из письма — «Звонок» и «SMS».
-  Удержание кнопки звонка в списке — SMS и мессенджеры номера. Добавочный
-  («доб. 123») больше не уходит в набираемый номер.
+  Удержание кнопки звонка в списке — SMS и мессенджеры номера.
+- **Добавочные номера** (замечание владельца 28.11.2026: «39-397 — добавочный,
+  позвонить можно, зная основной номер»). Звонок на добавочный (до 6 цифр)
+  с мобильного: приложение один раз спрашивает основной номер организации
+  (для домена почты контакта, например `yamalspg.ru`) и запоминает его;
+  дальше набирает основной номер, а после ответа — добавочный (пауза в
+  номере, как «доб.» в телефонной книге). «Набрать как есть» — для звонка
+  с рабочего телефона. Сменить основной номер — удержание номера →
+  «Основной номер организации». Номер с «доб. 123» набирается так же:
+  основной, после ответа — добавочный (раньше цифры добавочного
+  дописывались к номеру). На добавочные и номера с «доб.» SMS не
+  предлагается.
+- **Мобильный интернет** (журнал пользователя 27.11.2026):
+  - **письмо не уходило, если сразу свернуть приложение** (Android): письмо
+    начало уходить, через 3 с приложение свернули — Android 12+ его
+    заморозил, и отправка встала до следующего открытия («прервана, статус
+    неизвестен»). Теперь, пока идёт отправка или проверка почты, свёрнутое
+    приложение ставит короткую задачу системе (до 3 минут) — его не
+    замораживают, письмо уходит. На iPhone так было и раньше, но отправку
+    из «Исходящих» (с 2.7.4 — все письма) защита не видела — исправлено;
+  - **проверка ящика висела 90 с на входе**: ответ сервера Яндекса на вход
+    потерялся, приложение ждало общий срок ответа — 3 минуты. Теперь на
+    вход — 25 с, затем одно новое подключение;
+  - **Gmail по паролю приложения**: на каждой проверке приложение ходило в
+    календарь и контакты Google и получало отказ (161 запрос за сутки) —
+    Google пускает туда только по входу через Google. Теперь не ходит;
+  - в журнале — сколько этап синхронизации шёл на самом деле (было «не
+    завершился за 180 с» при обрыве через 90).
 - **Флажок «Сегодня» из Outlook во вчерашнем дне** (4PDA, 28.11.2026):
   срок брался из UtcDueDate (местная полночь в UTC — к востоку от Гринвича
   это вчерашний день по UTC). Теперь день — из плавающей DueDate. Так же
@@ -78,19 +104,21 @@
 
 **RU.** @-упоминания с подсказками из контактов и адресной книги; категории с
 цветами вместо тегов — и для нескольких писем сразу; флажок и срок одной
-кнопкой; вложения — по лимиту сервера; звонок и SMS контактам; рисунок
-погоды в «Моём дне»; на iPhone — фото из галереи; исправления дат флажков и
-группировки задач.
+кнопкой; вложения — по лимиту сервера; звонок и SMS контактам, добавочные —
+через основной номер; рисунок погоды в «Моём дне»; на iPhone — фото из
+галереи; письмо уходит, даже если сразу свернуть приложение; исправления дат
+флажков и группировки задач.
 
 **EN.** @mentions with suggestions from contacts and the company directory;
 colour categories instead of tags, also for several emails at once; flag and
 due date in one button; attachments limited only by your server; call and
-SMS for contacts; weather picture in My day; iPhone: photos from the gallery;
-fixes for flag dates and task grouping.
+SMS for contacts, extensions via the main number; weather picture in My day;
+iPhone: photos from the gallery; email is sent even if you minimize the app
+right away; fixes for flag dates and task grouping.
 
 ## Google Play — короткий текст (27 языков)
 
-Самый длинный — 498 знаков (es-ES; предел — 500).
+Самый длинный — 498 знаков (de-DE; предел — 500).
 
 ```
 <ru-RU>
@@ -100,7 +128,7 @@ fixes for flag dates and task grouping.
 • Вложения — по лимиту вашего сервера
 • Контакты: звонок и SMS на полный номер; выбор адресатов — сразу список
 • Рисунок погоды в «Моём дне»; на iPhone — фото из галереи
-• Исправления: даты флажков из Outlook, группы задач по неделям
+• Исправления: отправка после сворачивания, даты флажков Outlook, задачи по неделям
 </ru-RU>
 <en-US>
 • @mentions: type @ and a name to get suggestions from contacts and the company directory
@@ -109,7 +137,7 @@ fixes for flag dates and task grouping.
 • Attachments are limited only by your server
 • Contacts: call and SMS for full numbers; the recipient picker lists contacts right away
 • Weather picture in My day; iPhone: photos from the gallery
-• Fixes: Outlook flag dates, task groups by week
+• Fixes: sending after minimizing the app, Outlook flag dates, task groups by week
 </en-US>
 <de-DE>
 • @-Erwähnungen: @ und Name eingeben – Vorschläge aus Kontakten und dem Firmenverzeichnis
@@ -118,16 +146,16 @@ fixes for flag dates and task grouping.
 • Anhänge nur noch durch Ihren Server begrenzt
 • Kontakte: Anruf und SMS an vollständige Nummern; die Empfängerauswahl zeigt sofort Kontakte
 • Wetterbild in „Mein Tag“; iPhone: Fotos aus der Galerie
-• Korrekturen: Flaggendaten aus Outlook, Aufgaben nach Woche
+• Korrekturen: Senden nach dem Minimieren, Flaggendaten aus Outlook, Aufgaben nach Woche
 </de-DE>
 <fr-FR>
-• Mentions @ : tapez @ et un nom — suggestions des contacts et de l’annuaire de l’entreprise
+• Mentions @ : tapez @ et un nom — suggestions des contacts et de l’annuaire
 • Catégories de couleur au lieu des étiquettes, comme dans Outlook — aussi en lot
 • Indicateur et échéance en un seul bouton
 • Pièces jointes limitées seulement par votre serveur
 • Contacts : appel et SMS vers les numéros complets ; choix des destinataires immédiat
 • Image météo dans « Ma journée » ; iPhone : photos de la galerie
-• Corrections : dates d’indicateur Outlook, tâches par semaine
+• Corrections : envoi après réduction de l’app, dates Outlook, tâches par semaine
 </fr-FR>
 <ar>
 • الإشارات @: اكتب @ واسمًا لتظهر اقتراحات من جهات الاتصال ودليل المؤسسة
@@ -136,7 +164,7 @@ fixes for flag dates and task grouping.
 • المرفقات محدودة بخادمك فقط
 • جهات الاتصال: اتصال وSMS للأرقام الكاملة؛ اختيار المستلمين يعرض جهات الاتصال فورًا
 • صورة الطقس في «يومي»؛ على iPhone: صور من المعرض
-• إصلاحات: تواريخ أعلام Outlook، وتجميع المهام حسب الأسبوع
+• إصلاحات: الإرسال بعد تصغير التطبيق، تواريخ أعلام Outlook، تجميع المهام حسب الأسبوع
 </ar>
 <hu-HU>
 • @-említések: írjon @-ot és nevet – javaslatok a névjegyekből és a céges címjegyzékből
@@ -145,7 +173,7 @@ fixes for flag dates and task grouping.
 • A mellékletek korlátja csak a szerveré
 • Névjegyek: hívás és SMS teljes számra; a címzettválasztó azonnal listáz
 • Időjárás-kép a „Napom” nézetben; iPhone: fotók a galériából
-• Javítások: Outlook-zászlók dátuma, feladatok heti csoportjai
+• Javítások: küldés háttérbe tétel után, Outlook-zászlók dátuma, heti feladatok
 </hu-HU>
 <vi>
 • Nhắc tên @: gõ @ và tên để có gợi ý từ danh bạ và danh bạ công ty
@@ -154,7 +182,7 @@ fixes for flag dates and task grouping.
 • Tệp đính kèm chỉ giới hạn theo máy chủ của bạn
 • Danh bạ: gọi và SMS tới số đầy đủ; chọn người nhận hiện danh bạ ngay
 • Hình thời tiết trong Ngày của tôi; iPhone: ảnh từ thư viện
-• Sửa lỗi: ngày cờ từ Outlook, nhóm công việc theo tuần
+• Sửa lỗi: gửi thư sau khi thu nhỏ ứng dụng, ngày cờ từ Outlook, nhóm công việc theo tuần
 </vi>
 <da-DK>
 • @-omtaler: skriv @ og et navn – forslag fra kontakter og firmaets adressebog
@@ -163,7 +191,7 @@ fixes for flag dates and task grouping.
 • Vedhæftninger begrænses kun af din server
 • Kontakter: opkald og sms til fulde numre; valg af modtagere viser kontakter med det samme
 • Vejrbillede i Min dag; iPhone: fotos fra galleriet
-• Rettelser: flagdatoer fra Outlook, opgaver grupperet efter uge
+• Rettelser: afsendelse efter minimering, flagdatoer fra Outlook, opgaver efter uge
 </da-DK>
 <iw-IL>
 • אזכורים עם @: הקלידו @ ושם — הצעות מאנשי הקשר ומספר הכתובות של הארגון
@@ -172,7 +200,7 @@ fixes for flag dates and task grouping.
 • קבצים מצורפים מוגבלים רק לפי השרת שלכם
 • אנשי קשר: שיחה ו-SMS למספרים מלאים; בחירת נמענים מציגה אנשי קשר מיד
 • תמונת מזג אוויר ב„היום שלי”; ב-iPhone: תמונות מהגלריה
-• תיקונים: תאריכי דגלים מ-Outlook, קיבוץ משימות לפי שבוע
+• תיקונים: שליחה אחרי מזעור האפליקציה, תאריכי דגלים מ-Outlook, משימות לפי שבוע
 </iw-IL>
 <id>
 • Sebutan @: ketik @ dan nama — saran dari kontak dan direktori perusahaan
@@ -181,25 +209,25 @@ fixes for flag dates and task grouping.
 • Lampiran hanya dibatasi oleh server Anda
 • Kontak: telepon dan SMS ke nomor lengkap; pemilih penerima langsung menampilkan kontak
 • Gambar cuaca di Hari Saya; iPhone: foto dari galeri
-• Perbaikan: tanggal bendera Outlook, tugas per minggu
+• Perbaikan: kirim setelah aplikasi diminimalkan, tanggal bendera Outlook, tugas per minggu
 </id>
 <es-ES>
-• Menciones con @: escribe @ y un nombre — sugerencias de contactos y del directorio de la empresa
+• Menciones con @: escribe @ y un nombre — sugerencias de contactos y del directorio
 • Categorías de color en lugar de etiquetas, como en Outlook, también para varios correos a la vez
 • Marca y vencimiento en un solo botón
 • Adjuntos limitados solo por tu servidor
-• Contactos: llamada y SMS a números completos; los destinatarios se eligen de una lista al instante
+• Contactos: llamada y SMS a números completos; lista de destinatarios al instante
 • Imagen del tiempo en Mi día; iPhone: fotos de la galería
-• Correcciones: fechas de marcas Outlook, tareas por semana
+• Correcciones: envío tras minimizar la app, fechas de marcas Outlook, tareas por semana
 </es-ES>
 <it-IT>
-• Menzioni @: digita @ e un nome per avere suggerimenti da contatti e rubrica aziendale
+• Menzioni @: digita @ e un nome — suggerimenti da contatti e rubrica aziendale
 • Categorie a colori al posto dei tag, come in Outlook, anche per più email insieme
 • Contrassegno e scadenza in un solo pulsante
 • Allegati limitati solo dal tuo server
 • Contatti: chiamata e SMS ai numeri completi; la scelta dei destinatari mostra subito i contatti
 • Immagine meteo in La mia giornata; iPhone: foto dalla galleria
-• Correzioni: date dei contrassegni Outlook, attività per settimana
+• Correzioni: invio dopo aver ridotto l’app, date Outlook, attività per settimana
 </it-IT>
 <zh-CN>
 • @提及：输入 @ 和姓名，即可从联系人和公司通讯录中获得建议
@@ -208,7 +236,7 @@ fixes for flag dates and task grouping.
 • 附件大小仅受您的服务器限制
 • 联系人：可向完整号码拨打电话和发短信；选择收件人时立即显示联系人
 • “我的一天”显示天气图；iPhone：可从相册添加照片
-• 修复：Outlook 旗标日期、任务按周分组
+• 修复：最小化应用后的发送、Outlook 旗标日期、任务按周分组
 </zh-CN>
 <ko-KR>
 • @멘션: @와 이름을 입력하면 연락처와 회사 주소록에서 추천
@@ -217,7 +245,7 @@ fixes for flag dates and task grouping.
 • 첨부 파일은 서버 한도만 적용
 • 연락처: 전체 번호로 전화와 문자, 받는 사람 선택 시 연락처 바로 표시
 • 내 하루에 날씨 그림, iPhone: 갤러리의 사진
-• 수정: Outlook 플래그 날짜, 주별 작업 그룹
+• 수정: 앱을 내린 뒤 보내기, Outlook 플래그 날짜, 주별 작업 그룹
 </ko-KR>
 <nl-NL>
 • @-vermeldingen: typ @ en een naam voor suggesties uit contacten en het bedrijfsadresboek
@@ -226,7 +254,7 @@ fixes for flag dates and task grouping.
 • Bijlagen alleen beperkt door je server
 • Contacten: bellen en sms naar volledige nummers; ontvangers kiezen toont meteen contacten
 • Weerafbeelding in Mijn dag; iPhone: foto's uit de galerij
-• Oplossingen: vlagdatums uit Outlook, taken per week
+• Oplossingen: verzenden na minimaliseren, vlagdatums uit Outlook, taken per week
 </nl-NL>
 <no-NO>
 • @-omtaler: skriv @ og et navn – forslag fra kontakter og firmaets adressebok
@@ -235,7 +263,7 @@ fixes for flag dates and task grouping.
 • Vedlegg begrenses bare av serveren din
 • Kontakter: ring og send SMS til fullstendige numre; valg av mottakere viser kontakter med en gang
 • Værbilde i Min dag; iPhone: bilder fra galleriet
-• Rettelser: flaggdatoer fra Outlook, oppgaver per uke
+• Rettelser: sending etter minimering, flaggdatoer fra Outlook, oppgaver per uke
 </no-NO>
 <pl-PL>
 • Wzmianki @: wpisz @ i imię — podpowiedzi z kontaktów i książki adresowej firmy
@@ -244,25 +272,25 @@ fixes for flag dates and task grouping.
 • Załączniki ogranicza tylko Twój serwer
 • Kontakty: połączenie i SMS na pełne numery; wybór odbiorców od razu pokazuje kontakty
 • Obraz pogody w Moim dniu; iPhone: zdjęcia z galerii
-• Poprawki: daty flag z Outlooka, zadania tygodniami
+• Poprawki: wysyłanie po zminimalizowaniu, daty flag z Outlooka, zadania tygodniami
 </pl-PL>
 <pt-BR>
-• Menções com @: digite @ e um nome para ver sugestões dos contatos e do diretório da empresa
+• Menções com @: digite @ e um nome — sugestões dos contatos e do diretório
 • Categorias coloridas no lugar de marcadores, como no Outlook — também em vários e-mails
 • Sinalizador e prazo em um só botão
 • Anexos limitados apenas pelo seu servidor
 • Contatos: ligação e SMS para números completos; escolha de destinatários mostra os contatos na hora
 • Imagem do clima em Meu dia; iPhone: fotos da galeria
-• Correções: datas de sinalizadores do Outlook, tarefas por semana
+• Correções: envio após minimizar o app, datas do Outlook, tarefas por semana
 </pt-BR>
 <ro>
 • Mențiuni @: tastați @ și un nume — sugestii din contacte și agenda companiei
 • Categorii colorate în locul etichetelor, ca în Outlook — și pentru mai multe mesaje deodată
 • Steag și termen într-un singur buton
 • Atașamentele sunt limitate doar de serverul dvs.
-• Contacte: apel și SMS către numere complete; alegerea destinatarilor arată imediat contactele
+• Contacte: apel și SMS către numere complete; destinatarii — imediat din listă
 • Imagine meteo în Ziua mea; iPhone: fotografii din galerie
-• Remedieri: datele steagurilor din Outlook, sarcini pe săptămâni
+• Remedieri: trimiterea după minimizare, date Outlook, sarcini pe săptămâni
 </ro>
 <sk>
 • Zmienky @: napíšte @ a meno – návrhy z kontaktov a firemného adresára
@@ -271,7 +299,7 @@ fixes for flag dates and task grouping.
 • Prílohy obmedzuje len váš server
 • Kontakty: hovor a SMS na úplné čísla; výber príjemcov hneď ukáže kontakty
 • Obrázok počasia v Mojom dni; iPhone: fotky z galérie
-• Opravy: dátumy príznakov z Outlooku, úlohy podľa týždňov
+• Opravy: odosielanie po minimalizovaní, dátumy príznakov z Outlooku, úlohy podľa týždňov
 </sk>
 <th>
 • กล่าวถึงด้วย @: พิมพ์ @ และชื่อ เพื่อดูคำแนะนำจากรายชื่อติดต่อและสมุดที่อยู่ขององค์กร
@@ -280,7 +308,7 @@ fixes for flag dates and task grouping.
 • ไฟล์แนบจำกัดตามเซิร์ฟเวอร์ของคุณเท่านั้น
 • รายชื่อติดต่อ: โทรและส่ง SMS ไปยังหมายเลขเต็ม; เลือกผู้รับแล้วเห็นรายชื่อทันที
 • ภาพสภาพอากาศใน วันของฉัน; iPhone: รูปจากคลังภาพ
-• แก้ไข: วันที่ธงจาก Outlook, จัดกลุ่มงานตามสัปดาห์
+• แก้ไข: การส่งหลังย่อแอป, วันที่ธงจาก Outlook, จัดกลุ่มงานตามสัปดาห์
 </th>
 <tr-TR>
 • @ bahsetme: @ ve bir ad yazın — kişilerden ve şirket rehberinden öneriler
@@ -289,7 +317,7 @@ fixes for flag dates and task grouping.
 • Ekler yalnızca sunucunuzun sınırına bağlı
 • Kişiler: tam numaralara arama ve SMS; alıcı seçimi kişileri hemen gösterir
 • Günüm'de hava durumu resmi; iPhone: galeriden fotoğraflar
-• Düzeltmeler: Outlook bayrak tarihleri, görevler haftalara göre
+• Düzeltmeler: uygulama küçültülünce gönderim, Outlook bayrak tarihleri, haftalık görevler
 </tr-TR>
 <fi-FI>
 • @-maininnat: kirjoita @ ja nimi – ehdotukset yhteystiedoista ja yrityksen osoitteistosta
@@ -298,7 +326,7 @@ fixes for flag dates and task grouping.
 • Liitteitä rajoittaa vain palvelimesi
 • Yhteystiedot: puhelu ja tekstiviesti täydellisiin numeroihin; vastaanottajat näkyvät heti
 • Sääkuva Minun päiväni -näkymässä; iPhone: kuvat galleriasta
-• Korjaukset: Outlookin lippujen päivät, tehtävät viikoittain
+• Korjaukset: lähetys pienentämisen jälkeen, Outlookin liput, tehtävät viikoittain
 </fi-FI>
 <hi-IN>
 • @ उल्लेख: @ और नाम लिखें — संपर्कों और कंपनी निर्देशिका से सुझाव
@@ -307,7 +335,7 @@ fixes for flag dates and task grouping.
 • अटैचमेंट की सीमा अब सिर्फ़ आपके सर्वर की
 • संपर्क: पूरे नंबर पर कॉल और SMS; प्राप्तकर्ता चुनते ही संपर्क दिखते हैं
 • मेरा दिन में मौसम का चित्र; iPhone: गैलरी से फ़ोटो
-• सुधार: Outlook फ़्लैग की तारीखें, हफ़्ते के हिसाब से कार्य
+• सुधार: ऐप छोटा करने के बाद भेजना, Outlook फ़्लैग की तारीखें, हफ़्ते के हिसाब से कार्य
 </hi-IN>
 <cs-CZ>
 • Zmínky @: napište @ a jméno – návrhy z kontaktů a firemního adresáře
@@ -316,7 +344,7 @@ fixes for flag dates and task grouping.
 • Přílohy omezuje jen váš server
 • Kontakty: hovor a SMS na úplná čísla; výběr příjemců hned ukáže kontakty
 • Obrázek počasí v Mém dni; iPhone: fotky z galerie
-• Opravy: data příznaků z Outlooku, úkoly podle týdnů
+• Opravy: odesílání po minimalizaci, data příznaků z Outlooku, úkoly podle týdnů
 </cs-CZ>
 <sv-SE>
 • @-omnämnanden: skriv @ och ett namn – förslag från kontakter och företagets adressbok
@@ -325,7 +353,7 @@ fixes for flag dates and task grouping.
 • Bilagor begränsas bara av din server
 • Kontakter: samtal och sms till fullständiga nummer; mottagarvalet visar kontakter direkt
 • Väderbild i Min dag; iPhone: foton från galleriet
-• Rättelser: flaggdatum från Outlook, uppgifter per vecka
+• Rättelser: sändning efter minimering, flaggdatum från Outlook, uppgifter per vecka
 </sv-SE>
 <ja-JP>
 • @メンション：@ と名前を入力すると、連絡先と社内アドレス帳から候補を表示
@@ -334,7 +362,7 @@ fixes for flag dates and task grouping.
 • 添付ファイルの上限はサーバーの制限のみ
 • 連絡先：完全な番号へ電話と SMS、宛先の選択ですぐに連絡先を表示
 • 「マイデイ」に天気のイラスト、iPhone はギャラリーの写真を添付
-• 修正：Outlook のフラグの日付、タスクの週ごとのグループ
+• 修正：アプリを閉じた後の送信、Outlook のフラグの日付、タスクの週ごとのグループ
 </ja-JP>
 ```
 
@@ -348,7 +376,7 @@ fixes for flag dates and task grouping.
 • Вложения — по лимиту вашего сервера
 • Контакты: звонок и SMS на полный номер; выбор адресатов — сразу список
 • Рисунок погоды в «Моём дне»; на iPhone — фото из галереи
-• Исправления: даты флажков из Outlook, группы задач по неделям
+• Исправления: отправка после сворачивания, даты флажков Outlook, задачи по неделям
 </ru-RU>
 <en-US>
 • @mentions: type @ and a name to get suggestions from contacts and the company directory
@@ -357,7 +385,7 @@ fixes for flag dates and task grouping.
 • Attachments are limited only by your server
 • Contacts: call and SMS for full numbers; the recipient picker lists contacts right away
 • Weather picture in My day; iPhone: photos from the gallery
-• Fixes: Outlook flag dates, task groups by week
+• Fixes: sending after minimizing the app, Outlook flag dates, task groups by week
 </en-US>
 <de-DE>
 • @-Erwähnungen: @ und Name eingeben – Vorschläge aus Kontakten und dem Firmenverzeichnis
@@ -366,15 +394,15 @@ fixes for flag dates and task grouping.
 • Anhänge nur noch durch Ihren Server begrenzt
 • Kontakte: Anruf und SMS an vollständige Nummern; die Empfängerauswahl zeigt sofort Kontakte
 • Wetterbild in „Mein Tag“; iPhone: Fotos aus der Galerie
-• Korrekturen: Flaggendaten aus Outlook, Aufgaben nach Woche
+• Korrekturen: Senden nach dem Minimieren, Flaggendaten aus Outlook, Aufgaben nach Woche
 </de-DE>
 <fr-FR>
-• Mentions @ : tapez @ et un nom — suggestions des contacts et de l’annuaire de l’entreprise
+• Mentions @ : tapez @ et un nom — suggestions des contacts et de l’annuaire
 • Catégories de couleur au lieu des étiquettes, comme dans Outlook — aussi en lot
 • Indicateur et échéance en un seul bouton
 • Pièces jointes limitées seulement par votre serveur
 • Contacts : appel et SMS vers les numéros complets ; choix des destinataires immédiat
 • Image météo dans « Ma journée » ; iPhone : photos de la galerie
-• Corrections : dates d’indicateur Outlook, tâches par semaine
+• Corrections : envoi après réduction de l’app, dates Outlook, tâches par semaine
 </fr-FR>
 ```

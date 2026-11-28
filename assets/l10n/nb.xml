@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Reduser bildene ved sending, eller fjern noen filer</string>
     <string name="msgSizeOverFiles">Fjern noen filer, eller send dem i separate meldinger</string>
     <string name="msgSizeHelpServer">Grensen på {limit} kommer fra postboksens server: Exchange-retningslinjene eller svaret på en tidligere sending. Størrelsen omfatter vedlegg, meldingsteksten med innlimte bilder og sitatet. Bilder kan legges til utover grensen: du kan redusere dem ved sending.</string>
-    <string name="msgSizeHelpDefault">Grensen på {limit} er vanlig for e-postservere (Exchange, Gmail, Yandex). Hvis serveren din bruker en annen, lærer appen den av Exchange-retningslinjene eller serverens svar på en sending, og husker den for postboksen. Størrelsen omfatter vedlegg, meldingsteksten med innlimte bilder og sitatet. Bilder kan legges til utover grensen: du kan redusere dem ved sending.</string>
     <string name="imageSizeOverLimit">over grensen</string>
     <string name="reminderWeeksBefore">{n} u før</string>
     <string name="reminderAdd">Legg til påminnelse</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">og {n} til</string>
     <string name="startScreen">Startskjerm</string>
     <string name="startScreenHint">Appen åpnes på denne skjermen. Tilbake fra andre deler fører hit, herfra lukkes appen</string>
+    <string name="msgSizeOnly">E-post: {size}</string>
+    <string name="msgSizeHelpUnknown">E-postserveren avgjør hvor stor en e-post kan være — grensen varierer mellom servere. Appen har ingen egen grense. Er e-posten for stor, avviser serveren den: appen viser årsaken og husker grensen for postboksen. Størrelsen omfatter vedlegg, tekst med innlimte bilder og sitatet.</string>
 </resources>

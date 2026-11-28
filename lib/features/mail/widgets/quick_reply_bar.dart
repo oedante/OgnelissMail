@@ -280,7 +280,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     var total = _files.fold<int>(0, (s, f) => s + f.size);
     String? error;
     for (final chosen in picked) {
-      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+      if (limit != null && total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
         final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
         error = l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name);
         continue;

@@ -3181,7 +3181,6 @@
     <string name="msgSizeOverPhotos">صغّر الصور عند الإرسال أو أزل بعض الملفات</string>
     <string name="msgSizeOverFiles">أزل بعض الملفات أو أرسلها في رسائل منفصلة</string>
     <string name="msgSizeHelpServer">الحد {limit} مصدره خادم صندوق البريد: سياسة Exchange أو ردّه على عملية إرسال سابقة. يشمل الحجم المرفقات ونص الرسالة مع الصور الملصقة والاقتباس. يمكن إضافة الصور بما يتجاوز الحد: يمكنك تصغيرها عند الإرسال.</string>
-    <string name="msgSizeHelpDefault">الحد {limit} معتاد في خوادم البريد (Exchange وGmail وYandex). إذا كان خادمك يستخدم حدًا آخر، يتعرّف عليه التطبيق من سياسة Exchange أو من ردّ الخادم عند الإرسال ويتذكره لصندوق البريد. يشمل الحجم المرفقات ونص الرسالة مع الصور الملصقة والاقتباس. يمكن إضافة الصور بما يتجاوز الحد: يمكنك تصغيرها عند الإرسال.</string>
     <string name="imageSizeOverLimit">أكثر من الحد</string>
     <string name="reminderWeeksBefore">قبل {n} أسبوع</string>
     <string name="reminderAdd">إضافة تذكير</string>
@@ -4521,4 +4520,6 @@
     <string name="boardMoreUnread">و{n} أخرى</string>
     <string name="startScreen">شاشة البدء</string>
     <string name="startScreenHint">يُفتح التطبيق على هذه الشاشة. يعود زر الرجوع من الأقسام الأخرى إليها، ومنها يُغلق التطبيق</string>
+    <string name="msgSizeOnly">الرسالة: {size}</string>
+    <string name="msgSizeHelpUnknown">خادم البريد هو من يحدد الحجم الأقصى للرسالة، ويختلف الحد من خادم لآخر. ليس للتطبيق حد خاص به. إذا كانت الرسالة أكبر من المسموح يرفضها الخادم، فيعرض التطبيق السبب ويتذكر الحد لهذا الصندوق. يشمل الحجم المرفقات والنص مع الصور الملصقة والاقتباس.</string>
 </resources>

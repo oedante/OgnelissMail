@@ -3116,7 +3116,6 @@
     <string name="msgSizeOverPhotos">送信時に写真を小さくするか、一部のファイルを削除してください</string>
     <string name="msgSizeOverFiles">一部のファイルを削除するか、別々のメールに分けて送信してください</string>
     <string name="msgSizeHelpServer">上限の{limit}は、メールボックスのサーバーによるものです（Exchangeポリシー、または以前の送信に対するサーバーの応答）。サイズには、添付ファイル、貼り付けた画像を含む本文、引用が含まれます。写真は上限を超えても追加でき、送信時に縮小できます。</string>
-    <string name="msgSizeHelpDefault">上限の{limit}は、メールサーバー（Exchange、Gmail、Yandex）で一般的な値です。お使いのサーバーが別の値を使っている場合、アプリはExchangeポリシーまたは送信時のサーバーの応答から把握し、そのメールボックスに記憶します。サイズには、添付ファイル、貼り付けた画像を含む本文、引用が含まれます。写真は上限を超えても追加でき、送信時に縮小できます。</string>
     <string name="imageSizeOverLimit">上限超過</string>
     <string name="reminderWeeksBefore">{n}週間前</string>
     <string name="reminderAdd">リマインダーを追加</string>
@@ -4416,4 +4415,6 @@
     <string name="boardMoreUnread">ほか {n} 件</string>
     <string name="startScreen">起動時の画面</string>
     <string name="startScreenHint">アプリはこの画面で開きます。ほかの画面で「戻る」を押すとここに戻り、ここで押すとアプリを閉じます</string>
+    <string name="msgSizeOnly">メール: {size}</string>
+    <string name="msgSizeHelpUnknown">メールの最大サイズはメールサーバーが決めます（サーバーごとに異なります）。アプリ独自の上限はありません。上限を超えるとサーバーが受け付けず、アプリが理由を表示してこのメールボックスの上限を記憶します。サイズには添付ファイル、貼り付けた画像を含む本文、引用が含まれます。</string>
 </resources>

@@ -3142,7 +3142,6 @@
     <string name="msgSizeOverPhotos">La trimitere, micșorează fotografiile sau elimină unele fișiere</string>
     <string name="msgSizeOverFiles">Elimină unele fișiere sau trimite-le în mesaje separate</string>
     <string name="msgSizeHelpServer">Limita de {limit} vine de la serverul cutiei poștale: politica Exchange sau răspunsul său la o trimitere anterioară. Dimensiunea include atașamentele, textul mesajului cu imaginile lipite și citatul. Fotografiile pot fi adăugate peste limită: le poți micșora la trimitere.</string>
-    <string name="msgSizeHelpDefault">Limita de {limit} este tipică pentru serverele de e-mail (Exchange, Gmail, Yandex). Dacă serverul tău folosește alta, aplicația o află din politica Exchange sau din răspunsul serverului la o trimitere și o reține pentru cutia poștală. Dimensiunea include atașamentele, textul mesajului cu imaginile lipite și citatul. Fotografiile pot fi adăugate peste limită: le poți micșora la trimitere.</string>
     <string name="imageSizeOverLimit">peste limită</string>
     <string name="reminderWeeksBefore">{n} săpt. înainte</string>
     <string name="reminderAdd">Adaugă memento</string>
@@ -4458,4 +4457,6 @@
     <string name="boardMoreUnread">și încă {n}</string>
     <string name="startScreen">Ecran de pornire</string>
     <string name="startScreenHint">Aplicația se deschide pe acest ecran. Înapoi din alte secțiuni duce aici, de aici închide aplicația</string>
+    <string name="msgSizeOnly">Mesaj: {size}</string>
+    <string name="msgSizeHelpUnknown">Cât de mare poate fi un mesaj decide serverul de e-mail — limita diferă de la un server la altul. Aplicația nu impune o limită proprie. Dacă mesajul e prea mare, serverul îl respinge: aplicația arată motivul și reține limita pentru această căsuță. Mărimea include atașamentele, textul cu imagini lipite și citatul.</string>
 </resources>

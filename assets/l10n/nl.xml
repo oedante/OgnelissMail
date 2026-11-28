@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Verklein de foto\'s bij het verzenden of verwijder enkele bestanden</string>
     <string name="msgSizeOverFiles">Verwijder enkele bestanden of verstuur ze in aparte berichten</string>
     <string name="msgSizeHelpServer">De limiet van {limit} komt van de mailboxserver: het Exchange-beleid of het antwoord van de server op een eerdere verzending. De grootte omvat bijlagen, de berichttekst met geplakte afbeeldingen en het citaat. Foto\'s kunnen boven de limiet worden toegevoegd: je kunt ze bij het verzenden verkleinen.</string>
-    <string name="msgSizeHelpDefault">De limiet van {limit} is gebruikelijk voor mailservers (Exchange, Gmail, Yandex). Gebruikt jouw server een andere, dan leert de app die uit het Exchange-beleid of het antwoord van de server op een verzending en onthoudt hij die voor de mailbox. De grootte omvat bijlagen, de berichttekst met geplakte afbeeldingen en het citaat. Foto\'s kunnen boven de limiet worden toegevoegd: je kunt ze bij het verzenden verkleinen.</string>
     <string name="imageSizeOverLimit">boven de limiet</string>
     <string name="reminderWeeksBefore">{n} wk ervoor</string>
     <string name="reminderAdd">Herinnering toevoegen</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">en nog {n}</string>
     <string name="startScreen">Beginscherm</string>
     <string name="startScreenHint">De app opent op dit scherm. Terug vanuit andere onderdelen brengt je hier; vanaf hier sluit de app</string>
+    <string name="msgSizeOnly">Bericht: {size}</string>
+    <string name="msgSizeHelpUnknown">Hoe groot een bericht mag zijn, bepaalt de mailserver — elke server heeft een eigen limiet. De app stelt zelf geen limiet. Is het bericht te groot, dan weigert de server het: de app toont de reden en onthoudt de limiet voor dit postvak. De grootte omvat bijlagen, tekst met geplakte afbeeldingen en het citaat.</string>
 </resources>

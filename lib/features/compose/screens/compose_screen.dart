@@ -3071,7 +3071,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final l10n = AppLocalizations.of(context);
     final rest = _messageBytes - f.size;
     final scale = await showImageSizeSheet(context, [(name: f.name, size: f.size)],
-        other: rest < 0 ? 0 : rest, limit: _sizeLimit().limit);
+        other: rest < 0 ? 0 : rest, limit: _sizeLimit());
     if (scale == null || scale >= 1 || !mounted) return;
     setState(() => _editingFiles.add(f));
     try {
@@ -3145,12 +3145,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     return files + body + (_quoteHtml?.length ?? 0);
   }
 
-  /// Лимит размера письма у ящика «От» и известен ли он от сервера.
-  ({int limit, bool known}) _sizeLimit() {
+  /// Лимит размера письма у ящика «От», если его назвал сервер (null —
+  /// неизвестен: своего лимита у приложения нет, 2.7.5).
+  int? _sizeLimit() {
     final id = _fromAccount?.id;
-    if (id == null) return (limit: AppConstants.maxAttachmentSize, known: false);
-    final store = ref.read(attachmentLimitProvider);
-    return (limit: store.limitFor(id), known: store.isKnown(id));
+    return id == null ? null : ref.read(attachmentLimitProvider).limitFor(id);
   }
 
   /// «Письмо: 4,2 МБ из 25 МБ · можно добавить ещё 20,8 МБ» и полоска; от
@@ -3158,13 +3157,26 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// (с фото — уменьшить их при отправке). «?» — откуда лимит.
   Widget _sizeLine(ThemeData theme, AppLocalizations l10n) {
     final scheme = theme.colorScheme;
-    final (:limit, :known) = _sizeLimit();
+    final limit = _sizeLimit();
     final total = _messageBytes;
+    final muted = theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant);
+    // Лимит сервер не называл — только размер письма; не примет — сервер
+    // скажет при отправке, лимит запомнится.
+    if (limit == null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: Space.xs),
+        child: Row(children: [
+          Expanded(
+            child: Text(l10n.tr('msgSizeOnly').replaceAll('{size}', formatBytes(total, l10n)), style: muted),
+          ),
+          HelpButton(compact: true, title: l10n.tr('msgSizeTitle'), text: l10n.tr('msgSizeHelpUnknown')),
+        ]),
+      );
+    }
     final share = limit > 0 ? total / limit : 0.0;
     final over = total > limit;
     final warn = !over && share >= 0.8;
     final hasPhotos = _attachments.any((f) => ImageShrink.isShrinkable(f.name));
-    final muted = theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant);
     final color = over
         ? AppColors.errorTextOn(theme)
         : warn
@@ -3187,7 +3199,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               HelpButton(
                 compact: true,
                 title: l10n.tr('msgSizeTitle'),
-                text: l10n.tr(known ? 'msgSizeHelpServer' : 'msgSizeHelpDefault').replaceAll('{limit}', lim),
+                text: l10n.tr('msgSizeHelpServer').replaceAll('{limit}', lim),
               ),
             ],
           ),
@@ -5030,7 +5042,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _imageScale = fixed / 100;
       return true;
     }
-    final limit = _sizeLimit().limit;
+    final limit = _sizeLimit();
     final picked = await showImageSizeSheet(context, images, other: _messageBytes - total, limit: limit);
     if (picked == null) return false;
     _imageScale = picked;
@@ -5409,9 +5421,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// хранилище приложения, черновик.
   Future<void> _addChosenFiles(List<ChosenFile> picked) async {
     final l10n = AppLocalizations.of(context);
-    final limit = _fromAccount != null
-        ? ref.read(attachmentLimitProvider).limitFor(_fromAccount!.id)
-        : AppConstants.maxAttachmentSize;
+    // Лимит — только названный сервером (2.7.5); неизвестен — без проверки.
+    final limit = _sizeLimit();
     var total = _attachments.fold<int>(0, (s, f) => s + f.size);
     for (final chosen in picked) {
       // Блокируем по СУММАРНОМУ объёму (лимит сервера), а не только по
@@ -5419,7 +5430,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // выключены, и раньше превышение лимита молча ничего не делало.
       // Фото добавляются и сверх лимита (1.7.2+110): при отправке их можно
       // уменьшить — строка размера покажет, на сколько письмо тяжелее.
-      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+      if (limit != null && total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
         final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
         showInlineError(l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name));
         continue;

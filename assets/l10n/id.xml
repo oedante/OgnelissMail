@@ -3116,7 +3116,6 @@
     <string name="msgSizeOverPhotos">Perkecil foto saat mengirim atau hapus sebagian file</string>
     <string name="msgSizeOverFiles">Hapus sebagian file atau kirim dalam email terpisah</string>
     <string name="msgSizeHelpServer">Batas {limit} berasal dari server kotak surat: kebijakan Exchange atau balasannya pada pengiriman sebelumnya. Ukuran mencakup lampiran, teks email beserta gambar yang ditempel, dan kutipan. Foto bisa ditambahkan melebihi batas: Anda dapat memperkecilnya saat mengirim.</string>
-    <string name="msgSizeHelpDefault">Batas {limit} lazim untuk server email (Exchange, Gmail, Yandex). Jika server Anda memakai batas lain, aplikasi mengetahuinya dari kebijakan Exchange atau balasan server saat mengirim dan mengingatnya untuk kotak surat tersebut. Ukuran mencakup lampiran, teks email beserta gambar yang ditempel, dan kutipan. Foto bisa ditambahkan melebihi batas: Anda dapat memperkecilnya saat mengirim.</string>
     <string name="imageSizeOverLimit">melebihi batas</string>
     <string name="reminderWeeksBefore">{n} minggu sebelumnya</string>
     <string name="reminderAdd">Tambah pengingat</string>
@@ -4416,4 +4415,6 @@
     <string name="boardMoreUnread">dan {n} lagi</string>
     <string name="startScreen">Layar awal</string>
     <string name="startScreenHint">Aplikasi dibuka di layar ini. Kembali dari bagian lain menuju ke sini; dari sini menutup aplikasi</string>
+    <string name="msgSizeOnly">Email: {size}</string>
+    <string name="msgSizeHelpUnknown">Server email yang menentukan seberapa besar pesan boleh dikirim — batasnya berbeda tiap server. Aplikasi tidak punya batas sendiri. Jika pesan melebihi batas, server menolaknya: aplikasi menampilkan alasannya dan mengingat batas untuk kotak surat ini. Ukuran mencakup lampiran, teks dengan gambar tempelan, dan kutipan.</string>
 </resources>

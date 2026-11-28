@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Gør fotos mindre ved afsendelse, eller fjern nogle filer</string>
     <string name="msgSizeOverFiles">Fjern nogle filer, eller send dem i separate mails</string>
     <string name="msgSizeHelpServer">Grænsen på {limit} kommer fra postkassens server: Exchange-politikken eller dens svar på en tidligere afsendelse. Størrelsen omfatter vedhæftede filer, mailens tekst med indsatte billeder og citatet. Fotos kan tilføjes ud over grænsen: du kan gøre dem mindre ved afsendelse.</string>
-    <string name="msgSizeHelpDefault">Grænsen på {limit} er typisk for mailservere (Exchange, Gmail, Yandex). Hvis din server bruger en anden, lærer appen den af Exchange-politikken eller serverens svar på en afsendelse og husker den for postkassen. Størrelsen omfatter vedhæftede filer, mailens tekst med indsatte billeder og citatet. Fotos kan tilføjes ud over grænsen: du kan gøre dem mindre ved afsendelse.</string>
     <string name="imageSizeOverLimit">over grænsen</string>
     <string name="reminderWeeksBefore">{n} u før</string>
     <string name="reminderAdd">Tilføj påmindelse</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">og {n} mere</string>
     <string name="startScreen">Startskærm</string>
     <string name="startScreenHint">Appen åbner på denne skærm. Tilbage fra andre sektioner fører hertil; herfra lukkes appen</string>
+    <string name="msgSizeOnly">Mail: {size}</string>
+    <string name="msgSizeHelpUnknown">Mailserveren bestemmer, hvor stor en mail må være — grænsen er forskellig fra server til server. Appen har ingen egen grænse. Er mailen for stor, afviser serveren den: appen viser årsagen og husker grænsen for postkassen. Størrelsen omfatter vedhæftede filer, tekst med indsatte billeder og citatet.</string>
 </resources>

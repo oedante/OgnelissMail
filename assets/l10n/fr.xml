@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Réduisez les photos à l’envoi ou retirez des fichiers</string>
     <string name="msgSizeOverFiles">Retirez des fichiers ou envoyez-les dans des messages séparés</string>
     <string name="msgSizeHelpServer">La limite de {limit} vient du serveur de la boîte : la stratégie Exchange ou sa réponse à un envoi précédent. La taille comprend les pièces jointes, le texte avec les images collées et la citation. Les photos peuvent dépasser la limite : vous pourrez les réduire à l’envoi.</string>
-    <string name="msgSizeHelpDefault">La limite de {limit} est courante pour les serveurs de messagerie (Exchange, Gmail, Yandex). Si votre serveur en utilise une autre, l’application l’apprend de la stratégie Exchange ou de la réponse du serveur à un envoi et la retient pour la boîte. La taille comprend les pièces jointes, le texte avec les images collées et la citation. Les photos peuvent dépasser la limite : vous pourrez les réduire à l’envoi.</string>
     <string name="imageSizeOverLimit">au-delà de la limite</string>
     <string name="reminderWeeksBefore">{n} sem. avant</string>
     <string name="reminderAdd">Ajouter un rappel</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">et {n} de plus</string>
     <string name="startScreen">Écran d’accueil</string>
     <string name="startScreenHint">L’app s’ouvre sur cet écran. Retour depuis les autres sections y ramène ; depuis cet écran, il ferme l’app</string>
+    <string name="msgSizeOnly">Message : {size}</string>
+    <string name="msgSizeHelpUnknown">C’est le serveur de messagerie qui fixe la taille maximale d’un message — elle varie selon les serveurs. L’app n’impose aucune limite. Si le message est trop grand, le serveur le refuse : l’app en indique la raison et retient la limite pour cette boîte. La taille comprend les pièces jointes, le texte avec images collées et la citation.</string>
 </resources>

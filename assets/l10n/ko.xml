@@ -3116,7 +3116,6 @@
     <string name="msgSizeOverPhotos">보낼 때 사진을 줄이거나 일부 파일을 제거하세요</string>
     <string name="msgSizeOverFiles">일부 파일을 제거하거나 별도의 메일로 나눠서 보내세요</string>
     <string name="msgSizeHelpServer">{limit} 제한은 메일함 서버에서 정한 거예요. Exchange 정책이거나 이전 전송에 대한 서버의 응답이에요. 크기에는 첨부파일, 붙여넣은 이미지가 포함된 메일 본문, 인용문이 포함돼요. 사진은 제한을 넘겨 추가할 수 있고, 보낼 때 줄일 수 있어요.</string>
-    <string name="msgSizeHelpDefault">{limit} 제한은 메일 서버(Exchange, Gmail, Yandex)에서 일반적인 값이에요. 서버가 다른 값을 사용하면 앱이 Exchange 정책이나 전송 시 서버의 응답에서 알아내 메일함에 기억해 둬요. 크기에는 첨부파일, 붙여넣은 이미지가 포함된 메일 본문, 인용문이 포함돼요. 사진은 제한을 넘겨 추가할 수 있고, 보낼 때 줄일 수 있어요.</string>
     <string name="imageSizeOverLimit">제한 초과</string>
     <string name="reminderWeeksBefore">{n}주 전</string>
     <string name="reminderAdd">미리 알림 추가</string>
@@ -4416,4 +4415,6 @@
     <string name="boardMoreUnread">외 {n}개</string>
     <string name="startScreen">시작 화면</string>
     <string name="startScreenHint">앱이 이 화면으로 열립니다. 다른 화면에서 뒤로 가기를 누르면 여기로 오고, 여기서 누르면 앱이 닫힙니다</string>
+    <string name="msgSizeOnly">메일: {size}</string>
+    <string name="msgSizeHelpUnknown">메일의 최대 크기는 메일 서버가 정하며, 서버마다 한도가 다릅니다. 앱 자체의 한도는 없습니다. 한도를 넘으면 서버가 거부하고, 앱이 이유를 표시한 뒤 이 메일함의 한도를 기억합니다. 크기에는 첨부 파일, 붙여넣은 이미지가 있는 본문, 인용이 포함됩니다.</string>
 </resources>

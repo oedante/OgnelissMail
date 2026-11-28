@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Gönderirken fotoğrafları küçültün veya bazı dosyaları kaldırın</string>
     <string name="msgSizeOverFiles">Bazı dosyaları kaldırın veya ayrı iletilerle gönderin</string>
     <string name="msgSizeHelpServer">{limit} sınırı posta kutusu sunucusundan gelir: Exchange ilkesi veya sunucunun önceki bir gönderime verdiği yanıt. Boyuta ekler, yapıştırılmış resimlerle birlikte ileti metni ve alıntı dahildir. Fotoğraflar sınırın ötesinde de eklenebilir: gönderirken küçültebilirsiniz.</string>
-    <string name="msgSizeHelpDefault">{limit} sınırı posta sunucularında yaygındır (Exchange, Gmail, Yandex). Sunucunuz başka bir sınır kullanıyorsa uygulama bunu Exchange ilkesinden veya sunucunun bir gönderime verdiği yanıttan öğrenir ve posta kutusu için hatırlar. Boyuta ekler, yapıştırılmış resimlerle birlikte ileti metni ve alıntı dahildir. Fotoğraflar sınırın ötesinde de eklenebilir: gönderirken küçültebilirsiniz.</string>
     <string name="imageSizeOverLimit">sınırı aşıyor</string>
     <string name="reminderWeeksBefore">{n} hafta önce</string>
     <string name="reminderAdd">Hatırlatıcı ekle</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">ve {n} tane daha</string>
     <string name="startScreen">Başlangıç ekranı</string>
     <string name="startScreenHint">Uygulama bu ekranla açılır. Diğer bölümlerde Geri buraya döner, buradan uygulamayı kapatır</string>
+    <string name="msgSizeOnly">E-posta: {size}</string>
+    <string name="msgSizeHelpUnknown">Bir e-postanın ne kadar büyük olabileceğine posta sunucusu karar verir; sınır sunucudan sunucuya değişir. Uygulamanın kendi sınırı yoktur. E-posta sınırı aşarsa sunucu reddeder: uygulama nedenini gösterir ve bu kutunun sınırını hatırlar. Boyuta ekler, yapıştırılmış görselli metin ve alıntı dahildir.</string>
 </resources>

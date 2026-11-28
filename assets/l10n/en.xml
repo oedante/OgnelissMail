@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Reduce the photos when sending or remove some files</string>
     <string name="msgSizeOverFiles">Remove some files or send them in separate messages</string>
     <string name="msgSizeHelpServer">The {limit} limit comes from the mailbox server: the Exchange policy or its reply to an earlier send. The size includes attachments, the message text with pasted pictures, and the quote. Photos can be added beyond the limit: you can reduce them when sending.</string>
-    <string name="msgSizeHelpDefault">The {limit} limit is typical for mail servers (Exchange, Gmail, Yandex). If your server uses another one, the app learns it from the Exchange policy or the server\'s reply to a send and remembers it for the mailbox. The size includes attachments, the message text with pasted pictures, and the quote. Photos can be added beyond the limit: you can reduce them when sending.</string>
     <string name="imageSizeOverLimit">over the limit</string>
     <string name="reminderWeeksBefore">{n} wk before</string>
     <string name="reminderAdd">Add reminder</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">and {n} more</string>
     <string name="startScreen">Start screen</string>
     <string name="startScreenHint">The app opens on this screen. Back from other sections returns here; Back from here closes the app</string>
+    <string name="msgSizeOnly">Message: {size}</string>
+    <string name="msgSizeHelpUnknown">Your mail server decides how large a message can be — the limit differs between servers. The app sets no limit of its own. If a message is larger than the server allows, the server rejects it: the app shows why and remembers the limit for this mailbox. The size includes attachments, the text with pasted images and the quote.</string>
 </resources>

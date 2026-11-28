@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Förminska fotona vid sändning eller ta bort några filer</string>
     <string name="msgSizeOverFiles">Ta bort några filer eller skicka dem i separata meddelanden</string>
     <string name="msgSizeHelpServer">Gränsen på {limit} kommer från postlådans server: Exchange-policyn eller dess svar på en tidigare sändning. Storleken omfattar bilagor, meddelandetexten med inklistrade bilder och citatet. Foton kan läggas till utöver gränsen: du kan förminska dem vid sändning.</string>
-    <string name="msgSizeHelpDefault">Gränsen på {limit} är typisk för e-postservrar (Exchange, Gmail, Yandex). Om din server använder en annan lär sig appen den från Exchange-policyn eller serverns svar på en sändning och kommer ihåg den för postlådan. Storleken omfattar bilagor, meddelandetexten med inklistrade bilder och citatet. Foton kan läggas till utöver gränsen: du kan förminska dem vid sändning.</string>
     <string name="imageSizeOverLimit">över gränsen</string>
     <string name="reminderWeeksBefore">{n} v före</string>
     <string name="reminderAdd">Lägg till påminnelse</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">och {n} till</string>
     <string name="startScreen">Startskärm</string>
     <string name="startScreenHint">Appen öppnas på den här skärmen. Bakåt från andra delar leder hit, härifrån stängs appen</string>
+    <string name="msgSizeOnly">Meddelande: {size}</string>
+    <string name="msgSizeHelpUnknown">Hur stort ett meddelande får vara bestämmer e-postservern — gränsen skiljer sig mellan servrar. Appen har ingen egen gräns. Är meddelandet för stort avvisar servern det: appen visar varför och kommer ihåg gränsen för inkorgen. Storleken omfattar bilagor, text med inklistrade bilder och citatet.</string>
 </resources>

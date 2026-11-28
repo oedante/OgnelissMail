@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Al enviar, reduce las fotos o quita algunos archivos</string>
     <string name="msgSizeOverFiles">Quita algunos archivos o envíalos en mensajes distintos</string>
     <string name="msgSizeHelpServer">El límite de {limit} lo establece el servidor del buzón: la política de Exchange o su respuesta a un envío anterior. El tamaño incluye los archivos adjuntos, el texto del mensaje con las imágenes pegadas y la cita. Se pueden añadir fotos por encima del límite: puedes reducirlas al enviar.</string>
-    <string name="msgSizeHelpDefault">El límite de {limit} es habitual en los servidores de correo (Exchange, Gmail, Yandex). Si tu servidor usa otro, la app lo averigua a partir de la política de Exchange o de la respuesta del servidor a un envío, y lo recuerda para el buzón. El tamaño incluye los archivos adjuntos, el texto del mensaje con las imágenes pegadas y la cita. Se pueden añadir fotos por encima del límite: puedes reducirlas al enviar.</string>
     <string name="imageSizeOverLimit">por encima del límite</string>
     <string name="reminderWeeksBefore">{n} sem antes</string>
     <string name="reminderAdd">Añadir recordatorio</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">y {n} más</string>
     <string name="startScreen">Pantalla de inicio</string>
     <string name="startScreenHint">La app se abre en esta pantalla. Atrás desde otras secciones vuelve aquí; desde aquí cierra la app</string>
+    <string name="msgSizeOnly">Mensaje: {size}</string>
+    <string name="msgSizeHelpUnknown">El tamaño máximo lo decide el servidor de correo: cada servidor tiene su límite. La app no impone ninguno propio. Si el mensaje supera el límite, el servidor lo rechaza: la app muestra el motivo y recuerda el límite para este buzón. El tamaño incluye adjuntos, texto con imágenes pegadas y la cita.</string>
 </resources>

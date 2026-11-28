@@ -1,13 +1,17 @@
 // lib/features/compose/providers/attachment_limit_provider.dart
-// Лимит суммарного размера вложений на письмо, ПО АККАУНТУ. Значение по умолчанию —
-// AppConstants.maxAttachmentSize (25 МБ, типовой лимит Exchange/O365). Реальный лимит
-// сервера узнаём из ошибки отправки («сообщение слишком большое») и запоминаем —
-// EWS не отдаёт лимит отдельным запросом. Хранится в SharedPreferences (без миграции БД).
+// Лимит суммарного размера вложений на письмо, ПО АККАУНТУ — только тот, что
+// назвал сервер: политика Exchange или ошибка отправки («сообщение слишком
+// большое»; EWS не отдаёт лимит отдельным запросом). Хранится в
+// SharedPreferences (без миграции БД).
+//
+// Своего лимита у приложения нет (2.7.5, просьба пользователей 27.11.2026:
+// «снять лимит 25 МБ и ориентироваться на лимиты сервера»): раньше, пока
+// сервер лимит не назвал, приложение не давало приложить больше 25 МБ, хотя
+// многие серверы принимают больше.
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../../core/constants/app_constants.dart';
 import '../../../data/providers/shared_prefs_provider.dart';
 
 class AttachmentLimitStore {
@@ -16,11 +20,11 @@ class AttachmentLimitStore {
 
   static String _key(String accountId) => 'attach_limit_$accountId';
 
-  /// Лимит суммарного размера вложений (байт) для аккаунта.
-  int limitFor(String accountId) {
+  /// Лимит суммарного размера вложений (байт) для аккаунта, если его назвал
+  /// сервер; null — неизвестен (письмо уходит, сервер решает сам).
+  int? limitFor(String accountId) {
     final v = _p.getInt(_key(accountId));
-    if (v != null && v > 0) return v;
-    return AppConstants.maxAttachmentSize;
+    return v != null && v > 0 ? v : null;
   }
 
   /// Лимит известен от сервера ящика (политика Exchange или ответ на

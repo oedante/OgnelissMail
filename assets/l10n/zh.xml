@@ -3116,7 +3116,6 @@
     <string name="msgSizeOverPhotos">发送时缩小照片，或移除部分文件</string>
     <string name="msgSizeOverFiles">移除部分文件，或分多封邮件发送</string>
     <string name="msgSizeHelpServer">{limit} 的限制来自邮箱服务器：Exchange 策略，或服务器对之前发送的答复。大小包括附件、含粘贴图片的邮件正文以及引用内容。照片可以超出限制添加，发送时可缩小。</string>
-    <string name="msgSizeHelpDefault">{limit} 的限制是邮件服务器（Exchange、Gmail、Yandex）的常见值。如果您的服务器使用其他限制，应用会从 Exchange 策略或服务器对发送的答复中获知，并为该邮箱记住。大小包括附件、含粘贴图片的邮件正文以及引用内容。照片可以超出限制添加，发送时可缩小。</string>
     <string name="imageSizeOverLimit">超出上限</string>
     <string name="reminderWeeksBefore">提前 {n} 周</string>
     <string name="reminderAdd">添加提醒</string>
@@ -4416,4 +4415,6 @@
     <string name="boardMoreUnread">还有 {n} 封</string>
     <string name="startScreen">启动画面</string>
     <string name="startScreenHint">应用从此画面打开。在其他页面按返回会回到这里，在这里按返回则关闭应用</string>
+    <string name="msgSizeOnly">邮件：{size}</string>
+    <string name="msgSizeHelpUnknown">邮件最大能多大由邮件服务器决定，不同服务器限制不同。应用本身不设限制。如果邮件超过限制，服务器会拒收：应用会显示原因并记住此邮箱的限制。大小包括附件、带粘贴图片的正文和引用内容。</string>
 </resources>

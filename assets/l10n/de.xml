@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Fotos beim Senden verkleinern oder einige Dateien entfernen</string>
     <string name="msgSizeOverFiles">Einige Dateien entfernen oder in getrennten Nachrichten senden</string>
     <string name="msgSizeHelpServer">Das Limit von {limit} stammt vom Server des Postfachs: aus der Exchange-Richtlinie oder seiner Antwort auf einen früheren Versand. Zur Größe zählen Anhänge, der Nachrichtentext mit eingefügten Bildern und das Zitat. Fotos lassen sich auch über das Limit hinaus hinzufügen: Beim Senden können Sie sie verkleinern.</string>
-    <string name="msgSizeHelpDefault">Das Limit von {limit} ist bei Mailservern üblich (Exchange, Gmail, Yandex). Hat Ihr Server ein anderes, erfährt die App es aus der Exchange-Richtlinie oder der Serverantwort beim Senden und merkt es sich für das Postfach. Zur Größe zählen Anhänge, der Nachrichtentext mit eingefügten Bildern und das Zitat. Fotos lassen sich auch über das Limit hinaus hinzufügen: Beim Senden können Sie sie verkleinern.</string>
     <string name="imageSizeOverLimit">über dem Limit</string>
     <string name="reminderWeeksBefore">{n} Wo. vorher</string>
     <string name="reminderAdd">Erinnerung hinzufügen</string>
@@ -4437,4 +4436,6 @@
     <string name="boardMoreUnread">und {n} weitere</string>
     <string name="startScreen">Startbildschirm</string>
     <string name="startScreenHint">Die App öffnet mit diesem Bildschirm. „Zurück“ aus anderen Bereichen führt hierher, von hier aus wird die App geschlossen</string>
+    <string name="msgSizeOnly">Nachricht: {size}</string>
+    <string name="msgSizeHelpUnknown">Wie groß eine Nachricht sein darf, entscheidet der Mailserver – das Limit ist je nach Server verschieden. Die App setzt kein eigenes Limit. Ist die Nachricht größer, lehnt der Server sie ab: Die App zeigt den Grund und merkt sich das Limit für dieses Postfach. Zur Größe zählen Anhänge, Text mit eingefügten Bildern und Zitat.</string>
 </resources>

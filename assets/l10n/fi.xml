@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Pienennä kuvia lähetettäessä tai poista joitakin tiedostoja</string>
     <string name="msgSizeOverFiles">Poista joitakin tiedostoja tai lähetä ne erillisinä viesteinä</string>
     <string name="msgSizeHelpServer">Rajoitus {limit} tulee postilaatikon palvelimelta: Exchange-käytännöstä tai sen vastauksesta aiempaan lähetykseen. Koko sisältää liitteet, viestin tekstin liitettyine kuvineen ja lainauksen. Kuvia voi lisätä rajan ylittäen: voit pienentää ne lähetettäessä.</string>
-    <string name="msgSizeHelpDefault">Rajoitus {limit} on tyypillinen sähköpostipalvelimille (Exchange, Gmail, Yandex). Jos palvelimesi käyttää toista, sovellus oppii sen Exchange-käytännöstä tai palvelimen vastauksesta lähetykseen ja muistaa sen postilaatikolle. Koko sisältää liitteet, viestin tekstin liitettyine kuvineen ja lainauksen. Kuvia voi lisätä rajan ylittäen: voit pienentää ne lähetettäessä.</string>
     <string name="imageSizeOverLimit">yli rajan</string>
     <string name="reminderWeeksBefore">{n} vk ennen</string>
     <string name="reminderAdd">Lisää muistutus</string>
@@ -4437,4 +4436,11 @@
     <string name="boardMoreUnread">ja {n} muuta</string>
     <string name="startScreen">Aloitusnäkymä</string>
     <string name="startScreenHint">Sovellus avautuu tähän näkymään. Takaisin muista osioista palaa tänne, täältä sovellus sulkeutuu</string>
+    <string name="msgSizeOnly">Viesti: {size}</string>
+    <string name="msgSizeHelpUnknown">Viestin enimmäiskoon määrää postipalvelin — raja vaihtelee palvelimittain. Sovelluksella ei ole omaa rajaa. Jos viesti on liian suuri, palvelin hylkää sen: sovellus näyttää syyn ja muistaa rajan tälle postilaatikolle. Kokoon lasketaan liitteet, teksti liitettyine kuvineen ja lainaus.</string>
+    <string name="categoriesTitle">Luokat</string>
+    <string name="categoriesLocalHint">Tallennetaan laitteeseen: tällä postilaatikolla ei ole luokkia palvelimella</string>
+    <string name="categoryColor">Luokan väri</string>
+    <string name="attachFromGallery">Kuvat ja videot</string>
+    <string name="mentionHint">Maininta: aloita nimen kirjoittaminen</string>
 </resources>

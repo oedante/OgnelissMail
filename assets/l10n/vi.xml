@@ -3116,7 +3116,6 @@
     <string name="msgSizeOverPhotos">Hãy giảm kích thước ảnh khi gửi hoặc bỏ bớt một số tệp</string>
     <string name="msgSizeOverFiles">Hãy bỏ bớt một số tệp hoặc gửi chúng trong các thư riêng</string>
     <string name="msgSizeHelpServer">Giới hạn {limit} do máy chủ hộp thư đặt ra: chính sách Exchange hoặc phản hồi của máy chủ ở lần gửi trước. Kích thước bao gồm tệp đính kèm, nội dung thư cùng ảnh đã dán và phần trích dẫn. Bạn vẫn có thể thêm ảnh vượt giới hạn: có thể giảm kích thước ảnh khi gửi.</string>
-    <string name="msgSizeHelpDefault">Giới hạn {limit} là mức thường gặp ở các máy chủ thư (Exchange, Gmail, Yandex). Nếu máy chủ của bạn dùng mức khác, ứng dụng sẽ biết qua chính sách Exchange hoặc phản hồi của máy chủ khi gửi, và ghi nhớ cho hộp thư. Kích thước bao gồm tệp đính kèm, nội dung thư cùng ảnh đã dán và phần trích dẫn. Bạn vẫn có thể thêm ảnh vượt giới hạn: có thể giảm kích thước ảnh khi gửi.</string>
     <string name="imageSizeOverLimit">vượt giới hạn</string>
     <string name="reminderWeeksBefore">Trước {n} tuần</string>
     <string name="reminderAdd">Thêm lời nhắc</string>
@@ -4416,4 +4415,11 @@
     <string name="boardMoreUnread">và {n} thư khác</string>
     <string name="startScreen">Màn hình khởi động</string>
     <string name="startScreenHint">Ứng dụng mở ở màn hình này. Quay lại từ các mục khác sẽ về đây; từ đây sẽ đóng ứng dụng</string>
+    <string name="msgSizeOnly">Thư: {size}</string>
+    <string name="msgSizeHelpUnknown">Kích thước tối đa của thư do máy chủ thư quyết định — mỗi máy chủ có giới hạn riêng. Ứng dụng không đặt giới hạn riêng. Nếu thư vượt giới hạn, máy chủ sẽ từ chối: ứng dụng hiển thị lý do và ghi nhớ giới hạn cho hộp thư này. Kích thước gồm tệp đính kèm, nội dung có ảnh dán và phần trích dẫn.</string>
+    <string name="categoriesTitle">Thể loại</string>
+    <string name="categoriesLocalHint">Lưu trên thiết bị: hộp thư này không có thể loại trên máy chủ</string>
+    <string name="categoryColor">Màu thể loại</string>
+    <string name="attachFromGallery">Ảnh và video</string>
+    <string name="mentionHint">Nhắc tên: bắt đầu nhập tên</string>
 </resources>

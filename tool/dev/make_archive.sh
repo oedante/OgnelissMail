@@ -58,7 +58,8 @@ find "$P" -name xcuserdata -prune -exec rm -rf {} +
 # Файлы, которые Xcode ведёт сам, — в ios/xcode-base/ (см. выше).
 XB="$P/ios/xcode-base"
 for f in Runner.xcodeproj/project.xcworkspace Runner.xcodeproj/xcshareddata \
-         Runner.xcworkspace/xcshareddata OgnelissWidgets/OgnelissWidgets.entitlements; do
+         Runner.xcworkspace/xcshareddata OgnelissWidgets/OgnelissWidgets.entitlements \
+         OgnelissShare/OgnelissShare.entitlements; do
   if [[ -e "$P/ios/$f" ]]; then
     mkdir -p "$XB/$(dirname "$f")"
     mv "$P/ios/$f" "$XB/$f"
@@ -76,7 +77,7 @@ rm -rf "$P/server/push-relay/data" "$P/server/push-relay/keys"
 BASE=$(unzip -l "$ZIP" | grep -c "project.pbxproj.base$" || true)
 [[ "$BASE" == 1 ]] || { echo "✗ в архиве нет ios/Runner.xcodeproj/project.pbxproj.base"; exit 1; }
 SECRETS=$(unzip -l "$ZIP" | grep -c "dart_defines.json$\|key.properties\|\.jks$\|\.p8$\|/\.env$" || true)
-XCODE=$(unzip -l "$ZIP" | grep -v "/ios/xcode-base/" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata\|Runner.xcworkspace/contents.xcworkspacedata\|xcshareddata\|project.xcworkspace\|OgnelissWidgets.entitlements" || true)
+XCODE=$(unzip -l "$ZIP" | grep -v "/ios/xcode-base/" | grep -c "project.pbxproj$\|Runner.entitlements\|Signing.xcconfig\|xcuserdata\|Runner.xcworkspace/contents.xcworkspacedata\|xcshareddata\|project.xcworkspace\|OgnelissWidgets.entitlements\|OgnelissShare.entitlements" || true)
 GEN=$(unzip -l "$ZIP" | grep -c "app_database.g.dart" || true)
 echo "$ZIP"
 echo "секретов в архиве: $SECRETS; файлов настройки Xcode: $XCODE; сгенерированного кода базы: $GEN"

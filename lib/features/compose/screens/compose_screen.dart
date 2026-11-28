@@ -1,7 +1,7 @@
 // lib/features/compose/screens/compose_screen.dart
 import '../widgets/mail_tips_strip.dart';
 import '../compose_window.dart' show ComposeWindow;
-import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick;
+import '../../../core/platform/file_pick.dart' show ChosenFile, FilePick, FileType;
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/send_later_presets.dart';
 import '../../../widgets/common/file_drop_zone.dart';
@@ -2295,6 +2295,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // под клавиатуру (1.6.19): иначе он вместе с редактором в WebView
       // перестраивался в каждом кадре её появления, и шторка ехала рывками.
       resizeToAvoidBottomInset: ModalRoute.of(context)?.isCurrent ?? true,
+      // @-упоминание (2.7.5): подходящие люди — строкой над клавиатурой.
+      bottomNavigationBar: _mentionQuery == null ? null : _mentionStrip(l10n),
       // Белый (светлая тема) или фон темы — как у открытого письма.
       backgroundColor: mailPageColor(Theme.of(context)),
       appBar: TextScaleCapBar(child: AppBar(
@@ -2546,6 +2548,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                       },
                       onPickImage: pickInlineImageDataUri,
                       onFocus: _onEditorFocus,
+                      onMention: _onMention,
                       onKey: (k) {
                         if (_isSending) return;
                         if (k == 'send') unawaited(_onSend(l10n, settings));
@@ -3071,7 +3074,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     final l10n = AppLocalizations.of(context);
     final rest = _messageBytes - f.size;
     final scale = await showImageSizeSheet(context, [(name: f.name, size: f.size)],
-        other: rest < 0 ? 0 : rest, limit: _sizeLimit().limit);
+        other: rest < 0 ? 0 : rest, limit: _sizeLimit());
     if (scale == null || scale >= 1 || !mounted) return;
     setState(() => _editingFiles.add(f));
     try {
@@ -3145,12 +3148,11 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     return files + body + (_quoteHtml?.length ?? 0);
   }
 
-  /// Лимит размера письма у ящика «От» и известен ли он от сервера.
-  ({int limit, bool known}) _sizeLimit() {
+  /// Лимит размера письма у ящика «От», если его назвал сервер (null —
+  /// неизвестен: своего лимита у приложения нет, 2.7.5).
+  int? _sizeLimit() {
     final id = _fromAccount?.id;
-    if (id == null) return (limit: AppConstants.maxAttachmentSize, known: false);
-    final store = ref.read(attachmentLimitProvider);
-    return (limit: store.limitFor(id), known: store.isKnown(id));
+    return id == null ? null : ref.read(attachmentLimitProvider).limitFor(id);
   }
 
   /// «Письмо: 4,2 МБ из 25 МБ · можно добавить ещё 20,8 МБ» и полоска; от
@@ -3158,13 +3160,26 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// (с фото — уменьшить их при отправке). «?» — откуда лимит.
   Widget _sizeLine(ThemeData theme, AppLocalizations l10n) {
     final scheme = theme.colorScheme;
-    final (:limit, :known) = _sizeLimit();
+    final limit = _sizeLimit();
     final total = _messageBytes;
+    final muted = theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant);
+    // Лимит сервер не называл — только размер письма; не примет — сервер
+    // скажет при отправке, лимит запомнится.
+    if (limit == null) {
+      return Padding(
+        padding: const EdgeInsets.only(top: Space.xs),
+        child: Row(children: [
+          Expanded(
+            child: Text(l10n.tr('msgSizeOnly').replaceAll('{size}', formatBytes(total, l10n)), style: muted),
+          ),
+          HelpButton(compact: true, title: l10n.tr('msgSizeTitle'), text: l10n.tr('msgSizeHelpUnknown')),
+        ]),
+      );
+    }
     final share = limit > 0 ? total / limit : 0.0;
     final over = total > limit;
     final warn = !over && share >= 0.8;
     final hasPhotos = _attachments.any((f) => ImageShrink.isShrinkable(f.name));
-    final muted = theme.textTheme.labelSmall?.copyWith(color: scheme.onSurfaceVariant);
     final color = over
         ? AppColors.errorTextOn(theme)
         : warn
@@ -3187,7 +3202,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
               HelpButton(
                 compact: true,
                 title: l10n.tr('msgSizeTitle'),
-                text: l10n.tr(known ? 'msgSizeHelpServer' : 'msgSizeHelpDefault').replaceAll('{limit}', lim),
+                text: l10n.tr('msgSizeHelpServer').replaceAll('{limit}', lim),
               ),
             ],
           ),
@@ -4610,6 +4625,123 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     showInlineNotice(l10n.tr('groupExpanded').replaceAll('{n}', '${picked.length}'));
   }
 
+  // ── @-упоминания (2.7.5, просьба владельца «доделать @ФИО») ──
+  // «@» и начало имени в тексте — строка подходящих людей над клавиатурой;
+  // выбор вставляет упоминание, как Outlook (@Имя ссылкой на адрес), и
+  // добавляет человека в «Кому», если его нет среди адресатов.
+
+  /// Запрос упоминания (без «@»); null — упоминания нет.
+  String? _mentionQuery;
+  List<ContactModel> _mentionHits = const [];
+  int _mentionSeq = 0;
+
+  void _onMention(String? q) {
+    if (!mounted) return;
+    if (q == null) {
+      if (_mentionQuery != null) setState(() => _mentionQuery = null);
+      return;
+    }
+    setState(() => _mentionQuery = q);
+    final seq = ++_mentionSeq;
+    unawaited(_mentionCandidates(q).then((hits) {
+      if (mounted && seq == _mentionSeq) setState(() => _mentionHits = hits);
+    }));
+  }
+
+  /// Кого предложить: адресаты письма, затем контакты (избранные и частые);
+  /// с запросом — по имени или адресу.
+  Future<List<ContactModel>> _mentionCandidates(String q) async {
+    final query = q.trim().toLowerCase();
+    bool fits(String name, String email) =>
+        query.isEmpty || name.toLowerCase().contains(query) || email.toLowerCase().contains(query);
+    final out = <ContactModel>[];
+    final seen = <String>{};
+    for (final r in [..._toRecipients, ..._ccRecipients, ..._bccRecipients]) {
+      final name = r.displayName ?? '';
+      if (seen.add(r.email.toLowerCase()) && fits(name, r.email)) {
+        out.add(ContactModel(id: 'r_${r.email}', email: r.email, displayName: name.isEmpty ? r.email : name));
+      }
+    }
+    try {
+      final db = ref.read(databaseProvider);
+      final cap = query.isEmpty ? '' : query[0].toUpperCase() + query.substring(1);
+      final variants = {query, cap, q.trim()}.where((v) => v.isNotEmpty).toList();
+      final cond = variants.isEmpty ? '1' : List.filled(variants.length, 'display_name LIKE ?').join(' OR ');
+      final rows = await db.customSelect(
+        'SELECT id, email, display_name FROM contacts '
+        "WHERE email <> '' AND (${query.isEmpty ? '1' : 'lower(email) LIKE ? OR $cond'}) "
+        'ORDER BY is_favorite DESC, interaction_count DESC, display_name LIMIT 12',
+        variables: [
+          if (query.isNotEmpty) Variable.withString('%$query%'),
+          if (query.isNotEmpty)
+            for (final v in variants) Variable.withString('%$v%'),
+        ],
+      ).get();
+      for (final r in rows) {
+        final email = r.read<String>('email');
+        if (!seen.add(email.toLowerCase())) continue;
+        out.add(ContactModel(id: r.read<String>('id'), email: email, displayName: r.read<String>('display_name')));
+      }
+    } catch (_) {}
+    return out.take(10).toList();
+  }
+
+  /// Выбрали человека для упоминания.
+  Future<void> _mention(ContactModel c) async {
+    final name = c.displayName.isNotEmpty && c.displayName != c.email ? normalizePersonName(c.displayName) : c.email;
+    await _editor.insertMention(name, c.email);
+    final known = [..._toRecipients, ..._ccRecipients, ..._bccRecipients]
+        .any((r) => r.email.toLowerCase() == c.email.toLowerCase());
+    if (!mounted) return;
+    setState(() {
+      _mentionQuery = null;
+      if (!known) _toRecipients.add(EmailAddress(email: c.email, displayName: name));
+    });
+    if (!known) _updateGreeting();
+    _markDraftChanged();
+    unawaited(HapticFeedback.selectionClick());
+  }
+
+  Widget _mentionStrip(AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Material(
+      key: const ValueKey('mention_strip'),
+      color: theme.colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 52,
+          child: _mentionHits.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(l10n.tr('mentionHint'),
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  ),
+                )
+              : ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.s),
+                  children: [
+                    for (final c in _mentionHits)
+                      Padding(
+                        padding: const EdgeInsets.only(right: Space.s),
+                        child: ActionChip(
+                          key: ValueKey('mention_${c.email}'),
+                          avatar: const Icon(AppIcons.alternate_email, size: 16),
+                          label: Text(c.displayName.isNotEmpty ? normalizePersonName(c.displayName) : c.email),
+                          tooltip: c.email,
+                          onPressed: () => unawaited(_mention(c)),
+                        ),
+                      ),
+                  ],
+                ),
+        ),
+      ),
+    );
+  }
+
   void _addRecipient(ContactModel contact) {
     final target = _suggestTarget ?? _toRecipients;
     final field = _suggestFor ?? _toController;
@@ -5030,7 +5162,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       _imageScale = fixed / 100;
       return true;
     }
-    final limit = _sizeLimit().limit;
+    final limit = _sizeLimit();
     final picked = await showImageSizeSheet(context, images, other: _messageBytes - total, limit: limit);
     if (picked == null) return false;
     _imageScale = picked;
@@ -5358,6 +5490,10 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     // Откуда (14.11.2026, просьба владельца): файл с устройства или из
     // вложений почты («Вложения» — все файлы из писем).
     final from = await showActionSheet<String>(context, items: [
+      // Фото и видео из галереи (2.7.5, жалоба пользователей iPhone
+      // 27.11.2026: «нельзя вставить файл из галереи» — «Файл с устройства»
+      // на iPhone открывает «Файлы», где галереи нет).
+      ActionSheetItem(icon: AppIcons.photo_library, label: l10n.tr('attachFromGallery'), value: 'gallery'),
       ActionSheetItem(icon: AppIcons.folder_open, label: l10n.tr('attachFromDevice'), value: 'device'),
       ActionSheetItem(icon: AppIcons.attach_email, label: l10n.tr('attachFromMail'), value: 'mail'),
     ]);
@@ -5367,7 +5503,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       return;
     }
     try {
-      await _addChosenFiles(await FilePick.files());
+      await _addChosenFiles(await FilePick.files(type: from == 'gallery' ? FileType.media : FileType.any));
     } catch (e) {
       AppLogger.warning('Вложения: выбор файлов не удался — $e');
       quietError('${l10n.tr('error')}: $e');
@@ -5409,9 +5545,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
   /// хранилище приложения, черновик.
   Future<void> _addChosenFiles(List<ChosenFile> picked) async {
     final l10n = AppLocalizations.of(context);
-    final limit = _fromAccount != null
-        ? ref.read(attachmentLimitProvider).limitFor(_fromAccount!.id)
-        : AppConstants.maxAttachmentSize;
+    // Лимит — только названный сервером (2.7.5); неизвестен — без проверки.
+    final limit = _sizeLimit();
     var total = _attachments.fold<int>(0, (s, f) => s + f.size);
     for (final chosen in picked) {
       // Блокируем по СУММАРНОМУ объёму (лимит сервера), а не только по
@@ -5419,7 +5554,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // выключены, и раньше превышение лимита молча ничего не делало.
       // Фото добавляются и сверх лимита (1.7.2+110): при отправке их можно
       // уменьшить — строка размера покажет, на сколько письмо тяжелее.
-      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+      if (limit != null && total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
         final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
         showInlineError(l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name));
         continue;

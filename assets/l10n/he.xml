@@ -3142,7 +3142,6 @@
     <string name="msgSizeOverPhotos">בעת השליחה הקטן את התמונות או הסר חלק מהקבצים</string>
     <string name="msgSizeOverFiles">הסר חלק מהקבצים או שלח אותם בהודעות נפרדות</string>
     <string name="msgSizeHelpServer">המגבלה של {limit} נקבעת על ידי שרת תיבת הדואר: מדיניות Exchange או התשובה שלו לשליחה קודמת. הגודל כולל קבצים מצורפים, את טקסט ההודעה עם תמונות מודבקות ואת הציטוט. אפשר להוסיף תמונות מעבר למגבלה: ניתן להקטין אותן בעת השליחה.</string>
-    <string name="msgSizeHelpDefault">המגבלה של {limit} אופיינית לשרתי דואר (Exchange, Gmail, Yandex). אם השרת שלך משתמש במגבלה אחרת, האפליקציה לומדת אותה ממדיניות Exchange או מתשובת השרת לשליחה, וזוכרת אותה עבור תיבת הדואר. הגודל כולל קבצים מצורפים, את טקסט ההודעה עם תמונות מודבקות ואת הציטוט. אפשר להוסיף תמונות מעבר למגבלה: ניתן להקטין אותן בעת השליחה.</string>
     <string name="imageSizeOverLimit">מעל המגבלה</string>
     <string name="reminderWeeksBefore">{n} שב׳ לפני</string>
     <string name="reminderAdd">הוסף תזכורת</string>
@@ -4458,4 +4457,11 @@
     <string name="boardMoreUnread">ועוד {n}</string>
     <string name="startScreen">מסך פתיחה</string>
     <string name="startScreenHint">האפליקציה נפתחת במסך הזה. «חזרה» ממקומות אחרים מובילה אליו, וממנו — סוגרת את האפליקציה</string>
+    <string name="msgSizeOnly">הודעה: {size}</string>
+    <string name="msgSizeHelpUnknown">שרת הדואר קובע כמה גדולה יכולה להיות הודעה — המגבלה שונה משרת לשרת. לאפליקציה אין מגבלה משלה. אם ההודעה גדולה מדי, השרת דוחה אותה: האפליקציה מציגה את הסיבה וזוכרת את המגבלה לתיבה הזו. הגודל כולל קבצים מצורפים, טקסט עם תמונות מודבקות והציטוט.</string>
+    <string name="categoriesTitle">קטגוריות</string>
+    <string name="categoriesLocalHint">נשמרות במכשיר: לתיבה הזו אין קטגוריות בשרת</string>
+    <string name="categoryColor">צבע הקטגוריה</string>
+    <string name="attachFromGallery">תמונות וסרטונים</string>
+    <string name="mentionHint">אזכור: התחילו להקליד שם</string>
 </resources>

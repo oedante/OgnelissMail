@@ -7,6 +7,7 @@
 // - Semantics для screen reader
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
+import 'categories_sheet.dart' show CategoryChip, mailCategoriesOf;
 import '../../../services/mail/flag_due.dart';
 import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/text_safe.dart';
@@ -704,29 +705,22 @@ class EmailListTile extends ConsumerWidget {
                             SharedMailboxBadge(mailboxEmail: sharedMailboxEmail!),
                           ],
 
-                          if (email.tags.isNotEmpty) ...[
+                          // Категории (2.7.5): категории Exchange и теги —
+                          // своими цветами.
+                          if (email.tags.isNotEmpty || email.categories.isNotEmpty) ...[
                             const SizedBox(height: 6),
-                            SizedBox(
-                              height: 20,
-                              child: ListView.separated(
-                                scrollDirection: Axis.horizontal,
-                                itemCount: email.tags.length.clamp(0, 3),
-                                separatorBuilder: (_, __) => const SizedBox(width: Space.xs),
-                                itemBuilder: (_, i) {
-                                  final tag = email.tags[i];
-                                  final color = AppTheme.getTagColor(tag);
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: 2),
-                                    decoration: BoxDecoration(
-                                      color: color.withValues(alpha: 0.12),
-                                      borderRadius: BorderRadius.circular(4),
-                                      border: Border.all(color: color.withValues(alpha: 0.25), width: 0.5),
-                                    ),
-                                    child: Text(tag, style: theme.textTheme.labelSmall?.copyWith(fontWeight: FontWeight.w600, color: color)),
-                                  );
-                                },
-                              ),
-                            ),
+                            Builder(builder: (_) {
+                              final cats = mailCategoriesOf(email);
+                              return SizedBox(
+                                height: 20,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: cats.length.clamp(0, 3),
+                                  separatorBuilder: (_, __) => const SizedBox(width: Space.xs),
+                                  itemBuilder: (_, i) => CategoryChip(cats[i]),
+                                ),
+                              );
+                            }),
                           ],
                         ],
                       ),

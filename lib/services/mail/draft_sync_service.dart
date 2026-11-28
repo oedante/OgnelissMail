@@ -280,7 +280,8 @@ class DraftSyncService {
     final files = await DraftFiles.load(row.attachmentsJson) ?? const <DraftFile>[];
     final total = files.fold<int>(0, (s, f) => s + f.size);
     if (interim && (files.any((f) => f.isRemote) || (!force && total > interimFilesMax))) return _none;
-    if (files.isNotEmpty && total > _ref.read(attachmentLimitProvider).limitFor(account.id)) {
+    final serverLimit = _ref.read(attachmentLimitProvider).limitFor(account.id);
+    if (files.isNotEmpty && serverLimit != null && total > serverLimit) {
       if (interim) return _none;
       _failedAt[localId] = DateTime.now();
       AppLogger.info('Черновик с файлами на ${(total / 1048576).toStringAsFixed(1)} МБ больше лимита ящика — '

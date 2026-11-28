@@ -264,7 +264,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     if (what == 'template') return _template();
     List<ChosenFile> picked;
     try {
-      picked = await FilePick.files(type: what == 'photo' ? FileType.image : FileType.any);
+      picked = await FilePick.files(type: what == 'photo' ? FileType.media : FileType.any);
     } catch (e) {
       AppLogger.warning('Быстрый ответ: выбор файлов не удался — $e');
       return;
@@ -280,7 +280,7 @@ class _QuickReplyBarState extends ConsumerState<QuickReplyBar> {
     var total = _files.fold<int>(0, (s, f) => s + f.size);
     String? error;
     for (final chosen in picked) {
-      if (total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
+      if (limit != null && total + chosen.size > limit && !ImageShrink.isShrinkable(chosen.name)) {
         final mb = (limit / (1024 * 1024)).toStringAsFixed(0);
         error = l10n.tr('attachLimitExceeded').replaceAll('{mb}', mb).replaceAll('{file}', chosen.name);
         continue;

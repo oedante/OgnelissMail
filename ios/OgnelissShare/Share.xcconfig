@@ -1,0 +1,9 @@
+// Базовые настройки цели OgnelissShare (расширение «Поделиться», 2.7.5):
+// версия и сборка — как у приложения (FLUTTER_BUILD_NAME / FLUTTER_BUILD_NUMBER
+// из pubspec), иначе App Store отклонит сборку. Как Widgets.xcconfig.
+#include "../Flutter/Generated.xcconfig"
+// Команда разработчика — та же, что у приложения (локальный файл, не в git).
+#include? "../Flutter/Signing.xcconfig"
+IPHONEOS_DEPLOYMENT_TARGET = 15.0
+MARKETING_VERSION = $(FLUTTER_BUILD_NAME)
+CURRENT_PROJECT_VERSION = $(FLUTTER_BUILD_NUMBER)

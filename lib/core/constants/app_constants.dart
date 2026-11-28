@@ -63,7 +63,6 @@ class AppConstants {
   static const emailsPerPage = 50;
   static const maxCachedEmails = 5000;
   static const cachedCalendarDays = 60;
-  static const maxAttachmentSize = 25 * 1024 * 1024; // 25 MB
   static const searchDebounceMs = 300;
 
   // ═══════════════ ОРГАНИЗАЦИИ (опционально) ═══════════════

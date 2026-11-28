@@ -74,17 +74,27 @@ class DeviceContactsSync {
       // Получаем контакты через platform channel
       final List<dynamic> rawContacts = await _channel.invokeMethod('getContacts') ?? [];
 
+      // Адреса, которые уже есть в контактах (любого ящика — Google,
+      // Exchange — или прежнего импорта), не дублируются (4PDA, 28.11.2026:
+      // «не задвоятся ли с теми же контактами, что подтянуты Google?»):
+      // раньше каждый импорт добавлял всех заново (номер записи — по
+      // времени), а совпадения с контактами ящиков не проверялись.
+      final existing = <String>{
+        for (final r in await _db.customSelect('SELECT lower(email) AS e FROM contacts').get())
+          (r.readNullable<String>('e') ?? '').trim(),
+      };
       int imported = 0;
       await _db.batch((batch) {
         for (final raw in rawContacts) {
           final m = raw as Map<dynamic, dynamic>;
-          final email = m['email'] as String?;
+          final email = (m['email'] as String?)?.trim();
           if (email == null || email.isEmpty) continue;
+          if (!existing.add(email.toLowerCase())) continue;
 
           batch.insert(
             _db.contacts,
             ContactsCompanion.insert(
-              id: 'device_${email.hashCode}_${DateTime.now().millisecondsSinceEpoch}',
+              id: 'device_${email.toLowerCase()}',
               email: email,
               displayName: m['displayName'] as String? ?? email,
               firstName: Value(m['givenName'] as String?),

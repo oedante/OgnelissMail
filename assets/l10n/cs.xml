@@ -3142,7 +3142,6 @@
     <string name="msgSizeOverPhotos">Při odeslání zmenšete fotky nebo odstraňte část souborů</string>
     <string name="msgSizeOverFiles">Odstraňte část souborů nebo je pošlete v samostatných zprávách</string>
     <string name="msgSizeHelpServer">Limit {limit} pochází ze serveru schránky: ze zásad Exchange nebo z jeho odpovědi na dřívější odeslání. Do velikosti se počítají přílohy, text zprávy s vloženými obrázky a citace. Fotky lze přidat i nad limit: při odeslání je můžete zmenšit.</string>
-    <string name="msgSizeHelpDefault">Limit {limit} je typický pro poštovní servery (Exchange, Gmail, Yandex). Pokud váš server používá jiný, aplikace si ho zjistí ze zásad Exchange nebo z odpovědi serveru na odeslání a zapamatuje si ho pro schránku. Do velikosti se počítají přílohy, text zprávy s vloženými obrázky a citace. Fotky lze přidat i nad limit: při odeslání je můžete zmenšit.</string>
     <string name="imageSizeOverLimit">přes limit</string>
     <string name="reminderWeeksBefore">{n} týd. předem</string>
     <string name="reminderAdd">Přidat připomenutí</string>
@@ -4458,4 +4457,11 @@
     <string name="boardMoreUnread">a další {n}</string>
     <string name="startScreen">Úvodní obrazovka</string>
     <string name="startScreenHint">Aplikace se otevírá na této obrazovce. Zpět z jiných částí vede sem, odsud aplikaci zavře</string>
+    <string name="msgSizeOnly">Zpráva: {size}</string>
+    <string name="msgSizeHelpUnknown">Jak velká může být zpráva, rozhoduje poštovní server — každý má jiný limit. Aplikace žádný vlastní limit nemá. Pokud je zpráva větší, server ji odmítne: aplikace ukáže důvod a zapamatuje si limit pro tuto schránku. Do velikosti patří přílohy, text s vloženými obrázky a citace.</string>
+    <string name="categoriesTitle">Kategorie</string>
+    <string name="categoriesLocalHint">Uloženo v zařízení: tato schránka nemá kategorie na serveru</string>
+    <string name="categoryColor">Barva kategorie</string>
+    <string name="attachFromGallery">Fotky a videa</string>
+    <string name="mentionHint">Zmínka: začněte psát jméno</string>
 </resources>

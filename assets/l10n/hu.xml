@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Kicsinyítsd a fotókat küldéskor, vagy távolíts el néhány fájlt</string>
     <string name="msgSizeOverFiles">Távolíts el néhány fájlt, vagy küldd el őket külön üzenetekben</string>
     <string name="msgSizeHelpServer">A korlát ({limit}) a postafiók szerverétől származik: az Exchange-szabályzatból vagy a korábbi küldésre adott válaszából. A méretbe beletartoznak a mellékletek, az üzenet szövege a beillesztett képekkel, és az idézett szöveg. A fotók a korláton túl is hozzáadhatók: küldéskor lekicsinyíthetők.</string>
-    <string name="msgSizeHelpDefault">A korlát ({limit}) a levelezőszerverekre jellemző (Exchange, Gmail, Yandex). Ha a szervered másikat használ, az alkalmazás az Exchange-szabályzatból vagy a küldésre adott szerverválaszból megtanulja, és megjegyzi a postafiókhoz. A méretbe beletartoznak a mellékletek, az üzenet szövege a beillesztett képekkel, és az idézett szöveg. A fotók a korláton túl is hozzáadhatók: küldéskor lekicsinyíthetők.</string>
     <string name="imageSizeOverLimit">korláton felül</string>
     <string name="reminderWeeksBefore">{n} héttel előtte</string>
     <string name="reminderAdd">Emlékeztető hozzáadása</string>
@@ -4437,4 +4436,11 @@
     <string name="boardMoreUnread">és még {n}</string>
     <string name="startScreen">Kezdőképernyő</string>
     <string name="startScreenHint">Az alkalmazás ezzel a képernyővel nyílik meg. Más részekből a Vissza ide vezet, innen bezárja az alkalmazást</string>
+    <string name="msgSizeOnly">Levél: {size}</string>
+    <string name="msgSizeHelpUnknown">Azt, hogy mekkora lehet egy levél, a levelezőszerver dönti el — minden szervernek más a korlátja. Az alkalmazásnak nincs saját korlátja. Ha a levél túl nagy, a szerver elutasítja: az alkalmazás megmutatja az okát, és megjegyzi a korlátot ehhez a postafiókhoz. A méretbe beletartoznak a mellékletek, a beillesztett képes szöveg és az idézet.</string>
+    <string name="categoriesTitle">Kategóriák</string>
+    <string name="categoriesLocalHint">Az eszközön tárolva: ennek a postafióknak nincsenek kategóriái a szerveren</string>
+    <string name="categoryColor">Kategória színe</string>
+    <string name="attachFromGallery">Fotók és videók</string>
+    <string name="mentionHint">Említés: kezdje beírni a nevet</string>
 </resources>

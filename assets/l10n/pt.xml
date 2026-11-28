@@ -3129,7 +3129,6 @@
     <string name="msgSizeOverPhotos">Ao enviar, reduza as fotos ou remova alguns arquivos</string>
     <string name="msgSizeOverFiles">Remova alguns arquivos ou envie-os em mensagens separadas</string>
     <string name="msgSizeHelpServer">O limite de {limit} vem do servidor da caixa de correio: a política do Exchange ou a resposta dele a um envio anterior. O tamanho inclui os anexos, o texto da mensagem com as imagens coladas e a citação. É possível adicionar fotos além do limite: você pode reduzi-las ao enviar.</string>
-    <string name="msgSizeHelpDefault">O limite de {limit} é típico de servidores de e-mail (Exchange, Gmail, Yandex). Se o seu servidor usa outro, o app descobre pela política do Exchange ou pela resposta do servidor a um envio e o memoriza para a caixa de correio. O tamanho inclui os anexos, o texto da mensagem com as imagens coladas e a citação. É possível adicionar fotos além do limite: você pode reduzi-las ao enviar.</string>
     <string name="imageSizeOverLimit">acima do limite</string>
     <string name="reminderWeeksBefore">{n} sem antes</string>
     <string name="reminderAdd">Adicionar lembrete</string>
@@ -4437,4 +4436,11 @@
     <string name="boardMoreUnread">e mais {n}</string>
     <string name="startScreen">Tela inicial</string>
     <string name="startScreenHint">O app abre nesta tela. Voltar a partir de outras seções retorna para ela; a partir dela, fecha o app</string>
+    <string name="msgSizeOnly">Mensagem: {size}</string>
+    <string name="msgSizeHelpUnknown">Quem decide o tamanho máximo é o servidor de e-mail — cada servidor tem seu limite. O app não impõe limite próprio. Se a mensagem passar do limite, o servidor a recusa: o app mostra o motivo e guarda o limite desta caixa. O tamanho inclui anexos, texto com imagens coladas e a citação.</string>
+    <string name="categoriesTitle">Categorias</string>
+    <string name="categoriesLocalHint">Salvas no aparelho: esta caixa não tem categorias no servidor</string>
+    <string name="categoryColor">Cor da categoria</string>
+    <string name="attachFromGallery">Fotos e vídeos</string>
+    <string name="mentionHint">Menção: comece a digitar um nome</string>
 </resources>

@@ -3155,7 +3155,6 @@
     <string name="msgSizeOverPhotos">Zmniejsz zdjęcia przy wysyłaniu lub usuń część plików</string>
     <string name="msgSizeOverFiles">Usuń część plików lub wyślij je w osobnych wiadomościach</string>
     <string name="msgSizeHelpServer">Limit {limit} pochodzi z serwera skrzynki: z zasad Exchange lub z jego odpowiedzi na wcześniejsze wysłanie. Do rozmiaru wlicza się załączniki, tekst wiadomości z wklejonymi obrazami oraz cytat. Zdjęcia można dodawać ponad limit: możesz je zmniejszyć przy wysyłaniu.</string>
-    <string name="msgSizeHelpDefault">Limit {limit} jest typowy dla serwerów poczty (Exchange, Gmail, Yandex). Jeśli Twój serwer używa innego, aplikacja dowie się tego z zasad Exchange lub z odpowiedzi serwera na wysłanie i zapamięta go dla skrzynki. Do rozmiaru wlicza się załączniki, tekst wiadomości z wklejonymi obrazami oraz cytat. Zdjęcia można dodawać ponad limit: możesz je zmniejszyć przy wysyłaniu.</string>
     <string name="imageSizeOverLimit">ponad limit</string>
     <string name="reminderWeeksBefore">{n} tyg. wcześniej</string>
     <string name="reminderAdd">Dodaj przypomnienie</string>
@@ -4479,4 +4478,11 @@
     <string name="boardMoreUnread">i jeszcze {n}</string>
     <string name="startScreen">Ekran startowy</string>
     <string name="startScreenHint">Aplikacja otwiera się na tym ekranie. Wstecz z innych sekcji wraca tutaj, a stąd zamyka aplikację</string>
+    <string name="msgSizeOnly">Wiadomość: {size}</string>
+    <string name="msgSizeHelpUnknown">O maksymalnym rozmiarze decyduje serwer poczty — każdy ma swój limit. Aplikacja nie narzuca własnego. Jeśli wiadomość przekroczy limit, serwer ją odrzuci: aplikacja pokaże przyczynę i zapamięta limit dla tej skrzynki. Rozmiar obejmuje załączniki, tekst z wklejonymi obrazami i cytat.</string>
+    <string name="categoriesTitle">Kategorie</string>
+    <string name="categoriesLocalHint">Zapisane na urządzeniu: ta skrzynka nie ma kategorii na serwerze</string>
+    <string name="categoryColor">Kolor kategorii</string>
+    <string name="attachFromGallery">Zdjęcia i filmy</string>
+    <string name="mentionHint">Wzmianka: zacznij wpisywać imię</string>
 </resources>

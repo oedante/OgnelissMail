@@ -415,7 +415,10 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
     final now = DateTime.now();
     final today = DateTime(now.year, now.month, now.day);
     final tomorrow = today.add(const Duration(days: 1));
-    final weekEnd = today.add(const Duration(days: 7));
+    // Конец недели — по календарю (с понедельника или воскресенья — как в
+    // языке телефона), а не «через 7 дней» (4PDA, 28.11.2026: в субботу
+    // задачи на понедельник–четверг стояли в «На этой неделе»).
+    final weekEnd = weekEndAfter(today, MaterialLocalizations.of(context).firstDayOfWeekIndex);
 
     DateTime? when(TaskModel t) => t.dueDate?.toLocal() ?? t.reminderAt?.toLocal();
     int byWhen(TaskModel a, TaskModel b) {
@@ -458,7 +461,13 @@ class _TasksScreenState extends ConsumerState<TasksScreen> {
         sections.add((l10n.tr('today'), rest.where((t) => when(t)!.isBefore(tomorrow)).toList(), null));
         sections.add((l10n.tr('tomorrow'), rest.where((t) => inDay(t, tomorrow, tomorrow.add(const Duration(days: 1)))).toList(), null));
         sections.add((l10n.tr('thisWeek'), rest.where((t) => inDay(t, tomorrow.add(const Duration(days: 1)), weekEnd)).toList(), null));
-        sections.add((l10n.tr('later'), rest.where((t) => !when(t)!.isBefore(weekEnd)).toList(), null));
+        // В последний день недели «завтра» — уже следующая неделя: она
+        // начинается после «завтра», без повторов.
+        final dayAfter = tomorrow.add(const Duration(days: 1));
+        final nextStart = weekEnd.isAfter(dayAfter) ? weekEnd : dayAfter;
+        final nextWeekEnd = weekEnd.add(const Duration(days: 7));
+        sections.add((l10n.tr('flagNextWeek'), rest.where((t) => inDay(t, nextStart, nextWeekEnd)).toList(), null));
+        sections.add((l10n.tr('later'), rest.where((t) => !when(t)!.isBefore(nextWeekEnd)).toList(), null));
         break;
       case TaskList.important:
         sections.add(('', active.where((t) => t.isFlagged).toList(), null));
@@ -966,4 +975,13 @@ class _QuickAddBarState extends State<_QuickAddBar> {
       ),
     );
   }
+}
+
+/// Начало следующей недели после [today] (полночь): [firstDayOfWeek] — 0
+/// воскресенье, 1 понедельник (MaterialLocalizations.firstDayOfWeekIndex).
+@visibleForTesting
+DateTime weekEndAfter(DateTime today, int firstDayOfWeek) {
+  final dow = today.weekday % 7; // 0 — воскресенье
+  final sinceStart = (dow - firstDayOfWeek + 7) % 7;
+  return DateTime(today.year, today.month, today.day - sinceStart + 7);
 }

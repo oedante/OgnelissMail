@@ -1548,7 +1548,8 @@ class AppDatabase extends _$AppDatabase {
     final tag = f.tag;
     if (tag != null && tag.isNotEmpty) {
       // Грубый отбор в SQL; точное совпадение тега проверяется в памяти.
-      q.where((e) => e.tagsStr.like('%$tag%'));
+      // Категории Exchange — тоже (2.7.5: теги и категории — одно).
+      q.where((e) => e.tagsStr.like('%$tag%') | e.categoriesStr.like('%$tag%'));
     }
     final me = f.toMe;
     if (me != null && me.isNotEmpty) {

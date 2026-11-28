@@ -60,6 +60,8 @@
 	<!-- Возврат из входа через OAuth-прокси (Gmail, Яндекс, Mail.ru, Outlook):
 	     com.ogneliss.mail://oauth — та же схема, что в AndroidManifest и
 	     lib/services/mail/oauth/oauth_proxy_flow.dart (kAppScheme). -->
+	<key>AppGroupId</key>
+	<string>group.com.ogneliss.mail</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -68,6 +70,16 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>com.ogneliss.mail</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.ogneliss.mail.share</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ShareMedia-$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 			</array>
 		</dict>
 	</array>

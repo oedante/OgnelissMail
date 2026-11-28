@@ -11,6 +11,9 @@
 // UIApplication.beginBackgroundTask даёт приложению ~30 секунд, чтобы
 // закончить начатое. Просим их, только если работа идёт, и отдаём сразу,
 // как она закончилась (или через 25 с — с запасом до лимита iOS).
+//
+// Android (2.7.5): то же — срочной задачей WorkManager (FinishWorkKeeper.kt),
+// до 3 минут: Android 12+ замораживает свёрнутое приложение за секунды.
 
 import 'dart:async';
 import 'dart:io' show Platform;
@@ -62,9 +65,13 @@ class FinishInBackground {
 
   static bool _running = false;
 
-  /// Приложение свернули (iPhone): попросить у iOS время, если работа идёт.
+  static const _android = MethodChannel('ogneliss/finish_work');
+
+  /// Приложение свернули: попросить у системы время, если работа идёт.
   static Future<void> onPaused() async {
-    if (kIsWeb || !Platform.isIOS || _running || !busy) return;
+    if (kIsWeb || _running || !busy) return;
+    if (Platform.isAndroid) return _onPausedAndroid();
+    if (!Platform.isIOS) return;
     _running = true;
     int? task;
     try {
@@ -87,6 +94,33 @@ class FinishInBackground {
           await _channel.invokeMethod<void>('endBackgroundTask', task);
         } catch (_) {}
       }
+      _running = false;
+    }
+  }
+
+  /// Android (2.7.5, журнал пользователя 27.11.2026: письмо начало уходить,
+  /// приложение свернули через 3 с — и Android его заморозил, отправка
+  /// встала до следующего открытия). Срочная задача WorkManager ждёт, пока
+  /// работа идёт (до 3 минут): процесс с идущей задачей не замораживается.
+  static Future<void> _onPausedAndroid() async {
+    _running = true;
+    final started = DateTime.now();
+    try {
+      final ok = await _android.invokeMethod<bool>('begin');
+      if (ok != true) return;
+      AppLogger.info('Свёрнуто посреди синхронизации или отправки — Android: задача «доделать» поставлена');
+      await _whenIdle(const Duration(minutes: 3));
+      final s = DateTime.now().difference(started).inSeconds;
+      AppLogger.info(busy
+          ? 'Свёрнуто: за $s с не закончилось — остальное при следующем пробуждении'
+          : 'Свёрнуто: начатое закончено за $s с');
+    } catch (e) {
+      AppLogger.debug('Доделать в фоне (Android): $e');
+    } finally {
+      try {
+        await _android.invokeMethod<void>('end');
+      } catch (_) {}
+      AppLogger.flushNow();
       _running = false;
     }
   }

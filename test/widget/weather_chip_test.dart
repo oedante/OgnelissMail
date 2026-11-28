@@ -98,4 +98,35 @@ void main() {
     expect(find.text('В виджетах — не больше двух городов'), findsOneWidget);
     expect(find.byKey(const ValueKey('weather_add_city')), findsOneWidget);
   });
+
+  // 2.7.5 (замечание владельца 27.11.2026): сверху окна — не всегда первый
+  // город; «в виджетах» — заметно.
+  testWidgets('окно погоды: открывается на пролистанном городе, нажатие — другой город; «в виджетах» залито', (t) async {
+    final places = [
+      {..._ekb, 'w': true},
+      _msk,
+      _kzn,
+    ];
+    await _pump(t,
+        Builder(builder: (c) => TextButton(onPressed: () => showWeatherSheet(c, placeKey: '55.75,37.62'), child: const Text('open'))),
+        prefs: {'weather_places_v2': jsonEncode(places)});
+    await t.tap(find.text('open'));
+    await t.pumpAndSettle();
+    // Заголовок — Москва (первая строка окна — titleLarge).
+    Text title() => t.widget<Text>(find.byWidgetPredicate(
+        (w) => w is Text && w.style?.fontSize == Theme.of(t.element(find.byType(Scaffold))).textTheme.titleLarge?.fontSize));
+    expect(title().data, 'Москва');
+    await t.tap(find.byKey(const ValueKey('weather_place_55.8,49.11')));
+    await t.pumpAndSettle();
+    expect(title().data, 'Казань');
+    // «В виджетах» — залитая кнопка (filledTonal), остальные — обычные.
+    expect(find.descendant(of: find.byKey(const ValueKey('weather_widget_56.84,60.61')), matching: find.byType(IconButton)),
+        findsNothing, reason: 'сам ключ — у IconButton');
+    final ekb = t.widget<IconButton>(find.byKey(const ValueKey('weather_widget_56.84,60.61')));
+    final kzn = t.widget<IconButton>(find.byKey(const ValueKey('weather_widget_55.8,49.11')));
+    expect(ekb.isSelected, isTrue);
+    expect(kzn.isSelected, isFalse);
+    expect(kzn.onPressed, isNotNull, reason: 'в виджетах один город — можно добавить');
+  });
 }
+

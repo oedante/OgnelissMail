@@ -23,6 +23,7 @@ import '../../services/weather/weather_service.dart';
 import '../../widgets/common/app_sheet.dart';
 import '../settings/providers/settings_provider.dart';
 import 'flip_clock.dart';
+import 'weather_scene.dart' show nowCardPlaceProvider;
 
 IconData weatherIcon(WeatherKind? k, {bool night = false}) => switch (k) {
       WeatherKind.clear => night ? AppIcons.clear_night : AppIcons.clear_day,
@@ -153,7 +154,7 @@ class WeatherChip extends ConsumerWidget {
       excludeSemantics: true,
       child: InkWell(
         borderRadius: Radii.chipAll,
-        onTap: () => showWeatherSheet(context),
+        onTap: () => showWeatherSheet(context, placeKey: place.key),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.xs),
           child: ConstrainedBox(
@@ -276,7 +277,11 @@ class _CityClocksState extends ConsumerState<CityClocks> {
         child: PageView(
           key: const ValueKey('city_pages'),
           controller: _pages,
-          onPageChanged: (i) => setState(() => _page = i),
+          onPageChanged: (i) {
+            setState(() => _page = i);
+            // Город пролистанной страницы — для рисунка погоды фоном (2.7.5).
+            ref.read(nowCardPlaceProvider.notifier).state = i == 0 ? null : s.places[i].key;
+          },
           children: pages,
         ),
       ),
@@ -307,8 +312,9 @@ class MyDayCityClocks extends ConsumerWidget {
 }
 
 /// Окно погоды: сейчас, сегодня, по часам, источник; сменить город,
-/// выключить. Погода не включена — сразу выбор города.
-Future<void> showWeatherSheet(BuildContext context) async {
+/// выключить. Погода не включена — сразу выбор города. [placeKey] — город,
+/// который показать сверху (2.7.5: раньше — всегда первый).
+Future<void> showWeatherSheet(BuildContext context, {String? placeKey}) async {
   final container = ProviderScope.containerOf(context);
   if (!container.read(weatherSettingsProvider).active) {
     await showWeatherPlacePicker(context);
@@ -318,20 +324,29 @@ Future<void> showWeatherSheet(BuildContext context) async {
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
-    builder: (_) => const _WeatherSheet(),
+    builder: (_) => _WeatherSheet(initial: placeKey),
   );
 }
 
-class _WeatherSheet extends ConsumerWidget {
-  const _WeatherSheet();
+class _WeatherSheet extends ConsumerStatefulWidget {
+  final String? initial;
+  const _WeatherSheet({this.initial});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_WeatherSheet> createState() => _WeatherSheetState();
+}
+
+class _WeatherSheetState extends ConsumerState<_WeatherSheet> {
+  /// Город сверху (прогноз по часам); нажатие на город в списке — он.
+  late String? _selected = widget.initial;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final settings = ref.watch(weatherSettingsProvider);
-    final async = ref.watch(weatherProvider);
-    final place = settings.place;
+    final place = (_selected == null ? null : settings.byKey(_selected!)) ?? settings.place;
+    final async = place == null ? ref.watch(weatherProvider) : ref.watch(weatherForProvider(place.key));
     final f = async.value;
     final muted = AppColors.mutedText(context);
     return Padding(
@@ -396,7 +411,10 @@ class _WeatherSheet extends ConsumerWidget {
         ],
         // Города (2.7.2): сейчас и сегодня, «в виджетах», добавить, убрать.
         const SizedBox(height: Space.m),
-        const _Cities(),
+        _Cities(
+          selected: place?.key,
+          onSelect: (k) => setState(() => _selected = k),
+        ),
         const SizedBox(height: Space.s),
         if (f?.fetchedAt case final at?)
           Text(l10n.tr('weatherFetchedAt').replaceAll('{time}', _when(at, l10n)),
@@ -434,7 +452,10 @@ class _WeatherSheet extends ConsumerWidget {
 /// виджетах» (не больше двух) и меню «Сделать первым», «Убрать»; внизу —
 /// «Добавить город» (до пяти).
 class _Cities extends ConsumerWidget {
-  const _Cities();
+  /// Город сверху окна — строка выделена; нажатие на строку — этот город.
+  final String? selected;
+  final ValueChanged<String> onSelect;
+  const _Cities({this.selected, required this.onSelect});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -450,9 +471,16 @@ class _Cities extends ConsumerWidget {
           final f = ref.watch(weatherForProvider(p.key)).value;
           final inWidgets = s.widgetKeys.contains(p.key);
           final time = cityNow(p);
-          return Padding(
+          final isSel = p.key == selected;
+          return Material(
             key: ValueKey('weather_place_${p.key}'),
-            padding: const EdgeInsets.symmetric(vertical: Space.xs),
+            color: isSel ? theme.colorScheme.secondaryContainer.withValues(alpha: 0.6) : Colors.transparent,
+            borderRadius: Radii.chipAll,
+            child: InkWell(
+            borderRadius: Radii.chipAll,
+            onTap: () => onSelect(p.key),
+            child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: Space.xs, horizontal: Space.xs),
             child: Row(children: [
               Icon(f == null ? AppIcons.cloud : weatherIcon(f.now.kind, night: f.now.night),
                   size: 28, color: f == null ? muted : theme.colorScheme.primary),
@@ -479,13 +507,24 @@ class _Cities extends ConsumerWidget {
                   ),
                 ]),
               ),
-              IconButton(
-                key: ValueKey('weather_widget_${p.key}'),
-                tooltip: l10n.tr(inWidgets ? 'weatherInWidgets' : (full ? 'weatherWidgetLimit' : 'weatherShowInWidgets')),
-                isSelected: inWidgets,
-                icon: Icon(AppIcons.widgets, color: inWidgets ? theme.colorScheme.primary : muted),
-                onPressed: !inWidgets && full ? null : () => unawaited(n.setInWidgets(p.key, !inWidgets)),
-              ),
+              // «В виджетах» — залитой кнопкой, не в виджетах — контуром
+              // (2.7.5: в монохромной теме цвет значка почти не отличался).
+              if (inWidgets)
+                IconButton.filledTonal(
+                  key: ValueKey('weather_widget_${p.key}'),
+                  tooltip: l10n.tr('weatherInWidgets'),
+                  isSelected: true,
+                  icon: const Icon(AppIcons.widgets, fill: 1),
+                  onPressed: () => unawaited(n.setInWidgets(p.key, false)),
+                )
+              else
+                IconButton(
+                  key: ValueKey('weather_widget_${p.key}'),
+                  tooltip: l10n.tr(full ? 'weatherWidgetLimit' : 'weatherShowInWidgets'),
+                  isSelected: false,
+                  icon: Icon(AppIcons.widgets, fill: 0, color: muted.withValues(alpha: full ? 0.4 : 1)),
+                  onPressed: full ? null : () => unawaited(n.setInWidgets(p.key, true)),
+                ),
               PopupMenuButton<String>(
                 key: ValueKey('weather_menu_${p.key}'),
                 icon: Icon(AppIcons.more_vert, color: muted),
@@ -496,6 +535,8 @@ class _Cities extends ConsumerWidget {
                 ],
               ),
             ]),
+            ),
+            ),
           );
         }),
       if (full)

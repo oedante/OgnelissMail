@@ -55,6 +55,7 @@ import '../../widgets/ui/app_menu_button.dart';
 import '../calendar/calendar_data.dart';
 import '../mail/providers/mail_providers.dart';
 import '../mail/screens/accounts_board_screen.dart' show AccountsStrip;
+import 'weather_scene.dart' show MyDayWeatherBackdrop;
 import '../mail/widgets/control_sheet.dart' show controlDeadlineLabel;
 import '../settings/providers/settings_provider.dart';
 import '../tasks/widgets/task_editor_sheet.dart' show showTaskEditor;
@@ -394,11 +395,16 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
     final showTomorrow = now.hour >= 16 || (next == null && live.isEmpty);
     return Container(
       margin: const EdgeInsets.only(top: Space.s, bottom: Space.xs),
-      padding: const EdgeInsets.all(Space.l),
+      clipBehavior: Clip.antiAlias,
       decoration: BoxDecoration(
         color: theme.colorScheme.primary.withValues(alpha: 0.07),
         borderRadius: Radii.cardAll,
       ),
+      // Рисунок погоды фоном (2.7.5): солнце, облака, туман, капли, снег.
+      child: Stack(children: [
+        const Positioned.fill(child: MyDayWeatherBackdrop()),
+        Padding(
+      padding: const EdgeInsets.all(Space.l),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         // Часы — перелистывающиеся (1.15.1), справа — погода, если включена.
         // 2.7.2: несколько городов — листанием (часы и погода каждого).
@@ -446,6 +452,8 @@ class _MyDayScreenState extends ConsumerState<MyDayScreen> {
                         tomorrowTimed.first.title.trim().isEmpty ? l10n.tr('noSubject') : tomorrowTimed.first.title.trim()),
             tomorrowTimed.length > 1 ? l10n.plural('digestEventsN', tomorrowTimed.length) : null,
           ),
+      ]),
+        ),
       ]),
     );
   }

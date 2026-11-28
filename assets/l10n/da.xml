@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Gemt på enheden: denne postkasse har ingen kategorier på serveren</string>
     <string name="categoryColor">Kategorifarve</string>
     <string name="attachFromGallery">Billeder og videoer</string>
+    <string name="mentionHint">Omtale: begynd at skrive et navn</string>
 </resources>

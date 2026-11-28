@@ -4463,4 +4463,5 @@
     <string name="categoriesLocalHint">Uložené v zariadení: táto schránka nemá kategórie na serveri</string>
     <string name="categoryColor">Farba kategórie</string>
     <string name="attachFromGallery">Fotky a videá</string>
+    <string name="mentionHint">Zmienka: začnite písať meno</string>
 </resources>

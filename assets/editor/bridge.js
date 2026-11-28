@@ -47,6 +47,34 @@
   // свёрнутое «Исходное письмо» стояло почти внизу экрана, под пустым полем):
   // приложение ставит окну редактора высоту по тексту — до своего предела,
   // дальше текст прокручивается внутри, как раньше.
+  // @-упоминание (2.7.5, просьба владельца «доделать @ФИО»): «@» и начало
+  // имени перед курсором — приложению ('mention', '@запрос'), оно
+  // показывает подходящих людей; ушли с упоминания — ('mention', '').
+  var lastMention = '';
+  function mentionQuery() {
+    try {
+      var rng = ed.selection.getRng();
+      if (!rng || !rng.collapsed) return null;
+      var node = rng.startContainer;
+      if (!node || node.nodeType !== 3) return null;
+      if (ed.dom.getParent(node, 'a')) return null;
+      var text = node.data.substring(0, rng.startOffset);
+      var m = /(^|[\s\u00a0(\[«"'])@([^\s\u00a0@<>]{0,30}(?:[\s\u00a0][^\s\u00a0@<>]{1,30})?)$/.exec(text);
+      return m ? m[2] : null;
+    } catch (e) { return null; }
+  }
+  function mentionCheck() {
+    if (!ed) return;
+    var q = mentionQuery();
+    var v = q === null ? '' : '@' + q.replace(/\u00a0/g, ' ');
+    if (v === lastMention) return;
+    lastMention = v;
+    send('mention', v);
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
   var hTimer = null;
   var lastH = 0;
   function measure() {
@@ -108,6 +136,30 @@
       changed();
     },
     get: function () { return ed ? ed.getContent() : ''; },
+    // Упоминание вместо «@запроса» перед курсором — как у Outlook:
+    // <a href="mailto:…" id="OWAAM…">@Имя</a> (Outlook и OWA узнают в
+    // нём упоминание).
+    insertMention: function (name, email) {
+      if (!ed) return;
+      try {
+        var rng = ed.selection.getRng();
+        var node = rng.startContainer, off = rng.startOffset;
+        if (node && node.nodeType === 3) {
+          var at = node.data.substring(0, off).lastIndexOf('@');
+          if (at >= 0) {
+            var r = ed.dom.createRng();
+            r.setStart(node, at);
+            r.setEnd(node, off);
+            ed.selection.setRng(r);
+          }
+        }
+        var id = 'OWAAM' + Date.now().toString(16) + Math.random().toString(16).slice(2, 10);
+        ed.selection.setContent('<a href="mailto:' + esc(email) + '" id="' + id + '">@' + esc(name) + '</a>&nbsp;');
+      } catch (e) {}
+      lastMention = '';
+      send('mention', '');
+      changed();
+    },
     focus: function () { if (ed) ed.focus(); },
     // Фокус ушёл в поле приложения (тема, адресаты): убрать курсор и
     // выделение из окна редактора — иначе курсоров видно два.
@@ -305,6 +357,7 @@
         // Курсор ушёл в текст письма — приложение завершает ввод в шапке
         // (адрес становится плашкой, курсор поля гаснет), 1.6.2.
         editor.on('focus', function () { send('focus'); });
+        editor.on('input keyup NodeChange', mentionCheck);
         // Касание текста, когда документ редактора и так в фокусе (курсор
         // успели перенести в тему): событие focus не приходит, и курсоров
         // было два — в теме и в тексте (27.10.2026). Касание сообщает о

@@ -4421,4 +4421,5 @@
     <string name="categoriesLocalHint">保存在设备上：此邮箱在服务器上没有类别</string>
     <string name="categoryColor">类别颜色</string>
     <string name="attachFromGallery">照片和视频</string>
+    <string name="mentionHint">提及：开始输入姓名</string>
 </resources>

@@ -4421,4 +4421,5 @@
     <string name="categoriesLocalHint">จัดเก็บบนอุปกรณ์: กล่องนี้ไม่มีหมวดหมู่บนเซิร์ฟเวอร์</string>
     <string name="categoryColor">สีของหมวดหมู่</string>
     <string name="attachFromGallery">รูปภาพและวิดีโอ</string>
+    <string name="mentionHint">กล่าวถึง: เริ่มพิมพ์ชื่อ</string>
 </resources>

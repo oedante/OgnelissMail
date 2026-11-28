@@ -138,6 +138,10 @@ class MailEditorController {
   /// Вставить в позицию курсора.
   Future<void> insertHtml(String html) => _run('OgnEditor.insert(${_js(html)})');
 
+  /// @-упоминание вместо «@запроса» перед курсором (2.7.5).
+  Future<void> insertMention(String name, String email) =>
+      _run('OgnEditor.insertMention(${_js(name)}, ${_js(email)})');
+
   /// Дописать в конец (подпись, цитата).
   Future<void> appendHtml(String html) => _run('OgnEditor.append(${_js(html)})');
 
@@ -331,6 +335,7 @@ class MailEditor extends StatefulWidget {
     this.onPickImage,
     this.onFocus,
     this.onKey,
+    this.onMention,
     this.bodyStyle = '',
     this.toolbarHidden = false,
     this.usePool = false,
@@ -373,6 +378,10 @@ class MailEditor extends StatefulWidget {
   /// (⌘+Enter на Mac), 'save' — Ctrl+S. Клавиши во встроенном браузере до
   /// приложения не доходят — редактор сообщает о них сам.
   final ValueChanged<String>? onKey;
+
+  /// «@» и начало имени перед курсором (2.7.5): запрос без «@»; null — не
+  /// упоминание (подсказки убрать).
+  final ValueChanged<String?>? onMention;
 
   @override
   State<MailEditor> createState() => _MailEditorState();
@@ -706,6 +715,14 @@ class _MailEditorState extends State<MailEditor> {
           handlerName: 'focus',
           callback: (_) {
             widget.onFocus?.call();
+            return null;
+          },
+        );
+        c.addJavaScriptHandler(
+          handlerName: 'mention',
+          callback: (args) {
+            final v = args.isNotEmpty && args.first is String ? args.first as String : '';
+            widget.onMention?.call(v.startsWith('@') ? v.substring(1) : null);
             return null;
           },
         );

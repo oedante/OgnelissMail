@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Cihazda saklanır: bu kutunun sunucuda kategorileri yok</string>
     <string name="categoryColor">Kategori rengi</string>
     <string name="attachFromGallery">Fotoğraflar ve videolar</string>
+    <string name="mentionHint">Bahsetme: bir ad yazmaya başlayın</string>
 </resources>

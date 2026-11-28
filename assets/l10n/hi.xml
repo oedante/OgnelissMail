@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">डिवाइस पर सहेजी जाती हैं: इस मेलबॉक्स की सर्वर पर श्रेणियाँ नहीं हैं</string>
     <string name="categoryColor">श्रेणी का रंग</string>
     <string name="attachFromGallery">फ़ोटो और वीडियो</string>
+    <string name="mentionHint">उल्लेख: नाम लिखना शुरू करें</string>
 </resources>

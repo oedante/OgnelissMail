@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Auf dem Gerät gespeichert: Dieses Postfach hat keine Kategorien auf dem Server</string>
     <string name="categoryColor">Kategoriefarbe</string>
     <string name="attachFromGallery">Fotos und Videos</string>
+    <string name="mentionHint">Erwähnung: Namen eingeben</string>
 </resources>

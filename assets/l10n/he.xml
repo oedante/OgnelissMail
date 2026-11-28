@@ -4463,4 +4463,5 @@
     <string name="categoriesLocalHint">נשמרות במכשיר: לתיבה הזו אין קטגוריות בשרת</string>
     <string name="categoryColor">צבע הקטגוריה</string>
     <string name="attachFromGallery">תמונות וסרטונים</string>
+    <string name="mentionHint">אזכור: התחילו להקליד שם</string>
 </resources>

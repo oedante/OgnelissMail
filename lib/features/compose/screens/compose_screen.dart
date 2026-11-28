@@ -2295,6 +2295,8 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
       // под клавиатуру (1.6.19): иначе он вместе с редактором в WebView
       // перестраивался в каждом кадре её появления, и шторка ехала рывками.
       resizeToAvoidBottomInset: ModalRoute.of(context)?.isCurrent ?? true,
+      // @-упоминание (2.7.5): подходящие люди — строкой над клавиатурой.
+      bottomNavigationBar: _mentionQuery == null ? null : _mentionStrip(l10n),
       // Белый (светлая тема) или фон темы — как у открытого письма.
       backgroundColor: mailPageColor(Theme.of(context)),
       appBar: TextScaleCapBar(child: AppBar(
@@ -2546,6 +2548,7 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
                       },
                       onPickImage: pickInlineImageDataUri,
                       onFocus: _onEditorFocus,
+                      onMention: _onMention,
                       onKey: (k) {
                         if (_isSending) return;
                         if (k == 'send') unawaited(_onSend(l10n, settings));
@@ -4620,6 +4623,123 @@ class _ComposeScreenState extends ConsumerState<ComposeScreen>
     });
     _updateGreeting();
     showInlineNotice(l10n.tr('groupExpanded').replaceAll('{n}', '${picked.length}'));
+  }
+
+  // ── @-упоминания (2.7.5, просьба владельца «доделать @ФИО») ──
+  // «@» и начало имени в тексте — строка подходящих людей над клавиатурой;
+  // выбор вставляет упоминание, как Outlook (@Имя ссылкой на адрес), и
+  // добавляет человека в «Кому», если его нет среди адресатов.
+
+  /// Запрос упоминания (без «@»); null — упоминания нет.
+  String? _mentionQuery;
+  List<ContactModel> _mentionHits = const [];
+  int _mentionSeq = 0;
+
+  void _onMention(String? q) {
+    if (!mounted) return;
+    if (q == null) {
+      if (_mentionQuery != null) setState(() => _mentionQuery = null);
+      return;
+    }
+    setState(() => _mentionQuery = q);
+    final seq = ++_mentionSeq;
+    unawaited(_mentionCandidates(q).then((hits) {
+      if (mounted && seq == _mentionSeq) setState(() => _mentionHits = hits);
+    }));
+  }
+
+  /// Кого предложить: адресаты письма, затем контакты (избранные и частые);
+  /// с запросом — по имени или адресу.
+  Future<List<ContactModel>> _mentionCandidates(String q) async {
+    final query = q.trim().toLowerCase();
+    bool fits(String name, String email) =>
+        query.isEmpty || name.toLowerCase().contains(query) || email.toLowerCase().contains(query);
+    final out = <ContactModel>[];
+    final seen = <String>{};
+    for (final r in [..._toRecipients, ..._ccRecipients, ..._bccRecipients]) {
+      final name = r.displayName ?? '';
+      if (seen.add(r.email.toLowerCase()) && fits(name, r.email)) {
+        out.add(ContactModel(id: 'r_${r.email}', email: r.email, displayName: name.isEmpty ? r.email : name));
+      }
+    }
+    try {
+      final db = ref.read(databaseProvider);
+      final cap = query.isEmpty ? '' : query[0].toUpperCase() + query.substring(1);
+      final variants = {query, cap, q.trim()}.where((v) => v.isNotEmpty).toList();
+      final cond = variants.isEmpty ? '1' : List.filled(variants.length, 'display_name LIKE ?').join(' OR ');
+      final rows = await db.customSelect(
+        'SELECT id, email, display_name FROM contacts '
+        "WHERE email <> '' AND (${query.isEmpty ? '1' : 'lower(email) LIKE ? OR $cond'}) "
+        'ORDER BY is_favorite DESC, interaction_count DESC, display_name LIMIT 12',
+        variables: [
+          if (query.isNotEmpty) Variable.withString('%$query%'),
+          if (query.isNotEmpty)
+            for (final v in variants) Variable.withString('%$v%'),
+        ],
+      ).get();
+      for (final r in rows) {
+        final email = r.read<String>('email');
+        if (!seen.add(email.toLowerCase())) continue;
+        out.add(ContactModel(id: r.read<String>('id'), email: email, displayName: r.read<String>('display_name')));
+      }
+    } catch (_) {}
+    return out.take(10).toList();
+  }
+
+  /// Выбрали человека для упоминания.
+  Future<void> _mention(ContactModel c) async {
+    final name = c.displayName.isNotEmpty && c.displayName != c.email ? normalizePersonName(c.displayName) : c.email;
+    await _editor.insertMention(name, c.email);
+    final known = [..._toRecipients, ..._ccRecipients, ..._bccRecipients]
+        .any((r) => r.email.toLowerCase() == c.email.toLowerCase());
+    if (!mounted) return;
+    setState(() {
+      _mentionQuery = null;
+      if (!known) _toRecipients.add(EmailAddress(email: c.email, displayName: name));
+    });
+    if (!known) _updateGreeting();
+    _markDraftChanged();
+    unawaited(HapticFeedback.selectionClick());
+  }
+
+  Widget _mentionStrip(AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Material(
+      key: const ValueKey('mention_strip'),
+      color: theme.colorScheme.surfaceContainer,
+      child: SafeArea(
+        top: false,
+        child: SizedBox(
+          height: 52,
+          child: _mentionHits.isEmpty
+              ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: Space.l),
+                  child: Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: Text(l10n.tr('mentionHint'),
+                        style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant)),
+                  ),
+                )
+              : ListView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: Space.s),
+                  children: [
+                    for (final c in _mentionHits)
+                      Padding(
+                        padding: const EdgeInsets.only(right: Space.s),
+                        child: ActionChip(
+                          key: ValueKey('mention_${c.email}'),
+                          avatar: const Icon(AppIcons.alternate_email, size: 16),
+                          label: Text(c.displayName.isNotEmpty ? normalizePersonName(c.displayName) : c.email),
+                          tooltip: c.email,
+                          onPressed: () => unawaited(_mention(c)),
+                        ),
+                      ),
+                  ],
+                ),
+        ),
+      ),
+    );
   }
 
   void _addRecipient(ContactModel contact) {

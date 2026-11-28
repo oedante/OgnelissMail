@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Op dit apparaat opgeslagen: dit postvak heeft geen categorieën op de server</string>
     <string name="categoryColor">Categoriekleur</string>
     <string name="attachFromGallery">Foto’s en video’s</string>
+    <string name="mentionHint">Vermelding: typ een naam</string>
 </resources>

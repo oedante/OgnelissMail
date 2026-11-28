@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Sparas på enheten: den här inkorgen har inga kategorier på servern</string>
     <string name="categoryColor">Kategorifärg</string>
     <string name="attachFromGallery">Bilder och videor</string>
+    <string name="mentionHint">Omnämnande: börja skriva ett namn</string>
 </resources>

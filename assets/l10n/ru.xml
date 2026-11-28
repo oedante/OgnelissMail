@@ -4484,4 +4484,5 @@
     <string name="categoriesLocalHint">Хранятся на телефоне: у этого ящика на сервере категорий нет</string>
     <string name="categoryColor">Цвет категории</string>
     <string name="attachFromGallery">Фото и видео</string>
+    <string name="mentionHint">Упоминание: начните вводить имя</string>
 </resources>

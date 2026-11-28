@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Salvas no aparelho: esta caixa não tem categorias no servidor</string>
     <string name="categoryColor">Cor da categoria</string>
     <string name="attachFromGallery">Fotos e vídeos</string>
+    <string name="mentionHint">Menção: comece a digitar um nome</string>
 </resources>

@@ -4421,4 +4421,5 @@
     <string name="categoriesLocalHint">端末に保存されます（このメールボックスにはサーバーの分類がありません）</string>
     <string name="categoryColor">分類の色</string>
     <string name="attachFromGallery">写真とビデオ</string>
+    <string name="mentionHint">メンション: 名前を入力してください</string>
 </resources>

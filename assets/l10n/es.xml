@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Se guardan en el dispositivo: este buzón no tiene categorías en el servidor</string>
     <string name="categoryColor">Color de la categoría</string>
     <string name="attachFromGallery">Fotos y vídeos</string>
+    <string name="mentionHint">Mención: empiece a escribir un nombre</string>
 </resources>

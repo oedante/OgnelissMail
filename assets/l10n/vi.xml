@@ -4421,4 +4421,5 @@
     <string name="categoriesLocalHint">Lưu trên thiết bị: hộp thư này không có thể loại trên máy chủ</string>
     <string name="categoryColor">Màu thể loại</string>
     <string name="attachFromGallery">Ảnh và video</string>
+    <string name="mentionHint">Nhắc tên: bắt đầu nhập tên</string>
 </resources>

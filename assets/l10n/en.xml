@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Stored on this device: this mailbox has no categories on the server</string>
     <string name="categoryColor">Category color</string>
     <string name="attachFromGallery">Photos and videos</string>
+    <string name="mentionHint">Mention: start typing a name</string>
 </resources>

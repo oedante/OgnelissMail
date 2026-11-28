@@ -4526,4 +4526,5 @@
     <string name="categoriesLocalHint">تُحفظ على الجهاز: لا توجد فئات لهذا الصندوق على الخادم</string>
     <string name="categoryColor">لون الفئة</string>
     <string name="attachFromGallery">الصور ومقاطع الفيديو</string>
+    <string name="mentionHint">إشارة: ابدأ بكتابة اسم</string>
 </resources>

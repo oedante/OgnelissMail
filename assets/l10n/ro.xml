@@ -4463,4 +4463,5 @@
     <string name="categoriesLocalHint">Salvate pe dispozitiv: această căsuță nu are categorii pe server</string>
     <string name="categoryColor">Culoarea categoriei</string>
     <string name="attachFromGallery">Fotografii și videoclipuri</string>
+    <string name="mentionHint">Mențiune: începeți să tastați un nume</string>
 </resources>

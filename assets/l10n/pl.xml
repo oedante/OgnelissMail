@@ -4484,4 +4484,5 @@
     <string name="categoriesLocalHint">Zapisane na urządzeniu: ta skrzynka nie ma kategorii na serwerze</string>
     <string name="categoryColor">Kolor kategorii</string>
     <string name="attachFromGallery">Zdjęcia i filmy</string>
+    <string name="mentionHint">Wzmianka: zacznij wpisywać imię</string>
 </resources>

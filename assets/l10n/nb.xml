@@ -4442,4 +4442,5 @@
     <string name="categoriesLocalHint">Lagret på enheten: denne postboksen har ingen kategorier på serveren</string>
     <string name="categoryColor">Kategorifarge</string>
     <string name="attachFromGallery">Bilder og videoer</string>
+    <string name="mentionHint">Omtale: begynn å skrive et navn</string>
 </resources>

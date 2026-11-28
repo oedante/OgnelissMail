@@ -4421,4 +4421,5 @@
     <string name="categoriesLocalHint">Disimpan di perangkat: kotak surat ini tidak punya kategori di server</string>
     <string name="categoryColor">Warna kategori</string>
     <string name="attachFromGallery">Foto dan video</string>
+    <string name="mentionHint">Sebutan: mulai ketik nama</string>
 </resources>

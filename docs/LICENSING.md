@@ -150,6 +150,13 @@ pledge turned out to forbid commercial distribution):
   licence text and NOTICE shipped in the app (Settings → About → Licence
   texts), attribution where required, and a row in the table in section 2.
 
+Declined (do not propose again without the owner asking):
+
+- **RuStore Push SDK** (`ru.rustore.sdk:pushclient`) — owner's decision,
+  28 November 2026: a closed-source VK library whose licence and data
+  collection could not be checked. Waking the app on Android without Google
+  services stays with UnifiedPush (Apache 2.0).
+
 ## 6. Document formats (attachment preview, 1.11.x; old formats and .msg — 1.14.0)
 
 Since 1.11.x the app shows attachments in DOCX, XLSX, PPTX (and their
@@ -263,6 +270,9 @@ are never run (the macro part is not even read). Checked 4 November 2026:
   Google бесплатный (план Spark, без платы за сообщения); библиотека Android
   — Apache 2.0, зависит от бесплатных проприетарных сервисов Google Play.
   Только в сборке Android; Flutter-плагины Firebase не используются.
+- **RuStore Push SDK — не подключаем** (решение владельца 28.11.2026):
+  закрытая библиотека VK, лицензию и сбор данных проверить не удалось.
+  Телефоны без сервисов Google будит UnifiedPush.
 - **UnifiedPush** (сигналы сервера на Android без сервисов Google, 1.10.x) —
   библиотека android-connector (Apache 2.0) с Google Tink в Android-сборке
   tink-android (Apache 2.0, внутри protobuf lite — BSD-3-Clause). Распространитель (ntfy и др.) человек ставит

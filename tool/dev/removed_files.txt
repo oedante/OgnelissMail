@@ -84,6 +84,7 @@ lib/services/ocr/ocr_service.dart
 lib/services/translation/local_translator_service.dart
 lib/services/voice/dictation_formatter.dart
 lib/services/voice/voice_command_service.dart
+lib/widgets/common/selection_toolbar.dart
 lib/widgets/common/voice_button.dart
 server/oauth-proxy/remove-oauth-proxy.sh
 test/unit/ai_analyzer_test.dart

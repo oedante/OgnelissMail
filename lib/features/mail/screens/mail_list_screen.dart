@@ -99,7 +99,9 @@ import '../widgets/account_auth_banner.dart';
 import '../widgets/auto_reply_strip.dart';
 import '../../../services/mail/own_addresses.dart';
 import '../widgets/email_list_tile.dart';
-import '../widgets/categories_sheet.dart' show showCategoriesSheet;
+import '../widgets/flag_due_sheet.dart' show pickFlagDue;
+import '../widgets/categories_sheet.dart'
+    show applyCategoryChanges, mailCategoriesOf, pickCategoryChanges, saveMailCategoriesWith, showCategoriesSheet;
 import '../../../core/theme/appearance.dart' show AppearanceLook;
 import '../../../widgets/common/mail_open_motion.dart' show MailOpenHandoff;
 import '../widgets/mail_peek_card.dart';
@@ -113,6 +115,7 @@ import '../providers/account_look.dart';
 import '../widgets/mail_drawer.dart';
 import 'mail_detail_screen.dart';
 import '../../../services/mail/email_actions_service.dart';
+import '../../../core/utils/category_colors.dart' show CategoryColors;
 import '../../settings/providers/categories_provider.dart';
 import '../../../data/database/app_database.dart';
 import '../../../data/providers/database_provider.dart';
@@ -1364,6 +1367,7 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               action(AppIcons.drive_file_move, l10n.tr('move'), () => _bulkMove(l10n)),
               action(AppIcons.archive, l10n.tr('archive'), _bulkArchive),
               action(AppIcons.watch_later, l10n.tr('later'), () => unawaited(_bulkLater())),
+              action(AppIcons.label, l10n.tr('categoriesTitle'), () => unawaited(_bulkCategories())),
               if (control) action(AppIcons.task_alt, l10n.tr('controlSet'), _bulkControl),
               action(AppIcons.inventory_2, l10n.tr('toOgnaArchive'), () => unawaited(_bulkOgna())),
               action(AppIcons.delete, l10n.delete, _bulkDelete, danger: true),
@@ -2717,6 +2721,23 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
     }());
   }
 
+  /// «Категории» выделенных писем (2.7.5): категория, которой нет у части
+  /// писем, ставится всем или снимается у всех; у Exchange — на сервер.
+  Future<void> _bulkCategories() async {
+    final list = _selectedEmails();
+    final changes = await pickCategoryChanges(context, ref, list);
+    if (changes == null || changes.isEmpty || !mounted) return;
+    unawaited(HapticFeedback.selectionClick());
+    final actions = ref.read(emailActionsProvider);
+    final notifier = ref.read(emailsProvider.notifier);
+    _bulkInBackground((a, e) async {
+      final cur = mailCategoriesOf(e);
+      final next = applyCategoryChanges(cur, changes);
+      if (next.length == cur.length && next.every(cur.contains)) return;
+      await saveMailCategoriesWith(actions, a, e, next);
+    }, emails: list, done: () => unawaited(notifier.refresh()));
+  }
+
   Future<void> _bulkSetFlag(bool flag) async {
     final actions = ref.read(emailActionsProvider);
     final notifier = ref.read(emailsProvider.notifier);
@@ -2838,10 +2859,13 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
             if (v == 'control') _bulkControl();
             if (v == 'later') unawaited(_bulkLater());
             if (v == 'ogna') unawaited(_bulkOgna());
+            if (v == 'categories') unawaited(_bulkCategories());
           },
           itemBuilder: (_) => [
             AppMenuEntry(value: 'all', icon: AppIcons.select_all, label: l10n.tr('selectAll')),
             AppMenuEntry(value: 'later', icon: AppIcons.watch_later, label: l10n.tr('later')),
+            // Категории выделенных писем (2.7.5): поставить всем или снять.
+            AppMenuEntry(value: 'categories', icon: AppIcons.label, label: l10n.tr('categoriesTitle')),
             if (ref.read(settingsProvider).mailControl)
               AppMenuEntry(value: 'control', icon: AppIcons.task_alt, label: l10n.tr('controlSet')),
             // Выбранные письма — в архив Ogneliss (1.7.3); архива нет —
@@ -3040,7 +3064,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
           label: _rowUnread(email) ? l10n.tr('markRead') : l10n.tr('markUnread'),
           onTap: () => _toggleRead(email),
         ),
-        PeekAction(icon: AppIcons.flag, filled: email.isFlagged, label: l10n.tr('flag'), onTap: () => _toggleFlag(email)),
+        // Флажок и срок — одной кнопкой (2.7.5): сегодня, завтра, неделя…
+        PeekAction(
+            icon: AppIcons.flag,
+            filled: email.isFlagged,
+            label: l10n.tr('flag'),
+            onTap: () => unawaited(_pickFlagDue(email))),
         if (control)
           PeekAction(
             icon: AppIcons.task_alt,
@@ -3152,6 +3181,17 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
         ref.read(emailsProvider.notifier).invalidateConversationSizes();
       }());
     }
+  }
+
+  /// «Флаг» со сроком из карточки по удержанию (2.7.5).
+  Future<void> _pickFlagDue(EmailModel email) async {
+    final picked = await pickFlagDue(context, email);
+    if (picked == null || !mounted) return;
+    final account = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+    if (account == null) return;
+    unawaited(HapticFeedback.selectionClick());
+    ref.read(emailsProvider.notifier).applyLocalFlags(email.id, isFlagged: picked.flagged);
+    unawaited(ref.read(emailActionsProvider).setFlag(account, email.id, email.folderId, picked.flagged, due: picked.due));
   }
 
   void _toggleFlag(EmailModel email) {
@@ -3513,7 +3553,12 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: Space.l),
-                children: ref.watch(categoriesProvider).map((tag) {
+                // Свои категории и категории Outlook ящиков Exchange (2.7.5).
+                children: [
+                  ...ref.watch(categoriesProvider),
+                  for (final c in CategoryColors.serverList)
+                    if (!ref.watch(categoriesProvider).contains(c.name)) c.name,
+                ].map((tag) {
                   return Padding(
                     padding: const EdgeInsets.only(right: Space.s),
                     child: Consumer(builder: (context, ref, _) {
@@ -3525,7 +3570,9 @@ class _MailListScreenState extends ConsumerState<MailListScreen> with WidgetsBin
                           ref.read(tagFilterProvider.notifier).state = selected ? null : tag;
                           Navigator.of(ctx).pop();
                         },
-                        backgroundColor: AppTheme.getTagColor(tag).withValues(alpha: 0.1),
+                        avatar: Icon(AppIcons.label, fill: 1, size: 18,
+                            color: categoryColor(tag, ref.watch(categoryColorsProvider))),
+                        backgroundColor: categoryColor(tag, ref.watch(categoryColorsProvider)).withValues(alpha: 0.1),
                       );
                     }),
                   );

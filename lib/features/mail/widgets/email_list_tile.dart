@@ -8,6 +8,7 @@
 // - Иконки: приоритет, вложения, флаг, replied, forwarded
 
 import 'categories_sheet.dart' show CategoryChip, mailCategoriesOf;
+import '../../settings/providers/categories_provider.dart' show categoryColor, categoryColorsProvider;
 import '../../../services/mail/flag_due.dart';
 import '../../../core/utils/subject_prefix.dart';
 import '../../../core/utils/text_safe.dart';
@@ -249,8 +250,9 @@ class EmailListTile extends ConsumerWidget {
 
     // Правило «подсветить строку»: лёгкий фон цвета тега (правила на телефоне).
     final hlTags = ref.watch(highlightTagsProvider);
-    final hlTag = hlTags.isEmpty ? null : email.tags.where(hlTags.contains).firstOrNull;
-    final hlColor = hlTag == null ? null : AppTheme.getTagColor(hlTag).withValues(alpha: 0.08);
+    final hlTag = hlTags.isEmpty ? null : mailCategoriesOf(email).where(hlTags.contains).firstOrNull;
+    final hlColor =
+        hlTag == null ? null : categoryColor(hlTag, ref.watch(categoryColorsProvider)).withValues(alpha: 0.08);
 
     // Счётчик бесед — только своей (07.11.2026, аудит микрофризов: строка
     // следила за всей картой, и при каждом её обновлении перестраивались

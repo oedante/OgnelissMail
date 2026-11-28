@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Block External Images</string>
     <string name="bold">Bold</string>
     <string name="bulletList">Bullet list</string>
-    <string name="byTag">By Tag</string>
+    <string name="byTag">By category</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Clear formatting</string>
     <string name="colorBlind">Color Blind Mode</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Category color</string>
     <string name="attachFromGallery">Photos and videos</string>
     <string name="mentionHint">Mention: start typing a name</string>
+    <string name="categoriesMixedHint">Exchange mailboxes: on the server and in Outlook; others: on this device</string>
+    <string name="categoryColorDefault">Default color</string>
+    <string name="outlookCategoriesHint">From Exchange mailboxes, with Outlook colors. You can pick your own color — it is shown only in the app.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Extension</string>
+    <string name="phoneExtBody">To call extension {ext} from a mobile phone, enter the organization\'s main number{org}: the app dials it and then the extension once the call is answered. The number is remembered.</string>
+    <string name="phoneExtMain">Organization\'s main number</string>
+    <string name="phoneExtDialAsIs">Dial as is</string>
+    <string name="threadUnderMail">Conversation below the email</string>
+    <string name="threadUnderAlways">Always</string>
+    <string name="threadUnderAlwaysDesc">Also when the email is opened from the conversation screen</string>
+    <string name="threadUnderStandalone">When opened from a notification</string>
+    <string name="threadUnderStandaloneDesc">Also from search, links and widgets — whenever the email isn\'t opened from the conversation screen</string>
+    <string name="threadUnderNever">Never</string>
 </resources>

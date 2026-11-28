@@ -450,8 +450,16 @@ class ImapService {
   /// Новое соединение + вход. Вынесено, чтобы IDLE мог держать ОТДЕЛЬНЫЙ клиент:
   /// IDLE занимает соединение постоянно, и на общем клиенте он блокировал бы
   /// обычные операции (или конфликтовал с их SELECT).
+  /// Срок ответа сервера на вход (2.7.5, журнал пользователя 27.11.2026:
+  /// на мобильном интернете ответ на вход Яндекса терялся, и проверка ящика
+  /// ждала общий срок ответа — 3 минуты — до обрыва этапа через 90 с; ящик
+  /// не обновлялся). Живой сервер отвечает за секунды; не ответил — новое
+  /// соединение, один раз.
+  @visibleForTesting
+  static Duration loginTimeout = const Duration(seconds: 25);
+
   Future<ImapClient> _connectAndLogin(AccountModel account,
-      {bool forIdle = false, bool tokenRetried = false}) async {
+      {bool forIdle = false, bool tokenRetried = false, bool loginRetried = false}) async {
     // Таймаут ответа — только для обычного клиента: IDLE по определению
     // ждёт ответа сервера долго.
     final host = _imapHost(account);
@@ -524,58 +532,69 @@ class ImapService {
     final capsBeforeLogin = client.serverInfo.capabilitiesText;
 
     // Аутентификация
-    if (account.mailUsesOAuth) {
-      // Обновляем access-токен, если он истёк (иначе IMAP-вход упадёт через ~1 час).
-      if (_ensureToken != null) {
-        try { await _ensureToken!(account, false); } catch (e) {
-          AppLogger.warning('IMAP: не удалось обновить OAuth-токен — $e');
-          // Отозванный вход или истёкший токен — в IMAP не входим: вход
-          // заведомо плохим токеном засчитывается как неудачный.
-          final exp = await _secureStorage.getTokenExpiry(account.id);
-          final expired = exp == null || DateTime.now().isAfter(exp);
-          if ((e is OAuthRefreshFailure && e.needsSignIn) || expired) {
-            unawaited(client.disconnect().catchError((Object _) {}));
-            rethrow;
+    try {
+      if (account.mailUsesOAuth) {
+        // Обновляем access-токен, если он истёк (иначе IMAP-вход упадёт через ~1 час).
+        if (_ensureToken != null) {
+          try { await _ensureToken!(account, false); } catch (e) {
+            AppLogger.warning('IMAP: не удалось обновить OAuth-токен — $e');
+            // Отозванный вход или истёкший токен — в IMAP не входим: вход
+            // заведомо плохим токеном засчитывается как неудачный.
+            final exp = await _secureStorage.getTokenExpiry(account.id);
+            final expired = exp == null || DateTime.now().isAfter(exp);
+            if ((e is OAuthRefreshFailure && e.needsSignIn) || expired) {
+              unawaited(client.disconnect().catchError((Object _) {}));
+              rethrow;
+            }
           }
         }
-      }
-      final token = await _secureStorage.getAccessToken(account.id);
-      if (token != null) {
-        try {
-          await client.authenticateWithOAuth2(account.email, token);
-        } catch (e) {
-          // Обрыв связи или тайм-аут ответа — не отказ: токен не трогаем.
-          if (tokenRetried || !isAuthRejection(e)) rethrow;
-          // Токен мог быть отозван/просрочен, хотя срок ещё «не истёк»
-          // (смена пароля, выход на всех устройствах). Один раз
-          // принудительно обновляем и пробуем снова.
-          AppLogger.warning('IMAP XOAUTH2 отклонён — обновляю токен: $e');
-          unawaited(client.disconnect().catchError((Object _) {}));
-          await _ensureToken?.call(account, true);
-          final fresh = await _secureStorage.getAccessToken(account.id);
-          if (fresh == null || fresh == token) rethrow;
-          return _connectAndLogin(account, forIdle: forIdle, tokenRetried: true);
+        final token = await _secureStorage.getAccessToken(account.id);
+        if (token != null) {
+          try {
+            await client.authenticateWithOAuth2(account.email, token).timeout(loginTimeout);
+          } catch (e) {
+            // Обрыв связи или тайм-аут ответа — не отказ: токен не трогаем.
+            if (tokenRetried || !isAuthRejection(e)) rethrow;
+            // Токен мог быть отозван/просрочен, хотя срок ещё «не истёк»
+            // (смена пароля, выход на всех устройствах). Один раз
+            // принудительно обновляем и пробуем снова.
+            AppLogger.warning('IMAP XOAUTH2 отклонён — обновляю токен: $e');
+            unawaited(client.disconnect().catchError((Object _) {}));
+            await _ensureToken?.call(account, true);
+            final fresh = await _secureStorage.getAccessToken(account.id);
+            if (fresh == null || fresh == token) rethrow;
+            return await _connectAndLogin(account, forIdle: forIdle, tokenRetried: true, loginRetried: true);
+          }
+        } else {
+          throw Exception('IMAP: No OAuth token');
         }
       } else {
-        throw Exception('IMAP: No OAuth token');
+        final password = await _secureStorage.getAccountPassword(account.id);
+        // Ящик Google, вошедший через Google до 2.6.7: пароля приложения ещё
+        // нет — это ошибка входа («Войти снова» спросит пароль приложения).
+        if (password == null && account.type == AccountType.google) {
+          throw Exception('IMAP: Gmail authentication failed — app password required');
+        }
+        if (password == null) throw Exception('IMAP: No password');
+        // Логин IMAP — полный email; fallback на email, если username пуст.
+        final loginName = account.username.isNotEmpty ? account.username : account.email;
+        try {
+          await client.login(loginName, password).timeout(loginTimeout);
+        } catch (e) {
+          if (e is! TimeoutException) {
+            AppLogger.warning('IMAP: вход не удался для $loginName — $e '
+                '(неверный логин/пароль или требуется пароль приложения)');
+          }
+          rethrow;
+        }
       }
-    } else {
-      final password = await _secureStorage.getAccountPassword(account.id);
-      // Ящик Google, вошедший через Google до 2.6.7: пароля приложения ещё
-      // нет — это ошибка входа («Войти снова» спросит пароль приложения).
-      if (password == null && account.type == AccountType.google) {
-        throw Exception('IMAP: Gmail authentication failed — app password required');
-      }
-      if (password == null) throw Exception('IMAP: No password');
-      // Логин IMAP — полный email; fallback на email, если username пуст.
-      final loginName = account.username.isNotEmpty ? account.username : account.email;
-      try {
-        await client.login(loginName, password);
-      } catch (e) {
-        AppLogger.warning('IMAP: вход не удался для $loginName — $e '
-            '(неверный логин/пароль или требуется пароль приложения)');
-        rethrow;
-      }
+    } on TimeoutException {
+      // Сервер не ответил на вход — соединение, скорее всего, мёртвое.
+      unawaited(client.disconnect().catchError((Object _) {}));
+      if (loginRetried) rethrow;
+      AppLogger.info('IMAP ${account.email}: сервер не ответил на вход за '
+          '${loginTimeout.inSeconds} с — новое подключение');
+      return _connectAndLogin(account, forIdle: forIdle, tokenRetried: tokenRetried, loginRetried: true);
     }
 
     await _afterLogin(account, client, capsBeforeLogin, forIdle: forIdle);

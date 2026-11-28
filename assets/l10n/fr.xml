@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Bloquer les images externes</string>
     <string name="bold">Gras</string>
     <string name="bulletList">Liste à puces</string>
-    <string name="byTag">Par étiquette</string>
+    <string name="byTag">Par catégorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Effacer la mise en forme</string>
     <string name="colorBlind">Mode daltonien</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Couleur de catégorie</string>
     <string name="attachFromGallery">Photos et vidéos</string>
     <string name="mentionHint">Mention : saisissez un nom</string>
+    <string name="categoriesMixedHint">Boîtes Exchange : sur le serveur et dans Outlook ; autres : sur cet appareil</string>
+    <string name="categoryColorDefault">Couleur par défaut</string>
+    <string name="outlookCategoriesHint">Issues des boîtes Exchange, avec les couleurs d\'Outlook. Vous pouvez choisir votre couleur — elle n\'est visible que dans l\'application.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Poste</string>
+    <string name="phoneExtBody">Pour appeler le poste {ext} depuis un mobile, saisissez le numéro principal de l’organisation{org} : l’application le compose, puis le poste une fois l’appel décroché. Le numéro est mémorisé.</string>
+    <string name="phoneExtMain">Numéro principal de l’organisation</string>
+    <string name="phoneExtDialAsIs">Composer tel quel</string>
+    <string name="threadUnderMail">Conversation sous le message</string>
+    <string name="threadUnderAlways">Toujours</string>
+    <string name="threadUnderAlwaysDesc">Même quand le message est ouvert depuis l’écran de la conversation</string>
+    <string name="threadUnderStandalone">À l’ouverture depuis une notification</string>
+    <string name="threadUnderStandaloneDesc">Aussi depuis la recherche, un lien ou un widget — quand le message n’est pas ouvert depuis la conversation</string>
+    <string name="threadUnderNever">Jamais</string>
 </resources>

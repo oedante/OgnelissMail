@@ -19,6 +19,7 @@ import 'package:ogneliss/data/models/folder_model.dart';
 import 'package:ogneliss/data/providers/database_provider.dart';
 import 'package:ogneliss/data/providers/shared_prefs_provider.dart';
 import 'package:ogneliss/features/mail/screens/mail_detail_screen.dart';
+import 'package:ogneliss/features/mail/widgets/conversation_thread_view.dart';
 import 'package:ogneliss/l10n/app_localizations.dart';
 import 'package:ogneliss/services/background/work_scheduler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -187,6 +188,44 @@ void main() {
     expect(tester.takeException(), isNull);
     await _done(tester, db);
   });
+
+  // Беседа под письмом (2.7.5): с экрана беседы — по настройке.
+  Future<AppDatabase> convDb() async {
+    final db = await _db();
+    await (db.update(db.emails)..where((e) => e.id.equals('INBOX:42')))
+        .write(const EmailsCompanion(conversationId: Value('c1')));
+    await db.into(db.emails).insert(EmailsCompanion.insert(
+          id: 'INBOX:44',
+          accountId: 'a1',
+          folderId: 'INBOX',
+          fromEmail: 'petrova@corp.example',
+          fromName: const Value('Мария Петрова'),
+          toRecipients: '[]',
+          subject: 'Re: Смета на ремонт офиса',
+          bodyPreview: const Value('Напоминаю про смету.'),
+          receivedAt: DateTime(2026, 11, 7, 9, 0),
+          isRead: const Value(true),
+          conversationId: const Value('c1'),
+        ));
+    return db;
+  }
+
+  for (final (mode, shown) in const [('standalone', false), ('always', true)]) {
+    testWidgets('письмо с экрана беседы: беседа под письмом — $mode', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2340);
+      tester.view.devicePixelRatio = 2.75;
+      addTearDown(tester.view.reset);
+      SharedPreferences.setMockInitialValues({'thread_under_mail': mode});
+      final prefs = await SharedPreferences.getInstance();
+      final db = (await tester.runAsync(convDb))!;
+      await tester.pumpWidget(_app(
+          db, prefs, const MailDetailScreen(emailId: 'INBOX:42', accountId: 'a1', pagerLabel: '1 / 2')));
+      await _settle(tester, rounds: 16);
+      expect(find.byType(ConversationThreadView, skipOffstage: false), shown ? findsOneWidget : findsNothing);
+      expect(tester.takeException(), isNull);
+      await _done(tester, db);
+    });
+  }
 
   testWidgets('письма нет в базе — сообщение, а не вечная загрузка', (tester) async {
     SharedPreferences.setMockInitialValues({});

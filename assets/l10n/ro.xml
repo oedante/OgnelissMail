@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blochează imaginile externe</string>
     <string name="bold">Aldin</string>
     <string name="bulletList">Listă cu marcatori</string>
-    <string name="byTag">După etichetă</string>
+    <string name="byTag">După categorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Șterge formatarea</string>
     <string name="colorBlind">Mod pentru daltonism</string>
@@ -4464,4 +4464,18 @@
     <string name="categoryColor">Culoarea categoriei</string>
     <string name="attachFromGallery">Fotografii și videoclipuri</string>
     <string name="mentionHint">Mențiune: începeți să tastați un nume</string>
+    <string name="categoriesMixedHint">Căsuțe Exchange: pe server și în Outlook; celelalte: pe acest dispozitiv</string>
+    <string name="categoryColorDefault">Culoare implicită</string>
+    <string name="outlookCategoriesHint">Din căsuțele Exchange, cu culorile din Outlook. Puteți alege propria culoare — se vede doar în aplicație.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Interior</string>
+    <string name="phoneExtBody">Pentru a suna interiorul {ext} de pe mobil, introduceți numărul principal al organizației{org}: aplicația îl formează, iar după răspuns — interiorul. Numărul este memorat.</string>
+    <string name="phoneExtMain">Numărul principal al organizației</string>
+    <string name="phoneExtDialAsIs">Formează așa</string>
+    <string name="threadUnderMail">Conversația sub mesaj</string>
+    <string name="threadUnderAlways">Întotdeauna</string>
+    <string name="threadUnderAlwaysDesc">Și când mesajul e deschis din ecranul conversației</string>
+    <string name="threadUnderStandalone">La deschiderea dintr-o notificare</string>
+    <string name="threadUnderStandaloneDesc">Și din căutare, link sau widget — când mesajul nu e deschis din conversație</string>
+    <string name="threadUnderNever">Niciodată</string>
 </resources>

@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Estä ulkoiset kuvat</string>
     <string name="bold">Lihavointi</string>
     <string name="bulletList">Luettelomerkit</string>
-    <string name="byTag">Tunnisteen mukaan</string>
+    <string name="byTag">Luokan mukaan</string>
     <string name="cc">Kopio</string>
     <string name="clearFormatting">Poista muotoilu</string>
     <string name="colorBlind">Värisokeustila</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Luokan väri</string>
     <string name="attachFromGallery">Kuvat ja videot</string>
     <string name="mentionHint">Maininta: aloita nimen kirjoittaminen</string>
+    <string name="categoriesMixedHint">Exchange-postilaatikot: palvelimella ja Outlookissa; muut: tällä laitteella</string>
+    <string name="categoryColorDefault">Oletusväri</string>
+    <string name="outlookCategoriesHint">Exchange-postilaatikoista Outlookin väreillä. Voit valita oman värin — se näkyy vain sovelluksessa.</string>
+    <string name="smsShort">Tekstiviesti</string>
+    <string name="phoneExtTitle">Alanumero</string>
+    <string name="phoneExtBody">Soittaaksesi alanumeroon {ext} matkapuhelimesta anna organisaation päänumero{org}: sovellus soittaa siihen ja näppäilee alanumeron, kun puheluun vastataan. Numero muistetaan.</string>
+    <string name="phoneExtMain">Organisaation päänumero</string>
+    <string name="phoneExtDialAsIs">Soita sellaisenaan</string>
+    <string name="threadUnderMail">Keskustelu viestin alla</string>
+    <string name="threadUnderAlways">Aina</string>
+    <string name="threadUnderAlwaysDesc">Myös kun viesti avataan keskustelunäkymästä</string>
+    <string name="threadUnderStandalone">Kun avataan ilmoituksesta</string>
+    <string name="threadUnderStandaloneDesc">Myös hausta, linkistä tai pienoissovelluksesta – kun viestiä ei avata keskustelunäkymästä</string>
+    <string name="threadUnderNever">Ei koskaan</string>
 </resources>

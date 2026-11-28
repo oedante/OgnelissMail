@@ -830,10 +830,11 @@ class BackgroundService {
   /// 15 минут» и задача обработки. Так заявка точно есть, даже если прежнюю
   /// система сняла. Проснувшись, задача передаст проверку приложению.
   void onPaused() {
-    if (kIsWeb || !Platform.isIOS) return;
-    // Синхронизация или отправка ещё идёт — попросить у iOS время доделать
-    // (1.6.44), иначе запрос замёрзнет до следующего открытия.
+    // Синхронизация или отправка ещё идёт — попросить у системы время
+    // доделать (iOS — 1.6.44, Android — 2.7.5), иначе запрос замёрзнет до
+    // следующего открытия.
     unawaited(FinishInBackground.onPaused());
+    if (kIsWeb || !Platform.isIOS) return;
     if (_ref.read(settingsProvider).syncIntervalMinutes < 0) return;
     unawaited(() async {
       try {

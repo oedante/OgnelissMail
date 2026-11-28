@@ -166,6 +166,8 @@ class MainActivity : FlutterFragmentActivity() {
         TranslationBridge.register(messenger)
         // Сторож главного потока (2.7.2): замирания системы — в журнал.
         MainThreadWatchdog.register(messenger)
+        // Доделать отправку и синхронизацию после сворачивания (2.7.5).
+        FinishWorkKeeper.register(messenger, this)
         // mailto и «Написать письмо» из других приложений.
         MailtoBridge.register(messenger)
         // Настройки организации (MDM, 1.10.5).

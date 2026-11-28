@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Bloquear imagens externas</string>
     <string name="bold">Negrito</string>
     <string name="bulletList">Lista com marcadores</string>
-    <string name="byTag">Por tag</string>
+    <string name="byTag">Por categoria</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Limpar formatação</string>
     <string name="colorBlind">Modo para daltonismo</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Cor da categoria</string>
     <string name="attachFromGallery">Fotos e vídeos</string>
     <string name="mentionHint">Menção: comece a digitar um nome</string>
+    <string name="categoriesMixedHint">Caixas Exchange: no servidor e no Outlook; as outras: neste dispositivo</string>
+    <string name="categoryColorDefault">Cor padrão</string>
+    <string name="outlookCategoriesHint">Das caixas Exchange, com as cores do Outlook. Você pode escolher sua própria cor — ela aparece só no app.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Ramal</string>
+    <string name="phoneExtBody">Para ligar para o ramal {ext} pelo celular, informe o número principal da organização{org}: o app liga para ele e, quando atenderem, disca o ramal. O número fica salvo.</string>
+    <string name="phoneExtMain">Número principal da organização</string>
+    <string name="phoneExtDialAsIs">Discar assim</string>
+    <string name="threadUnderMail">Conversa abaixo do e-mail</string>
+    <string name="threadUnderAlways">Sempre</string>
+    <string name="threadUnderAlwaysDesc">Também quando o e-mail é aberto pela tela da conversa</string>
+    <string name="threadUnderStandalone">Ao abrir por uma notificação</string>
+    <string name="threadUnderStandaloneDesc">Também pela busca, links e widgets — quando o e-mail não é aberto pela conversa</string>
+    <string name="threadUnderNever">Nunca</string>
 </resources>

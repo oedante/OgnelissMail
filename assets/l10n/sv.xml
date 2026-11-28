@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blockera externa bilder</string>
     <string name="bold">Fet</string>
     <string name="bulletList">Punktlista</string>
-    <string name="byTag">Efter tagg</string>
+    <string name="byTag">Efter kategori</string>
     <string name="cc">Kopia</string>
     <string name="clearFormatting">Rensa formatering</string>
     <string name="colorBlind">Färgblindhetsläge</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Kategorifärg</string>
     <string name="attachFromGallery">Bilder och videor</string>
     <string name="mentionHint">Omnämnande: börja skriva ett namn</string>
+    <string name="categoriesMixedHint">Exchange-brevlådor: på servern och i Outlook; andra: på den här enheten</string>
+    <string name="categoryColorDefault">Standardfärg</string>
+    <string name="outlookCategoriesHint">Från Exchange-brevlådor, med färgerna från Outlook. Du kan välja en egen färg — den syns bara i appen.</string>
+    <string name="smsShort">Sms</string>
+    <string name="phoneExtTitle">Anknytning</string>
+    <string name="phoneExtBody">För att ringa anknytning {ext} från mobilen anger du organisationens huvudnummer{org}: appen ringer det och slår anknytningen när någon svarar. Numret sparas.</string>
+    <string name="phoneExtMain">Organisationens huvudnummer</string>
+    <string name="phoneExtDialAsIs">Ring som det är</string>
+    <string name="threadUnderMail">Konversation under mejlet</string>
+    <string name="threadUnderAlways">Alltid</string>
+    <string name="threadUnderAlwaysDesc">Även när mejlet öppnas från konversationsvyn</string>
+    <string name="threadUnderStandalone">När det öppnas från en avisering</string>
+    <string name="threadUnderStandaloneDesc">Även från sökning, länkar och widgetar – när mejlet inte öppnas från konversationen</string>
+    <string name="threadUnderNever">Aldrig</string>
 </resources>

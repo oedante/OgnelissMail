@@ -333,8 +333,8 @@ class MailOpenCache {
               .then((_) {}, onError: (Object _) {}));
           if (images) unawaited(inlineImages(accountId, e).then((_) {}, onError: (Object _) {}));
         }
-      } catch (e) {
-        AppLogger.debug('Подготовка письма заранее: $e');
+      } catch (e, st) {
+        AppLogger.debug('Подготовка письма заранее: $e @ ${st.toString().split('\n').take(4).join(' | ')}');
       }
     }());
   }
@@ -354,8 +354,10 @@ class MailOpenCache {
       if (html == null || html.isEmpty) return;
       final o = optionsFor(e);
       await prepare(html, options: o.options, allowImages: o.allowImages, dates: datesFor(e));
-    } catch (e) {
-      AppLogger.debug('Подготовка свежего письма: $e');
+    } catch (e, st) {
+      // Место ошибки — первые строки стека (журнал 27.11.2026: «Null check
+      // operator used on a null value» без места, 14 раз за сутки).
+      AppLogger.debug('Подготовка свежего письма: $e @ ${st.toString().split('\n').take(4).join(' | ')}');
     }
   }
 

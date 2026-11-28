@@ -106,7 +106,10 @@ class GraphPlace {
 class GraphCategory {
   final String name;
   final int color;
-  const GraphCategory({required this.name, required this.color});
+
+  /// id в /me/outlook/masterCategories (для смены цвета); null — неизвестен.
+  final String? id;
+  const GraphCategory({required this.name, required this.color, this.id});
 }
 
 /// Правило «Входящих» (messageRule) как пришло с сервера.

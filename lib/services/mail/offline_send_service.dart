@@ -783,8 +783,14 @@ class OfflineSendService {
           ),
       ];
 
-  /// Обработать очередь отправки (вызывается из sync_service)
-  Future<int> processQueue(String accountId) async {
+  /// Обработать очередь отправки (вызывается из sync_service, таймера
+  /// «Отправляется через N с», восстановления сети). Отправка — работа,
+  /// которую доделывают после сворачивания ([FinishInBackground], 2.7.5:
+  /// с 2.7.4 все письма уходят через «Исходящие», и эта отправка не была
+  /// отмечена — свёрнутое приложение замерзало посреди неё).
+  Future<int> processQueue(String accountId) => FinishInBackground.guard(() => _processQueue(accountId));
+
+  Future<int> _processQueue(String accountId) async {
     final db = _ref.read(databaseProvider);
     await _resolveStaleInflight(db, accountId);
     final ops = await (db.select(db.syncQueue)

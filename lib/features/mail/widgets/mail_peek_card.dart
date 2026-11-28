@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/app_theme.dart';
+import 'categories_sheet.dart' show CategoryChip, mailCategoriesOf;
 import '../../../core/theme/tokens.dart';
 import '../../../core/utils/app_date_format.dart';
 import '../../../core/utils/text_safe.dart';
@@ -141,7 +142,7 @@ class _MailCard extends StatelessWidget {
     final muted = theme.colorScheme.onSurfaceVariant;
     final name = email.from.label;
     final preview = email.preview.trim();
-    final tags = [...email.categories, ...email.tags.where((t) => !email.categories.contains(t))];
+    final tags = mailCategoriesOf(email);
     final meeting = email.meeting;
     final files = (fetchFile != null && openFile != null) ? peekFiles(email) : const <EmailAttachment>[];
     // Скрепка — только если файлов списком нет (ещё не известны).
@@ -195,17 +196,7 @@ class _MailCard extends StatelessWidget {
           if (tags.isNotEmpty || clip || conversationCount > 1) ...[
             const SizedBox(height: Space.s),
             Wrap(spacing: Space.xs, runSpacing: Space.xs, crossAxisAlignment: WrapCrossAlignment.center, children: [
-              for (final t in tags.take(3))
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: Space.s, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppTheme.getTagColor(t).withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(t,
-                      style: theme.textTheme.labelSmall
-                          ?.copyWith(color: AppTheme.getTagColor(t), fontWeight: FontWeight.w600)),
-                ),
+              for (final t in tags.take(3)) CategoryChip(t),
               if (clip) Icon(AppIcons.attach_file, size: 16, color: muted),
               if (conversationCount > 1)
                 Row(mainAxisSize: MainAxisSize.min, children: [

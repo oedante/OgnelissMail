@@ -819,7 +819,9 @@ class SyncService {
       final f = PerfMark.run('синхронизация: $name', run);
       return limit == null ? await f : await f.timeout(limit);
     } on TimeoutException {
-      AppLogger.error('Синхронизация ${account.email}: «$name» не завершился за ${limit?.inSeconds} с — прерван');
+      // Срок мог истечь и внутри этапа (подключение к серверу — 90 с):
+      // в журнал — сколько этап шёл на самом деле, а не его предел.
+      AppLogger.error('Синхронизация ${account.email}: «$name» не завершился за ${sw.elapsed.inSeconds} с — прерван');
       rethrow;
     } finally {
       warn.cancel();

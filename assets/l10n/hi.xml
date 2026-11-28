@@ -121,7 +121,7 @@
     <string name="blockExternalImages">बाहरी इमेज ब्लॉक करें</string>
     <string name="bold">बोल्ड</string>
     <string name="bulletList">बुलेट सूची</string>
-    <string name="byTag">टैग के अनुसार</string>
+    <string name="byTag">श्रेणी के अनुसार</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">फ़ॉर्मैटिंग हटाएं</string>
     <string name="colorBlind">वर्णांधता मोड</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">श्रेणी का रंग</string>
     <string name="attachFromGallery">फ़ोटो और वीडियो</string>
     <string name="mentionHint">उल्लेख: नाम लिखना शुरू करें</string>
+    <string name="categoriesMixedHint">Exchange मेलबॉक्स: सर्वर और Outlook में; बाकी: इस डिवाइस पर</string>
+    <string name="categoryColorDefault">डिफ़ॉल्ट रंग</string>
+    <string name="outlookCategoriesHint">Exchange मेलबॉक्स से, Outlook के रंगों के साथ। आप अपना रंग चुन सकते हैं — वह केवल ऐप में दिखेगा।</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">एक्सटेंशन</string>
+    <string name="phoneExtBody">मोबाइल से एक्सटेंशन {ext} पर कॉल करने के लिए संगठन का मुख्य नंबर{org} डालें: ऐप उसे डायल करेगा और कॉल उठने पर एक्सटेंशन। नंबर याद रखा जाएगा।</string>
+    <string name="phoneExtMain">संगठन का मुख्य नंबर</string>
+    <string name="phoneExtDialAsIs">जैसा है वैसा डायल करें</string>
+    <string name="threadUnderMail">ईमेल के नीचे बातचीत</string>
+    <string name="threadUnderAlways">हमेशा</string>
+    <string name="threadUnderAlwaysDesc">तब भी जब ईमेल बातचीत स्क्रीन से खोला जाए</string>
+    <string name="threadUnderStandalone">सूचना से खोलने पर</string>
+    <string name="threadUnderStandaloneDesc">खोज, लिंक या विजेट से भी — जब ईमेल बातचीत स्क्रीन से न खोला जाए</string>
+    <string name="threadUnderNever">कभी नहीं</string>
 </resources>

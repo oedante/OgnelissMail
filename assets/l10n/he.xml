@@ -121,7 +121,7 @@
     <string name="blockExternalImages">חסימת תמונות חיצוניות</string>
     <string name="bold">מודגש</string>
     <string name="bulletList">רשימת תבליטים</string>
-    <string name="byTag">לפי תג</string>
+    <string name="byTag">לפי קטגוריה</string>
     <string name="cc">עותק</string>
     <string name="clearFormatting">נקה עיצוב</string>
     <string name="colorBlind">מצב עיוורון צבעים</string>
@@ -4464,4 +4464,18 @@
     <string name="categoryColor">צבע הקטגוריה</string>
     <string name="attachFromGallery">תמונות וסרטונים</string>
     <string name="mentionHint">אזכור: התחילו להקליד שם</string>
+    <string name="categoriesMixedHint">תיבות Exchange: בשרת וב-Outlook; האחרות: במכשיר זה</string>
+    <string name="categoryColorDefault">צבע ברירת מחדל</string>
+    <string name="outlookCategoriesHint">מתיבות Exchange, בצבעי Outlook. אפשר לבחור צבע משלך — הוא מוצג רק באפליקציה.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">שלוחה</string>
+    <string name="phoneExtBody">כדי להתקשר לשלוחה {ext} מהנייד, הזינו את המספר הראשי של הארגון{org}: האפליקציה תחייג אליו ואחרי המענה — את השלוחה. המספר יישמר.</string>
+    <string name="phoneExtMain">המספר הראשי של הארגון</string>
+    <string name="phoneExtDialAsIs">חייג כמו שהוא</string>
+    <string name="threadUnderMail">שיחה מתחת להודעה</string>
+    <string name="threadUnderAlways">תמיד</string>
+    <string name="threadUnderAlwaysDesc">גם כשההודעה נפתחת ממסך השיחה</string>
+    <string name="threadUnderStandalone">בפתיחה מהתראה</string>
+    <string name="threadUnderStandaloneDesc">גם מחיפוש, קישור או וידג׳ט — כשההודעה לא נפתחת ממסך השיחה</string>
+    <string name="threadUnderNever">אף פעם</string>
 </resources>

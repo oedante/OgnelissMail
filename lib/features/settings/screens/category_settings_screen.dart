@@ -1,6 +1,9 @@
 // lib/features/settings/screens/category_settings_screen.dart
 // Управление пользовательскими категориями: список, добавление, удаление,
-// сброс к стандартным, экспорт/импорт настроек (через буфер обмена, JSON).
+// цвет (2.7.5), сброс к стандартным, экспорт/импорт настроек (через буфер
+// обмена, JSON). Ниже — категории Outlook ящиков Exchange с их цветами.
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_icons.dart';
@@ -8,22 +11,43 @@ import '../../../core/theme/tokens.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/utils/category_colors.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../mail/widgets/categories_sheet.dart' show pickCategoryColor, refreshOutlookCategories;
 import '../providers/categories_provider.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../widgets/common/text_scale_cap.dart';
 import '../../../widgets/common/inline_notice.dart' show showInlineError, showInlineNotice;
 import '../../../widgets/ui/app_menu_button.dart';
 
-class CategorySettingsScreen extends ConsumerWidget {
+class CategorySettingsScreen extends ConsumerStatefulWidget {
   const CategorySettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CategorySettingsScreen> createState() => _CategorySettingsScreenState();
+}
+
+class _CategorySettingsScreenState extends ConsumerState<CategorySettingsScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Категории и цвета Outlook — свежие (2.7.5: раньше раз в сутки).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) unawaited(refreshOutlookCategories(ref, maxAge: const Duration(minutes: 1)));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final ru = l10n.isRussian;
     final categories = ref.watch(categoriesProvider);
+    final colors = ref.watch(categoryColorsProvider);
     final notifier = ref.read(categoriesProvider.notifier);
+    final server = [
+      for (final c in CategoryColors.serverList)
+        if (!categories.contains(c.name)) c.name,
+    ];
 
     return Scaffold(
       appBar: TextScaleCapBar(child: AppBar(
@@ -60,22 +84,42 @@ class CategorySettingsScreen extends ConsumerWidget {
             ),
           ),
           Expanded(
-            child: categories.isEmpty
+            child: categories.isEmpty && server.isEmpty
                 ? Center(child: Text(l10n.tr('noCategories')))
-                : ListView.builder(
-                    itemCount: categories.length,
-                    itemBuilder: (ctx, i) {
-                      final c = categories[i];
-                      return ListTile(
-                        leading: const Icon(AppIcons.label),
-                        title: Text(c),
-                        trailing: IconButton(
-                          icon: const Icon(AppIcons.close, size: 20),
-                          tooltip: l10n.tr('delete'),
-                          onPressed: () => notifier.remove(c),
+                : ListView(
+                    padding: const EdgeInsets.only(bottom: 88),
+                    children: [
+                      for (final c in categories)
+                        ListTile(
+                          key: ValueKey('category_row_$c'),
+                          leading: _ColorButton(name: c, color: categoryColor(c, colors)),
+                          title: Text(c),
+                          trailing: IconButton(
+                            icon: const Icon(AppIcons.close, size: 20),
+                            tooltip: l10n.tr('delete'),
+                            onPressed: () => notifier.remove(c),
+                          ),
                         ),
-                      );
-                    },
+                      // Категории Outlook ящика Exchange (главный список, с
+                      // цветами Outlook) — те, которых нет среди своих.
+                      if (server.isNotEmpty) ...[
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(Space.l, Space.l, Space.l, Space.xs),
+                          child: Text(l10n.tr('outlookCategories'), style: Theme.of(context).textTheme.titleSmall),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(Space.l, 0, Space.l, Space.s),
+                          child: Text(l10n.tr('outlookCategoriesHint'),
+                              style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.mutedText(context))),
+                        ),
+                        for (final c in server)
+                          ListTile(
+                            key: ValueKey('category_row_$c'),
+                            leading: _ColorButton(name: c, color: categoryColor(c, colors)),
+                            title: Text(c),
+                          ),
+                      ],
+                    ],
                   ),
           ),
         ],
@@ -147,4 +191,19 @@ class CategorySettingsScreen extends ConsumerWidget {
     await ref.read(categoriesProvider.notifier).setAll(parsed);
     showInlineNotice(l10n.tr('importedCategoriesN').replaceAll('{n}', '${parsed.length}'));
   }
+}
+
+/// Кружок цвета категории: касание — выбрать цвет.
+class _ColorButton extends ConsumerWidget {
+  final String name;
+  final Color color;
+  const _ColorButton({required this.name, required this.color});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => IconButton(
+        key: ValueKey('category_color_$name'),
+        tooltip: AppLocalizations.of(context).tr('categoryColor'),
+        icon: Icon(AppIcons.label, fill: 1, color: color),
+        onPressed: () => pickCategoryColor(context, ref, name),
+      );
 }

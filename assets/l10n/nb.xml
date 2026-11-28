@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokker eksterne bilder</string>
     <string name="bold">Fet</string>
     <string name="bulletList">Punktliste</string>
-    <string name="byTag">Etter tagg</string>
+    <string name="byTag">Etter kategori</string>
     <string name="cc">Kopi</string>
     <string name="clearFormatting">Fjern formatering</string>
     <string name="colorBlind">Fargeblindmodus</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Kategorifarge</string>
     <string name="attachFromGallery">Bilder og videoer</string>
     <string name="mentionHint">Omtale: begynn å skrive et navn</string>
+    <string name="categoriesMixedHint">Exchange-postbokser: på serveren og i Outlook; andre: på denne enheten</string>
+    <string name="categoryColorDefault">Standardfarge</string>
+    <string name="outlookCategoriesHint">Fra Exchange-postbokser, med fargene fra Outlook. Du kan velge din egen farge — den vises bare i appen.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Internnummer</string>
+    <string name="phoneExtBody">For å ringe internnummer {ext} fra mobilen, skriv inn organisasjonens hovednummer{org}: appen ringer det og taster internnummeret når noen svarer. Nummeret huskes.</string>
+    <string name="phoneExtMain">Organisasjonens hovednummer</string>
+    <string name="phoneExtDialAsIs">Ring som det er</string>
+    <string name="threadUnderMail">Samtale under e-posten</string>
+    <string name="threadUnderAlways">Alltid</string>
+    <string name="threadUnderAlwaysDesc">Også når e-posten åpnes fra samtaleskjermen</string>
+    <string name="threadUnderStandalone">Når den åpnes fra et varsel</string>
+    <string name="threadUnderStandaloneDesc">Også fra søk, lenker og moduler – når e-posten ikke åpnes fra samtaleskjermen</string>
+    <string name="threadUnderNever">Aldri</string>
 </resources>

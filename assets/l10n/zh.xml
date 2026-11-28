@@ -121,7 +121,7 @@
     <string name="blockExternalImages">阻止外部图片</string>
     <string name="bold">粗体</string>
     <string name="bulletList">项目符号列表</string>
-    <string name="byTag">按标签</string>
+    <string name="byTag">按类别</string>
     <string name="cc">抄送</string>
     <string name="clearFormatting">清除格式</string>
     <string name="colorBlind">色盲模式</string>
@@ -4422,4 +4422,18 @@
     <string name="categoryColor">类别颜色</string>
     <string name="attachFromGallery">照片和视频</string>
     <string name="mentionHint">提及：开始输入姓名</string>
+    <string name="categoriesMixedHint">Exchange 邮箱：保存在服务器和 Outlook 中；其他：保存在本设备</string>
+    <string name="categoryColorDefault">默认颜色</string>
+    <string name="outlookCategoriesHint">来自 Exchange 邮箱，颜色与 Outlook 相同。可以自选颜色——仅在应用中显示。</string>
+    <string name="smsShort">短信</string>
+    <string name="phoneExtTitle">分机号</string>
+    <string name="phoneExtBody">要用手机拨打分机 {ext}，请输入单位总机号码{org}：应用会先拨总机，接通后再拨分机。号码会被记住。</string>
+    <string name="phoneExtMain">单位总机号码</string>
+    <string name="phoneExtDialAsIs">直接拨打</string>
+    <string name="threadUnderMail">邮件下方显示会话</string>
+    <string name="threadUnderAlways">始终</string>
+    <string name="threadUnderAlwaysDesc">从会话页面打开邮件时也显示</string>
+    <string name="threadUnderStandalone">从通知打开时</string>
+    <string name="threadUnderStandaloneDesc">从搜索、链接、小组件打开时也显示——只要不是从会话页面打开</string>
+    <string name="threadUnderNever">从不</string>
 </resources>

@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blocca immagini esterne</string>
     <string name="bold">Grassetto</string>
     <string name="bulletList">Elenco puntato</string>
-    <string name="byTag">Per tag</string>
+    <string name="byTag">Per categoria</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Cancella formattazione</string>
     <string name="colorBlind">Modalità daltonismo</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Colore della categoria</string>
     <string name="attachFromGallery">Foto e video</string>
     <string name="mentionHint">Menzione: inizia a digitare un nome</string>
+    <string name="categoriesMixedHint">Caselle Exchange: sul server e in Outlook; le altre: su questo dispositivo</string>
+    <string name="categoryColorDefault">Colore predefinito</string>
+    <string name="outlookCategoriesHint">Dalle caselle Exchange, con i colori di Outlook. Puoi scegliere un colore tuo: sarà visibile solo nell\'app.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Interno</string>
+    <string name="phoneExtBody">Per chiamare l’interno {ext} dal cellulare, inserisci il numero principale dell’organizzazione{org}: l’app lo compone e, alla risposta, digita l’interno. Il numero viene ricordato.</string>
+    <string name="phoneExtMain">Numero principale dell’organizzazione</string>
+    <string name="phoneExtDialAsIs">Componi così</string>
+    <string name="threadUnderMail">Conversazione sotto l’email</string>
+    <string name="threadUnderAlways">Sempre</string>
+    <string name="threadUnderAlwaysDesc">Anche quando l’email è aperta dalla schermata della conversazione</string>
+    <string name="threadUnderStandalone">All’apertura da una notifica</string>
+    <string name="threadUnderStandaloneDesc">Anche da ricerca, link o widget, quando l’email non è aperta dalla conversazione</string>
+    <string name="threadUnderNever">Mai</string>
 </resources>

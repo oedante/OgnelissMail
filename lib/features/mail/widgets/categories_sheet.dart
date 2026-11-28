@@ -5,8 +5,9 @@
 // Одна кнопка вместо «Добавить тег» и «Категории Outlook». У ящиков Exchange
 // категории уходят на сервер (видны в Outlook и веб-почте), у остальных —
 // хранятся на телефоне. У каждой категории — цвет: стандартные категории
-// Outlook («Красная категория»…) — своим цветом, остальные — постоянным
-// цветом палитры; цвет можно выбрать (кружок слева).
+// Outlook («Красная категория»…) — своим цветом, категории из Outlook — его
+// цветом, остальные — постоянным цветом палитры; цвет можно выбрать
+// (кружок слева). Окно умеет и несколько писем сразу (выделение в ленте).
 
 import 'dart:async';
 
@@ -16,9 +17,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/theme/app_icons.dart';
 import '../../../core/theme/tokens.dart';
+import '../../../core/logging/app_logger.dart';
+import '../../../core/utils/category_colors.dart';
 import '../../../data/models/email_model.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../services/mail/email_actions_service.dart' show emailActionsProvider;
+import '../../../data/models/account_model.dart';
+import '../../../services/mail/email_actions_service.dart' show EmailActionsService, emailActionsProvider;
+import '../../../services/mail/engine/mail_engine_service.dart' show mailEngineServiceProvider;
 import '../../../widgets/common/app_sheet.dart';
 import '../../settings/providers/categories_provider.dart';
 import '../providers/mail_providers.dart' show accountsProvider;
@@ -31,11 +36,14 @@ List<String> mailCategoriesOf(EmailModel e) => [
     ];
 
 /// Записать категории письма: у Exchange — на сервер (прежние теги
-/// переходят в категории), у остальных — теги на телефоне. Возвращает
-/// записанный список.
-Future<void> saveMailCategories(WidgetRef ref, EmailModel email, List<String> names) async {
-  final actions = ref.read(emailActionsProvider);
-  final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
+/// переходят в категории), у остальных — теги на телефоне.
+Future<void> saveMailCategories(WidgetRef ref, EmailModel email, List<String> names) =>
+    saveMailCategoriesWith(ref.read(emailActionsProvider),
+        ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull, email, names);
+
+/// То же без ref — для массовой записи в фоне (экран мог уже закрыться).
+Future<void> saveMailCategoriesWith(
+    EmailActionsService actions, AccountModel? acc, EmailModel email, List<String> names) async {
   if (acc != null && acc.isMsExchange) {
     await actions.setCategories(acc, email.id, names);
     if (email.tags.isNotEmpty) await actions.setTags(email.id, const [], accountId: email.accountId);
@@ -44,21 +52,74 @@ Future<void> saveMailCategories(WidgetRef ref, EmailModel email, List<String> na
   }
 }
 
+/// Изменения категорий: true — поставить, false — снять; категорий, которых
+/// нет в карте, изменение не касается.
+typedef CategoryChanges = Map<String, bool>;
+
+/// Применить изменения к категориям одного письма (порядок прежних
+/// сохраняется, новые — в конец).
+List<String> applyCategoryChanges(List<String> current, CategoryChanges changes) {
+  final out = [for (final c in current) if (changes[c] != false) c];
+  for (final e in changes.entries) {
+    if (e.value && !out.contains(e.key)) out.add(e.key);
+  }
+  return out;
+}
+
 /// Окно «Категории»: отметить категории письма, добавить новую, выбрать
 /// цвет. null — закрыли без изменений; иначе — новый список.
 Future<List<String>?> showCategoriesSheet(BuildContext context, WidgetRef ref, EmailModel email) async {
-  final l10n = AppLocalizations.of(context);
-  final acc = ref.read(accountsProvider).where((a) => a.id == email.accountId).firstOrNull;
-  final exchange = acc?.isMsExchange ?? false;
+  final changes = await pickCategoryChanges(context, ref, [email]);
+  if (changes == null) return null;
   final current = mailCategoriesOf(email);
-  final selected = {...current};
+  final result = applyCategoryChanges(current, changes);
+  if (result.length == current.length && result.every(current.contains)) return null;
+  unawaited(HapticFeedback.selectionClick());
+  await saveMailCategories(ref, email, result);
+  return result;
+}
+
+/// Окно «Категории» для одного или нескольких писем (2.7.5, выделение в
+/// ленте). Категория, которая есть у части писем, отмечена чертой: её можно
+/// поставить всем, снять у всех или оставить как есть. Возвращает изменения
+/// (пусто — ничего не меняли); null — окно закрыли.
+Future<CategoryChanges?> pickCategoryChanges(BuildContext context, WidgetRef ref, List<EmailModel> emails) async {
+  if (emails.isEmpty) return null;
+  final l10n = AppLocalizations.of(context);
+  final accounts = {for (final a in ref.read(accountsProvider)) a.id: a};
+  final exchange = [for (final e in emails) accounts[e.accountId]?.isMsExchange ?? false];
+  final anyExchange = exchange.contains(true);
+  final hint = !anyExchange
+      ? 'categoriesLocalHint'
+      : exchange.contains(false)
+          ? 'categoriesMixedHint'
+          : 'outlookCategoriesSynced';
+  final own = mailCategoriesOrder(emails);
+  final userList = ref.read(categoriesProvider);
   final names = <String>[
-    ...ref.read(categoriesProvider),
-    for (final c in current)
-      if (!ref.read(categoriesProvider).contains(c)) c,
+    ...userList,
+    // Категории Outlook ящика — у писем Exchange.
+    if (anyExchange)
+      for (final c in CategoryColors.serverList)
+        if (!userList.contains(c.name)) c.name,
   ];
+  for (final c in own) {
+    if (!names.contains(c)) names.add(c);
+  }
+  // Сколько писем с категорией: у всех — true, ни у одного — false, у части — null.
+  final initial = <String, bool?>{
+    for (final n in names)
+      n: switch (emails.where((e) => mailCategoriesOf(e).contains(n)).length) {
+        0 => false,
+        final k when k == emails.length => true,
+        _ => null,
+      },
+  };
+  final state = {...initial};
   final input = TextEditingController();
-  final result = await showAppSheet<List<String>>(
+  // Цвета — свежие из Outlook (не старше 10 минут).
+  if (anyExchange) unawaited(refreshOutlookCategories(ref));
+  final result = await showAppSheet<CategoryChanges>(
     context: context,
     isScrollControlled: true,
     showDragHandle: true,
@@ -71,7 +132,8 @@ Future<List<String>?> showCategoriesSheet(BuildContext context, WidgetRef ref, E
           unawaited(ref.read(categoriesProvider.notifier).add(t));
           setSheet(() {
             if (!names.contains(t)) names.add(t);
-            selected.add(t);
+            initial.putIfAbsent(t, () => false);
+            state[t] = true;
             input.clear();
           });
         }
@@ -82,11 +144,18 @@ Future<List<String>?> showCategoriesSheet(BuildContext context, WidgetRef ref, E
             constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(ctx).height * 0.8),
             child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: [
               ListTile(
-                title: Text(l10n.tr('categoriesTitle'), style: Theme.of(ctx).textTheme.titleMedium),
-                subtitle: Text(l10n.tr(exchange ? 'outlookCategoriesSynced' : 'categoriesLocalHint')),
+                title: Text(
+                    emails.length == 1
+                        ? l10n.tr('categoriesTitle')
+                        : '${l10n.tr('categoriesTitle')} · ${l10n.tr('selectedMailsN').replaceAll('{n}', '${emails.length}')}',
+                    style: Theme.of(ctx).textTheme.titleMedium),
+                subtitle: Text(l10n.tr(hint)),
                 trailing: FilledButton(
                   key: const ValueKey('categories_done'),
-                  onPressed: () => Navigator.pop(ctx, [for (final n in names) if (selected.contains(n)) n]),
+                  onPressed: () => Navigator.pop(ctx, {
+                    for (final n in names)
+                      if (state[n] != null && state[n] != initial[n]) n: state[n]!,
+                  }),
                   child: Text(l10n.tr('done')),
                 ),
               ),
@@ -96,14 +165,20 @@ Future<List<String>?> showCategoriesSheet(BuildContext context, WidgetRef ref, E
                   for (final n in names)
                     CheckboxListTile(
                       key: ValueKey('category_$n'),
-                      value: selected.contains(n),
-                      onChanged: (v) => setSheet(() => v == true ? selected.add(n) : selected.remove(n)),
+                      // Черта — у части писем; касание: всем → ни у кого → как было.
+                      tristate: initial[n] == null,
+                      value: state[n],
+                      onChanged: (_) => setSheet(() => state[n] = switch (state[n]) {
+                            null => true,
+                            true => false,
+                            false => initial[n] == null ? null : true,
+                          }),
                       title: Text(n),
                       secondary: IconButton(
                         key: ValueKey('category_color_$n'),
                         tooltip: l10n.tr('categoryColor'),
                         icon: Icon(AppIcons.label, fill: 1, color: categoryColor(n, colors)),
-                        onPressed: () => unawaited(_pickColor(ctx, ref, n, l10n)),
+                        onPressed: () => unawaited(pickCategoryColor(ctx, ref, n)),
                       ),
                     ),
                 ]),
@@ -129,15 +204,26 @@ Future<List<String>?> showCategoriesSheet(BuildContext context, WidgetRef ref, E
     }),
   );
   input.dispose();
-  if (result == null) return null;
-  if (result.length == current.length && result.every(current.contains)) return null;
-  unawaited(HapticFeedback.selectionClick());
-  await saveMailCategories(ref, email, result);
   return result;
 }
 
-/// Цвет категории — кружки палитры.
-Future<void> _pickColor(BuildContext context, WidgetRef ref, String name, AppLocalizations l10n) async {
+/// Категории писем по порядку первого появления (без повторов).
+List<String> mailCategoriesOrder(Iterable<EmailModel> emails) {
+  final out = <String>[];
+  for (final e in emails) {
+    for (final c in mailCategoriesOf(e)) {
+      if (!out.contains(c)) out.add(c);
+    }
+  }
+  return out;
+}
+
+/// Цвет категории — кружки палитры и «как в Outlook» (свой цвет снять).
+Future<void> pickCategoryColor(BuildContext context, WidgetRef ref, String name) async {
+  final l10n = AppLocalizations.of(context);
+  final chosen = ref.read(categoryColorsProvider);
+  final own = chosen[name];
+  final byDefault = categoryColor(name, const {});
   final picked = await showAppSheet<Color>(
     context: context,
     showDragHandle: true,
@@ -150,16 +236,93 @@ Future<void> _pickColor(BuildContext context, WidgetRef ref, String name, AppLoc
           Wrap(spacing: Space.m, runSpacing: Space.m, children: [
             for (final c in categoryPalette)
               InkWell(
+                key: ValueKey('category_palette_${c.toARGB32()}'),
                 customBorder: const CircleBorder(),
                 onTap: () => Navigator.pop(ctx, c),
-                child: CircleAvatar(radius: 20, backgroundColor: c),
+                child: CircleAvatar(
+                  radius: 20,
+                  backgroundColor: c,
+                  child: own == c.toARGB32() ? const Icon(AppIcons.check, color: Colors.white, size: 20) : null,
+                ),
               ),
           ]),
+          if (own != null) ...[
+            const SizedBox(height: Space.m),
+            TextButton.icon(
+              key: const ValueKey('category_color_default'),
+              onPressed: () => Navigator.pop(ctx, Colors.transparent),
+              icon: Icon(AppIcons.label, fill: 1, color: byDefault),
+              label: Text(l10n.tr('categoryColorDefault')),
+            ),
+          ],
         ]),
       ),
     ),
   );
-  if (picked != null) await ref.read(categoryColorsProvider.notifier).set(name, picked);
+  if (picked == null) return;
+  final notifier = ref.read(categoryColorsProvider.notifier);
+  if (picked == Colors.transparent) {
+    await notifier.clear(name);
+    return;
+  }
+  // Сразу — в приложении; следом — в Outlook (2.7.5).
+  await notifier.set(name, picked);
+  unawaited(pushCategoryColorToOutlook(ref, name, picked));
+}
+
+/// Ящики, у которых есть главный список категорий Outlook (Exchange с EWS
+/// или Microsoft 365).
+List<AccountModel> _outlookAccounts(WidgetRef ref) {
+  try {
+    return [for (final a in ref.read(accountsProvider)) if (a.isMsExchange && a.hasEwsExtras) a];
+  } catch (_) {
+    return const []; // ящики ещё не загружены — в Outlook нечего писать
+  }
+}
+
+/// Цвет категории — в главный список категорий Outlook ящиков Exchange
+/// (2.7.5, решение владельца 28.11.2026: «свой цвет категории — в
+/// Outlook»). Категории там нет — добавляется. Записано хоть в один ящик —
+/// свой цвет в приложении больше не нужен: цвет берётся из Outlook. Не
+/// записано (нет связи, сервер отказал) — остаётся свой цвет в приложении,
+/// без сообщения (только журнал).
+Future<void> pushCategoryColorToOutlook(WidgetRef ref, String name, Color color) async {
+  final accounts = _outlookAccounts(ref);
+  if (accounts.isEmpty) return;
+  final engine = ref.read(mailEngineServiceProvider);
+  final notifier = ref.read(categoryColorsProvider.notifier);
+  final index = CategoryColors.outlookIndexOf(color);
+  var ok = false;
+  for (final a in accounts) {
+    try {
+      ok = await engine.setMasterCategoryColor(a, name, index) || ok;
+    } catch (e) {
+      AppLogger.debug('Цвет категории в Outlook: $e');
+    }
+  }
+  if (ok && CategoryColors.serverColor(name)?.toARGB32() == CategoryColors.outlookColor(index)?.toARGB32()) {
+    await notifier.clear(name);
+  } else {
+    notifier.touch();
+  }
+}
+
+/// Перечитать главный список категорий Outlook, если он старше [maxAge]
+/// (открыли «Категории» — 2.7.5: раньше раз в сутки), и перерисовать цвета.
+Future<void> refreshOutlookCategories(WidgetRef ref, {Duration maxAge = const Duration(minutes: 10)}) async {
+  final accounts = _outlookAccounts(ref);
+  if (accounts.isEmpty) return;
+  final engine = ref.read(mailEngineServiceProvider);
+  final notifier = ref.read(categoryColorsProvider.notifier);
+  var changed = false;
+  for (final a in accounts) {
+    try {
+      changed = await engine.refreshCategoryList(a, maxAge: maxAge) || changed;
+    } catch (e) {
+      AppLogger.debug('Категории Outlook: $e');
+    }
+  }
+  if (changed) notifier.touch();
 }
 
 /// Метка категории: название её цветом на светлой подложке.

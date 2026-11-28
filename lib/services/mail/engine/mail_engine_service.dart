@@ -781,24 +781,51 @@ class MailEngineService {
   ({DateTime from, DateTime to})? takeCalendarFullWindow(String accountId) =>
       _calendarFull.remove(accountId);
 
-  /// Главный список категорий Outlook (имена и цвета) — раз в сутки, у
-  /// ящиков с EWS (1.6.5). Нужен, чтобы цвет встречи совпадал с Outlook и в
-  /// окне встречи были категории ящика, а не угаданные по названию.
-  Future<void> _refreshCategoryList(AccountModel account) async {
-    if (!account.hasEwsExtras) return;
+  /// Главный список категорий Outlook (имена и цвета) — у ящиков с EWS
+  /// (1.6.5). Нужен, чтобы цвет встречи совпадал с Outlook и в окне встречи
+  /// были категории ящика, а не угаданные по названию. 2.7.5 (решение
+  /// владельца 28.11.2026): не раз в сутки, а раз в час и при открытии
+  /// категорий ([maxAge]); цвета писем — тоже из него.
+  Future<void> _refreshCategoryList(AccountModel account) => refreshCategoryList(account);
+
+  /// Обновить главный список категорий, если он старше [maxAge]
+  /// ([Duration.zero] — сейчас). true — список получен.
+  Future<bool> refreshCategoryList(AccountModel account, {Duration maxAge = const Duration(hours: 1)}) async {
+    if (!account.hasEwsExtras) return false;
     final key = 'cat_master_at_${account.id}';
     final last = DateTime.tryParse(_prefs.getString(key) ?? '');
-    if (last != null && DateTime.now().difference(last) < const Duration(hours: 24)) return;
+    if (last != null && DateTime.now().difference(last) < maxAge) return false;
     final g = await _viaGraph(account, 'категории',
         (graph) async => [for (final c in await graph.masterCategories()) (name: c.name, color: c.color)]);
     final list = g.ok
         ? g.value
         : await _ews.getCategoryList(account).timeout(const Duration(seconds: 25), onTimeout: () => null);
-    if (list == null) return;
+    if (list == null) return false;
     await _prefs.setString(key, DateTime.now().toIso8601String());
-    if (list.isEmpty) return;
+    if (list.isEmpty) return true;
     await CategoryColors.save(_prefs, list);
     AppLogger.info('Категории Outlook: ${list.length} (${AppLogger.mask(account.email)})');
+    return true;
+  }
+
+  /// Цвет категории — в главный список категорий Outlook ящика (2.7.5,
+  /// решение владельца 28.11.2026): Graph, иначе EWS; категории нет —
+  /// добавляется. [color] — номер цвета Outlook 0–24. Записано — список
+  /// перечитывается. false — у ящика такого списка нет или сервер отказал.
+  Future<bool> setMasterCategoryColor(AccountModel account, String name, int color) async {
+    if (!account.hasEwsExtras || color < 0 || color > 24) return false;
+    final g = await _viaGraph(account, 'цвет категории', (graph) async {
+      await graph.setMasterCategoryColor(name, color);
+      return true;
+    });
+    final ok = g.ok || await _ews.setCategoryColor(account, name, color);
+    if (!ok) {
+      AppLogger.info('Цвет категории в Outlook не записан (${AppLogger.mask(account.email)})');
+      return false;
+    }
+    AppLogger.info('Цвет категории — в Outlook (${AppLogger.mask(account.email)})');
+    await refreshCategoryList(account, maxAge: Duration.zero);
+    return true;
   }
 
   Future<List<CalendarEventModel>> getCalendarEvents(AccountModel account) async {

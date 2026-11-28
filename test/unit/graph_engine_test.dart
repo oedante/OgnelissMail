@@ -241,6 +241,36 @@ void main() {
   });
 
   group('запросы', () {
+    test('цвет категории в Outlook: есть — PATCH цвета, нет — POST с цветом (2.7.5)', () async {
+      final calls = <String>[];
+      final g = GraphEngine(
+        tokenSource: ({bool force = false}) async => 'graph-token',
+        httpClient: MockClient((req) async {
+          calls.add('${req.method} ${req.url.path} ${utf8.decode(req.bodyBytes)}');
+          const json = {'content-type': 'application/json; charset=utf-8'};
+          if (req.method == 'GET') {
+            return http.Response.bytes(
+                utf8.encode(jsonEncode({
+                  'value': [
+                    {'id': 'c-1', 'displayName': 'Проекты', 'color': 'preset4'},
+                  ]
+                })),
+                200,
+                headers: json);
+          }
+          return http.Response.bytes(utf8.encode(jsonEncode({'id': 'c-2'})), req.method == 'POST' ? 201 : 200,
+              headers: json);
+        }),
+      );
+      await g.setMasterCategoryColor('проекты', 7);
+      expect(calls.last, contains('PATCH /v1.0/me/outlook/masterCategories/c-1'));
+      expect(calls.last, contains('"color":"preset7"'));
+      await g.setMasterCategoryColor('Отпуск', 0);
+      expect(calls.last, contains('POST /v1.0/me/outlook/masterCategories'));
+      expect(calls.last, contains('"displayName":"Отпуск"'));
+      expect(calls.last, contains('"color":"preset0"'));
+    });
+
     test('токен, все страницы списка', () async {
       final seen = <String>[];
       final g = GraphEngine(

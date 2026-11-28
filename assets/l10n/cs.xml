@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokovat externí obrázky</string>
     <string name="bold">Tučné</string>
     <string name="bulletList">Odrážky</string>
-    <string name="byTag">Podle štítku</string>
+    <string name="byTag">Podle kategorie</string>
     <string name="cc">Kopie</string>
     <string name="clearFormatting">Vymazat formátování</string>
     <string name="colorBlind">Režim pro barvoslepé</string>
@@ -4464,4 +4464,18 @@
     <string name="categoryColor">Barva kategorie</string>
     <string name="attachFromGallery">Fotky a videa</string>
     <string name="mentionHint">Zmínka: začněte psát jméno</string>
+    <string name="categoriesMixedHint">Schránky Exchange: na serveru a v Outlooku; ostatní: v tomto zařízení</string>
+    <string name="categoryColorDefault">Výchozí barva</string>
+    <string name="outlookCategoriesHint">Ze schránek Exchange, s barvami jako v Outlooku. Můžete zvolit vlastní barvu — uvidíte ji jen v aplikaci.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Linka</string>
+    <string name="phoneExtBody">Chcete-li z mobilu volat na linku {ext}, zadejte hlavní číslo organizace{org}: aplikace ho vytočí a po přijetí hovoru zadá linku. Číslo si zapamatuje.</string>
+    <string name="phoneExtMain">Hlavní číslo organizace</string>
+    <string name="phoneExtDialAsIs">Vytočit takto</string>
+    <string name="threadUnderMail">Konverzace pod zprávou</string>
+    <string name="threadUnderAlways">Vždy</string>
+    <string name="threadUnderAlwaysDesc">I když je zpráva otevřena z obrazovky konverzace</string>
+    <string name="threadUnderStandalone">Při otevření z oznámení</string>
+    <string name="threadUnderStandaloneDesc">I z hledání, odkazu či widgetu – když zpráva není otevřena z obrazovky konverzace</string>
+    <string name="threadUnderNever">Nikdy</string>
 </resources>

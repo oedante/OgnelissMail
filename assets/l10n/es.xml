@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Bloquear imágenes externas</string>
     <string name="bold">Negrita</string>
     <string name="bulletList">Lista con viñetas</string>
-    <string name="byTag">Por etiqueta</string>
+    <string name="byTag">Por categoría</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Borrar formato</string>
     <string name="colorBlind">Modo para daltonismo</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Color de la categoría</string>
     <string name="attachFromGallery">Fotos y vídeos</string>
     <string name="mentionHint">Mención: empiece a escribir un nombre</string>
+    <string name="categoriesMixedHint">Buzones Exchange: en el servidor y en Outlook; los demás: en este dispositivo</string>
+    <string name="categoryColorDefault">Color predeterminado</string>
+    <string name="outlookCategoriesHint">De los buzones Exchange, con los colores de Outlook. Puedes elegir tu propio color: solo se verá en la app.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Extensión</string>
+    <string name="phoneExtBody">Para llamar a la extensión {ext} desde el móvil, introduce el número principal de la organización{org}: la app lo marca y, al contestar, marca la extensión. El número se recuerda.</string>
+    <string name="phoneExtMain">Número principal de la organización</string>
+    <string name="phoneExtDialAsIs">Marcar tal cual</string>
+    <string name="threadUnderMail">Conversación debajo del correo</string>
+    <string name="threadUnderAlways">Siempre</string>
+    <string name="threadUnderAlwaysDesc">También al abrir el correo desde la pantalla de la conversación</string>
+    <string name="threadUnderStandalone">Al abrir desde una notificación</string>
+    <string name="threadUnderStandaloneDesc">También desde la búsqueda, un enlace o un widget, cuando el correo no se abre desde la conversación</string>
+    <string name="threadUnderNever">Nunca</string>
 </resources>

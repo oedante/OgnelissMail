@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Blokir gambar eksternal</string>
     <string name="bold">Tebal</string>
     <string name="bulletList">Daftar berpoin</string>
-    <string name="byTag">Menurut tag</string>
+    <string name="byTag">Menurut kategori</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Hapus pemformatan</string>
     <string name="colorBlind">Mode buta warna</string>
@@ -4422,4 +4422,18 @@
     <string name="categoryColor">Warna kategori</string>
     <string name="attachFromGallery">Foto dan video</string>
     <string name="mentionHint">Sebutan: mulai ketik nama</string>
+    <string name="categoriesMixedHint">Kotak surat Exchange: di server dan Outlook; lainnya: di perangkat ini</string>
+    <string name="categoryColorDefault">Warna bawaan</string>
+    <string name="outlookCategoriesHint">Dari kotak surat Exchange, dengan warna Outlook. Anda bisa memilih warna sendiri — hanya terlihat di aplikasi.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Nomor ekstensi</string>
+    <string name="phoneExtBody">Untuk menelepon ekstensi {ext} dari ponsel, masukkan nomor utama organisasi{org}: aplikasi memanggilnya lalu ekstensi setelah panggilan dijawab. Nomor akan diingat.</string>
+    <string name="phoneExtMain">Nomor utama organisasi</string>
+    <string name="phoneExtDialAsIs">Panggil apa adanya</string>
+    <string name="threadUnderMail">Percakapan di bawah email</string>
+    <string name="threadUnderAlways">Selalu</string>
+    <string name="threadUnderAlwaysDesc">Juga saat email dibuka dari layar percakapan</string>
+    <string name="threadUnderStandalone">Saat dibuka dari notifikasi</string>
+    <string name="threadUnderStandaloneDesc">Juga dari pencarian, tautan, atau widget — saat email tidak dibuka dari layar percakapan</string>
+    <string name="threadUnderNever">Tidak pernah</string>
 </resources>

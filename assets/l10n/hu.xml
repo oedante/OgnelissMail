@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Külső képek letiltása</string>
     <string name="bold">Félkövér</string>
     <string name="bulletList">Felsorolás</string>
-    <string name="byTag">Címke szerint</string>
+    <string name="byTag">Kategória szerint</string>
     <string name="cc">Másolat</string>
     <string name="clearFormatting">Formázás törlése</string>
     <string name="colorBlind">Színtévesztő mód</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Kategória színe</string>
     <string name="attachFromGallery">Fotók és videók</string>
     <string name="mentionHint">Említés: kezdje beírni a nevet</string>
+    <string name="categoriesMixedHint">Exchange-postafiókok: a szerveren és az Outlookban; a többi: ezen az eszközön</string>
+    <string name="categoryColorDefault">Alapértelmezett szín</string>
+    <string name="outlookCategoriesHint">Az Exchange-postafiókokból, az Outlook színeivel. Választhat saját színt is — az csak az alkalmazásban látszik.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Mellék</string>
+    <string name="phoneExtBody">A(z) {ext} mellék mobilról való hívásához adja meg a szervezet fő számát{org}: az alkalmazás felhívja, majd a hívás fogadása után beüti a melléket. A számot megjegyzi.</string>
+    <string name="phoneExtMain">A szervezet fő száma</string>
+    <string name="phoneExtDialAsIs">Hívás így</string>
+    <string name="threadUnderMail">Beszélgetés a levél alatt</string>
+    <string name="threadUnderAlways">Mindig</string>
+    <string name="threadUnderAlwaysDesc">Akkor is, ha a levelet a beszélgetés képernyőjéről nyitja meg</string>
+    <string name="threadUnderStandalone">Értesítésből megnyitva</string>
+    <string name="threadUnderStandaloneDesc">Keresésből, hivatkozásból, widgetről is – ha a levél nem a beszélgetés képernyőjéről nyílik</string>
+    <string name="threadUnderNever">Soha</string>
 </resources>

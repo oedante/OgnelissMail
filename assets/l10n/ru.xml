@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Блокировать внешние изображения</string>
     <string name="bold">Жирный</string>
     <string name="bulletList">Маркированный список</string>
-    <string name="byTag">По тегу</string>
+    <string name="byTag">По категории</string>
     <string name="cc">Копия</string>
     <string name="clearFormatting">Очистить форматирование</string>
     <string name="colorBlind">Режим дальтонизма</string>
@@ -4485,4 +4485,18 @@
     <string name="categoryColor">Цвет категории</string>
     <string name="attachFromGallery">Фото и видео</string>
     <string name="mentionHint">Упоминание: начните вводить имя</string>
+    <string name="categoriesMixedHint">У ящиков Exchange — на сервере и в Outlook, у остальных — на телефоне</string>
+    <string name="categoryColorDefault">Цвет по умолчанию</string>
+    <string name="outlookCategoriesHint">Из ящиков Exchange, с цветами как в Outlook. Цвет можно выбрать свой — он виден только в приложении.</string>
+    <string name="smsShort">SMS</string>
+    <string name="phoneExtTitle">Добавочный номер</string>
+    <string name="phoneExtBody">Чтобы позвонить на добавочный {ext} с мобильного, нужен основной номер организации{org}: приложение наберёт его, а после ответа — добавочный. Номер запомнится.</string>
+    <string name="phoneExtMain">Основной номер организации</string>
+    <string name="phoneExtDialAsIs">Набрать как есть</string>
+    <string name="threadUnderMail">Беседа под письмом</string>
+    <string name="threadUnderAlways">Всегда</string>
+    <string name="threadUnderAlwaysDesc">И когда письмо открыто с экрана беседы</string>
+    <string name="threadUnderStandalone">При открытии из уведомления</string>
+    <string name="threadUnderStandaloneDesc">И из поиска, ссылки, виджета — когда письмо открыто не с экрана беседы</string>
+    <string name="threadUnderNever">Никогда</string>
 </resources>

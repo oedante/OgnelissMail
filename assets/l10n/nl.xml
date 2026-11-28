@@ -121,7 +121,7 @@
     <string name="blockExternalImages">Externe afbeeldingen blokkeren</string>
     <string name="bold">Vet</string>
     <string name="bulletList">Lijst met opsommingstekens</string>
-    <string name="byTag">Op tag</string>
+    <string name="byTag">Op categorie</string>
     <string name="cc">Cc</string>
     <string name="clearFormatting">Opmaak wissen</string>
     <string name="colorBlind">Kleurenblindmodus</string>
@@ -4443,4 +4443,18 @@
     <string name="categoryColor">Categoriekleur</string>
     <string name="attachFromGallery">Foto’s en video’s</string>
     <string name="mentionHint">Vermelding: typ een naam</string>
+    <string name="categoriesMixedHint">Exchange-postvakken: op de server en in Outlook; andere: op dit apparaat</string>
+    <string name="categoryColorDefault">Standaardkleur</string>
+    <string name="outlookCategoriesHint">Uit Exchange-postvakken, met de kleuren van Outlook. Je kunt een eigen kleur kiezen — die zie je alleen in de app.</string>
+    <string name="smsShort">Sms</string>
+    <string name="phoneExtTitle">Toestel</string>
+    <string name="phoneExtBody">Om toestel {ext} vanaf een mobiel te bellen, vul je het hoofdnummer van de organisatie{org} in: de app belt het en kiest het toestel zodra er wordt opgenomen. Het nummer wordt onthouden.</string>
+    <string name="phoneExtMain">Hoofdnummer van de organisatie</string>
+    <string name="phoneExtDialAsIs">Zo bellen</string>
+    <string name="threadUnderMail">Gesprek onder de e-mail</string>
+    <string name="threadUnderAlways">Altijd</string>
+    <string name="threadUnderAlwaysDesc">Ook als de e-mail vanuit het gespreksscherm wordt geopend</string>
+    <string name="threadUnderStandalone">Bij openen vanuit een melding</string>
+    <string name="threadUnderStandaloneDesc">Ook vanuit zoeken, links en widgets – als de e-mail niet vanuit het gesprek wordt geopend</string>
+    <string name="threadUnderNever">Nooit</string>
 </resources>
